@@ -1,0 +1,56 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Angel Wings",
+    "description": "Elytra-style Angel Wings that let you fly in Minecraft Bedrock Edition.",
+    "uuid": "a1b2c3d4-1111-4444-8888-123456789abc",
+    "version": [
+      1,
+      1,
+      1
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "description": "Angel Wings behavior pack",
+      "type": "data",
+      "uuid": "a1b2c3d4-2222-4444-8888-123456789abc",
+      "version": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "description": "Angel Wings flight script",
+      "type": "script",
+      "language": "javascript",
+      "uuid": "a1b2c3d4-3333-4444-8888-123456789abc",
+      "version": [
+        1,
+        1,
+        1
+      ],
+      "entry": "scripts/angel_wings.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "a1b2c3d4-4444-4444-8888-123456789abc",
+      "version": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    }
+  ]
+}

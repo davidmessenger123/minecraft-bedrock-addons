@@ -1,0 +1,33 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "mod:angel_wings",
+      "materials": {
+        "default": "armor",
+        "enchanted": "armor_enchanted"
+      },
+      "textures": {
+        "default": "textures/entity/angel_wings",
+        "enchanted": "textures/misc/enchanted_actor_glint"
+      },
+      "geometry": {
+        "default": "geometry.angel_wings"
+      },
+      "animations": {
+        "flap": "animation.angel_wings.flap"
+      },
+      "scripts": {
+        "parent_setup": "v.chest_layer_visible = false;",
+        "animate": [
+          {
+            "flap": "!query.is_on_ground"
+          }
+        ]
+      },
+      "render_controllers": [
+        "controller.render.armor.v2"
+      ]
+    }
+  }
+}

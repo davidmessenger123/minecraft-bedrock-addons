@@ -1,0 +1,33 @@
+{
+  "format_version": "1.8.0",
+  "animation_controllers": {
+    "controller.animation.item.phone": {
+      "animations": {
+        "animation.item.phone": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            -20,
+            0,
+            0
+          ],
+          "scale": [
+            0.9,
+            0.9,
+            0.9
+          ]
+        }
+      },
+      "scripts": {
+        "animate": [
+          {
+            "animation.item.phone": "c.is_first_person"
+          }
+        ]
+      }
+    }
+  }
+}

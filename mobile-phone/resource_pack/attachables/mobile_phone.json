@@ -1,0 +1,26 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "phone:mobile_phone",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/mobile_phone"
+      },
+      "geometry": {
+        "default": "geometry.phone.mobile_phone"
+      },
+      "scripts": {
+        "parent_setup": "v1.10.0",
+        "animate": [
+          "controller.animation.item.phone"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.item_default"
+      ]
+    }
+  }
+}

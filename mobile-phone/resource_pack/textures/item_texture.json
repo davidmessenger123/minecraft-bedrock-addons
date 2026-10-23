@@ -1,0 +1,9 @@
+{
+  "resource_pack_name": "phone",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "mobile_phone": {
+      "textures": "textures/items/mobile_phone"
+    }
+  }
+}

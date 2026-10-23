@@ -1,0 +1,50 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Mobile Phone (Behaviour)",
+    "description": "Mobile Phone item with a phone GUI that runs admin commands",
+    "uuid": "d4c44828-6fad-52c5-80f4-c287d616afe5",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "0305d186-e328-5fd5-b6b0-9bc4d5e39623",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/main.js",
+      "uuid": "996ba6e3-a20f-5119-91ba-e43d40fc46a2",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "1c539c27-8457-5e9b-8ddc-b7e56a59732b",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

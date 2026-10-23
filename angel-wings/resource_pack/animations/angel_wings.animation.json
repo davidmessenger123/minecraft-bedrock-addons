@@ -1,0 +1,17 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.angel_wings.flap": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "left_wing": {
+          "rotation": [0, 0, "math.sin(query.anim_time * 6.28318) * 8"]
+        },
+        "right_wing": {
+          "rotation": [0, 0, "math.sin(query.anim_time * 6.28318) * -8"]
+        }
+      }
+    }
+  }
+}

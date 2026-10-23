@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Angel Wings",
+    "description": "Elytra-style Angel Wings that let you fly in Minecraft Bedrock Edition.",
+    "uuid": "a1b2c3d4-4444-4444-8888-123456789abc",
+    "version": [
+      1,
+      1,
+      1
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "description": "Angel Wings resource pack",
+      "type": "resources",
+      "uuid": "a1b2c3d4-5555-4444-8888-123456789abc",
+      "version": [
+        1,
+        1,
+        1
+      ]
+    }
+  ]
+}
