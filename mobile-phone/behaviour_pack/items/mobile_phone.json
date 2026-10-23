@@ -8,16 +8,12 @@
       }
     },
     "components": {
-      "minecraft:icon": {
-        "texture": "mobile_phone"
-      },
-      "minecraft:attachable": {
-        "identifier": "phone:mobile_phone"
-      },
+      "minecraft:icon": "mobile_phone",
       "minecraft:display_name": {
         "value": "item.phone.mobile_phone"
       },
-      "minecraft:max_stack_size": 1
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true
     }
   }
 }

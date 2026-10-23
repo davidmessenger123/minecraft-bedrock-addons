@@ -1,0 +1,49 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.angel_wings": {
+      "initial_state": "grounded",
+      "states": {
+        "grounded": {
+          "animations": [
+            "idle"
+          ],
+          "blend_transition": 0.2,
+          "transitions": [
+            {
+              "airborne": "!query.is_on_ground"
+            }
+          ]
+        },
+        "airborne": {
+          "animations": [
+            "glide"
+          ],
+          "blend_transition": 0.15,
+          "transitions": [
+            {
+              "grounded": "query.is_on_ground"
+            },
+            {
+              "flap": "query.is_jumping"
+            }
+          ]
+        },
+        "flap": {
+          "animations": [
+            "flap"
+          ],
+          "blend_transition": 0.08,
+          "transitions": [
+            {
+              "grounded": "query.is_on_ground"
+            },
+            {
+              "airborne": "!query.is_jumping"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

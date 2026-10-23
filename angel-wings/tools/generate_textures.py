@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Generate the Angel Wings entity feather texture and inventory icon.
+"""Generate the Angel Wings entity feather atlas and inventory icon.
 
 Pure-stdlib PNG writer (no Pillow needed) so the art can be regenerated on any
 machine with Python 3.  Run from the project root:
 
     python3 tools/generate_textures.py
+
+The entity atlas is 128x128.  The top two rows are eight 32x32 feather cells:
+row 0 points right (left wing), row 1 points left (right wing).  Row 2 holds
+four opaque material swatches used for leading edges and the back plate.
 """
 import math
 import os
@@ -98,102 +102,132 @@ def poly(px, w, h, points, fill, outline=None):
 
 
 # --------------------------------------------------------------------------- #
-# Entity texture: a seamless-ish field of layered ivory feathers
+# Entity texture: eight cut-out feather cells plus opaque trim swatches
 # --------------------------------------------------------------------------- #
+CREAM_HI = (255, 252, 242, 255)
+CREAM = (250, 240, 220, 255)
+CREAM_MID = (238, 222, 192, 255)
+SHADE = (205, 180, 140, 255)
+OUTLINE = (148, 109, 58, 255)
+SHAFT = (222, 196, 152, 255)
+GOLD_HI = (255, 242, 184, 255)
+GOLD = (226, 178, 76, 255)
+GOLD_DARK = (158, 112, 38, 255)
+
+
+def _feather_pixel(px, W, H, cell_x, cell_y, local_x, local_y, direction, color):
+    x = cell_x + (local_x if direction > 0 else 31 - local_x)
+    put(px, W, H, x, cell_y + local_y, color)
+
+
+def draw_feather_cell(px, W, H, cell_x, cell_y, direction, tip_x, half_h, variant):
+    """Draw one transparent feather cell pointing left or right."""
+    base_x = 2
+    span = max(1, tip_x - base_x)
+
+    # Body: vertical slices give a smooth ivory-to-gold gradient.
+    for lx in range(base_x, tip_x + 1):
+        t = (lx - base_x) / span
+        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
+        if width < 0.4:
+            width = 0.4
+        top = 16 - width * 0.92
+        bottom = 16 + width * 1.08
+        for ly in range(int(round(top)), int(round(bottom)) + 1):
+            tt = t
+            if tt < 0.62:
+                color = mix(CREAM_HI, CREAM, tt / 0.62)
+            else:
+                color = mix(CREAM, GOLD, (tt - 0.62) / 0.38)
+            # Warm rim on the outer edge of the feather.
+            if ly <= int(round(top)) + 1:
+                color = mix(color, GOLD_HI, 0.45)
+            elif ly >= int(round(bottom)) - 1:
+                color = mix(color, SHADE, 0.45)
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, ly, direction, color)
+
+    # Outline the silhouette so the cut-out edge reads at small sizes.
+    for lx in range(base_x, tip_x + 1):
+        t = (lx - base_x) / span
+        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
+        if width < 0.4:
+            width = 0.4
+        top = int(round(16 - width * 0.92))
+        bottom = int(round(16 + width * 1.08))
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, top, direction, OUTLINE)
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, bottom, direction, OUTLINE)
+
+    # Shaft and a lit upper edge.
+    for lx in range(base_x, tip_x + 1):
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, 16, direction, SHAFT)
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, 15, direction, CREAM_HI)
+        if lx % 3 == 0:
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, 17, direction, GOLD_DARK)
+
+    # Barbs slanting toward the tip.  Variant 0 is the soft covert, 3 the
+    # long primary with the strongest barbs.
+    barb_count = 3 + variant
+    for i in range(barb_count):
+        t = 0.22 + 0.16 * i
+        lx = int(base_x + span * t)
+        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
+        for side in (-1, 1):
+            y0 = 16
+            y1 = int(round(16 + side * width * 0.82))
+            for step in range(1, 5):
+                yy = int(round(y0 + (y1 - y0) * step / 4))
+                xx = lx + int(round(step * 1.15))
+                _feather_pixel(px, W, H, cell_x, cell_y, xx, yy,
+                               direction, mix(SHADE, CREAM_MID, 0.35))
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, y1, direction, OUTLINE)
+
+    # Gold quill at the base.
+    for ly in range(14, 19):
+        for lx in range(0, 3):
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, ly, direction, GOLD)
+    _feather_pixel(px, W, H, cell_x, cell_y, 1, 15, direction, GOLD_HI)
+    _feather_pixel(px, W, H, cell_x, cell_y, 1, 18, direction, GOLD_DARK)
+
+
+def draw_swatch(px, W, H, x0, y0, base, hi, lo, kind):
+    for y in range(32):
+        t = y / 31.0
+        for x in range(32):
+            color = mix(hi, base, t * 0.55)
+            if kind == "gold" and ((x + y) % 11 < 2):
+                color = mix(color, GOLD_HI, 0.45)
+            if kind == "ivory" and (x % 9 == 0):
+                color = mix(color, CREAM_HI, 0.4)
+            put(px, W, H, x0 + x, y0 + y, color)
+    # A darker border keeps the swatches from bleeding when stretched.
+    for x in range(32):
+        put(px, W, H, x0 + x, y0, lo)
+        put(px, W, H, x0 + x, y0 + 31, lo)
+    for y in range(32):
+        put(px, W, H, x0, y0 + y, lo)
+        put(px, W, H, x0 + 31, y0 + y, lo)
+    # A little hand-painted wear.
+    for i in range(10):
+        xx = x0 + 3 + (i * 7) % 26
+        yy = y0 + 5 + (i * 11) % 22
+        put(px, W, H, xx, yy, hi)
+
+
 def generate_entity_texture(path):
-    W = H = 64
-    px = [[(0, 0, 0, 255) for _ in range(W)] for _ in range(H)]
+    W = H = 128
+    px = [[(0, 0, 0, 0) for _ in range(W)] for _ in range(H)]
 
-    # Warm parchment background, slightly darker than the feathers so the
-    # outlines and overlaps stay readable on small cubes.
-    for y in range(H):
-        t = y / (H - 1)
-        r = 232 - 22 * t
-        g = 214 - 26 * t
-        b = 180 - 35 * t
-        for x in range(W):
-            wave = 1.5 * math.sin(x * 0.45 + y * 0.21)
-            px[y][x] = (clamp(r + wave), clamp(g + wave), clamp(b + wave), 255)
+    # Row 0: left wing, pointing right.  Row 1: right wing, pointing left.
+    left_specs = [(28, 13.5, 0), (30, 12.5, 1), (31, 11.5, 2), (31, 10.0, 3)]
+    for i, (tip, half_h, variant) in enumerate(left_specs):
+        draw_feather_cell(px, W, H, i * 32, 0, +1, tip, half_h, variant)
+        draw_feather_cell(px, W, H, i * 32, 32, -1, tip, half_h, variant)
 
-    cream_hi = (255, 251, 240, 255)
-    cream = (252, 244, 227, 255)
-    cream_mid = (244, 232, 209, 255)
-    shade = (216, 194, 160, 255)
-    outline = (166, 129, 78, 255)
-    shaft = (214, 190, 152, 255)
-    gold_hi = (255, 240, 184, 255)
-    gold = (230, 187, 92, 255)
-    gold_dark = (166, 119, 42, 255)
-
-    def feather(cx, top, bottom, halfw, base, tip, strength=1.0):
-        h = bottom - top
-        for y in range(top, bottom + 1):
-            t = (y - top) / max(1, h)
-            wid = halfw * max(0.06, 1.0 - t ** 1.35)
-            x0 = int(round(cx - wid))
-            x1 = int(round(cx + wid))
-            for x in range(x0, x1 + 1):
-                col = mix(base, tip, t * 0.5)
-                if x == x0:
-                    col = cream_hi
-                elif x == x1:
-                    col = shade
-                put(px, W, H, x, y, col)
-            put(px, W, H, x0 - 1, y, outline, 0.75)
-            put(px, W, H, x1 + 1, y, outline, 0.75)
-            if y == bottom:
-                put(px, W, H, cx, y + 1, outline, 0.65)
-
-        # Shaft: warm line with a lit left side.
-        for y in range(top + 2, bottom - 1):
-            sx = int(round(cx + math.sin(y * 0.5) * 0.25))
-            put(px, W, H, sx, y, shaft)
-            put(px, W, H, sx - 1, y, cream_hi)
-
-        # Two soft barbs per side, slanted toward the tip.
-        for i in range(2):
-            yy = top + 5 + int(i * (h - 10) / 1)
-            spread = halfw * (0.8 - 0.35 * i)
-            for side in (-1, 1):
-                line(px, W, H, cx + side * 1.5, yy,
-                     cx + side * spread, yy + 3, outline, 0.18 * strength)
-                line(px, W, H, cx + side * 1.5, yy - 1,
-                     cx + side * spread, yy + 2, cream_hi, 0.25 * strength)
-
-        # A warm glint near the tip.
-        if int(cx) % 2 == 0:
-            put(px, W, H, cx, max(top, bottom - 3), gold, 0.35)
-
-    # Draw the lowest row first so the row above overlaps its base.  The rows
-    # overlap by about a third, hiding the flat feather bases.
-    for row, (top, bottom, halfw, base) in enumerate([
-        (36, 62, 10.0, cream_mid),
-        (19, 43, 9.6, cream),
-        (3, 24, 9.2, cream_hi),
-    ]):
-        offset = 0 if row % 2 == 0 else 8
-        for i in range(-1, 5):
-            feather(offset + i * 16, top, bottom, halfw, base, cream_mid)
-
-    # Gold leading-edge trim.  The arm cubes sample v=0..12, so this reads as
-    # a clean metallic rim along the top of the wing.
-    for x in range(W):
-        put(px, W, H, x, 0, gold_hi)
-        put(px, W, H, x, 1, gold)
-        put(px, W, H, x, 2, gold_dark)
-
-    # Sparse pinprick highlights for a hand-painted feel.
-    for i in range(55):
-        x = (i * 37 + 11) % W
-        y = 6 + ((i * 23 + 7) % (H - 8))
-        put(px, W, H, x, y, cream_hi, 0.22)
-
-    # Keep the worn-wing sheet fully opaque; translucent pixels would put the
-    # armor material into a sorted pass and can make the wings flicker.
-    for y in range(H):
-        for x in range(W):
-            r, g, b, _ = px[y][x]
-            px[y][x] = (r, g, b, 255)
+    # Row 2: opaque swatches used for the leading-edge arms and back plate.
+    draw_swatch(px, W, H, 0, 64, GOLD, GOLD_HI, GOLD_DARK, "gold")
+    draw_swatch(px, W, H, 32, 64, CREAM, CREAM_HI, OUTLINE, "ivory")
+    draw_swatch(px, W, H, 64, 64, SHADE, CREAM_MID, OUTLINE, "shade")
+    draw_swatch(px, W, H, 96, 64, GOLD_DARK, GOLD, OUTLINE, "gold")
 
     write_png(path, W, H, px)
 
@@ -201,7 +235,7 @@ def generate_entity_texture(path):
 # --------------------------------------------------------------------------- #
 # Inventory icon: a clean symmetric wing pair on transparency
 # --------------------------------------------------------------------------- #
-def generate_item_icon(path):
+def build_item_icon():
     W = H = 64
     px = [[(0, 0, 0, 0) for _ in range(W)] for _ in range(H)]
 
@@ -275,6 +309,55 @@ def generate_item_icon(path):
     put(px, W, H, 23, 18, gold_hi, 0.9)
     put(px, W, H, 41, 18, gold_hi, 0.9)
 
+    return W, H, px
+
+
+def generate_item_icon(path):
+    W, H, px = build_item_icon()
+    write_png(path, W, H, px)
+
+
+# --------------------------------------------------------------------------- #
+# Pack icon: the inventory icon over a dark night-sky field
+# --------------------------------------------------------------------------- #
+def generate_pack_icon(path):
+    W = H = 128
+    px = [[(0, 0, 0, 255) for _ in range(W)] for _ in range(H)]
+
+    # Deep blue vignette with a warm halo behind the wings.
+    for y in range(H):
+        for x in range(W):
+            dx = (x - 64) / 64.0
+            dy = (y - 64) / 64.0
+            distance = min(1.0, math.hypot(dx, dy))
+            t = 1.0 - distance
+            base = mix((10, 14, 28, 255), (34, 48, 82, 255), t * 0.9)
+            halo = max(0.0, 1.0 - math.hypot(dx * 1.15, (dy - 0.05) * 1.6))
+            px[y][x] = mix(base, (92, 132, 188, 255), halo * 0.22)
+
+    # Gold frame.
+    for i in range(3):
+        for x in range(i, W - i):
+            px[i][x] = (226, 178, 76, 255)
+            px[H - 1 - i][x] = (158, 112, 38, 255)
+        for y in range(i, H - i):
+            px[y][i] = (226, 178, 76, 255)
+            px[y][W - 1 - i] = (158, 112, 38, 255)
+
+    # Scale the 64x64 item icon 2x and centre it.
+    iw, ih, icon = build_item_icon()
+    scale = 2
+    ox = (W - iw * scale) // 2
+    oy = (H - ih * scale) // 2
+    for y in range(ih):
+        for x in range(iw):
+            r, g, b, a = icon[y][x]
+            if a == 0:
+                continue
+            for dy in range(scale):
+                for dx in range(scale):
+                    px[oy + y * scale + dy][ox + x * scale + dx] = (r, g, b, a)
+
     write_png(path, W, H, px)
 
 
@@ -284,4 +367,6 @@ if __name__ == "__main__":
                                          "entity", "angel_wings.png"))
     generate_item_icon(os.path.join(root, "resource_pack", "textures",
                                     "items", "angel_wings.png"))
-    print("wrote entity texture and item icon")
+    generate_pack_icon(os.path.join(root, "behavior_pack", "pack_icon.png"))
+    generate_pack_icon(os.path.join(root, "resource_pack", "pack_icon.png"))
+    print("wrote entity texture, item icon and pack icons")

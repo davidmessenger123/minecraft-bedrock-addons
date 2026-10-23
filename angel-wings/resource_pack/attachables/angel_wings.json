@@ -4,8 +4,8 @@
     "description": {
       "identifier": "mod:angel_wings",
       "materials": {
-        "default": "armor",
-        "enchanted": "armor_enchanted"
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
       },
       "textures": {
         "default": "textures/entity/angel_wings",
@@ -15,18 +15,19 @@
         "default": "geometry.angel_wings"
       },
       "animations": {
-        "flap": "animation.angel_wings.flap"
+        "idle": "animation.angel_wings.idle",
+        "glide": "animation.angel_wings.glide",
+        "flap": "animation.angel_wings.flap",
+        "controller": "controller.animation.angel_wings"
       },
       "scripts": {
-        "parent_setup": "v.chest_layer_visible = false;",
+        "parent_setup": "variable.chest_layer_visible = 0.0;",
         "animate": [
-          {
-            "flap": "!query.is_on_ground"
-          }
+          "controller"
         ]
       },
       "render_controllers": [
-        "controller.render.armor.v2"
+        "controller.render.armor"
       ]
     }
   }

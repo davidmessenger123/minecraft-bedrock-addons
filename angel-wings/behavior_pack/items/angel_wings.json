@@ -9,11 +9,9 @@
       }
     },
     "components": {
-      "minecraft:icon": {
-        "texture": "angel_wings"
-      },
+      "minecraft:icon": "angel_wings",
       "minecraft:display_name": {
-        "value": "Angel Wings"
+        "value": "item.mod:angel_wings"
       },
       "minecraft:max_stack_size": 1,
       "minecraft:wearable": {

@@ -2,17 +2,17 @@
   "format_version": 2,
   "header": {
     "name": "Mobile Phone (Resources)",
-    "description": "3D phone model, textures and translations for the Mobile Phone item",
+    "description": "3D phone model, cut-out textures, hand animations and translations for the Mobile Phone item.",
     "uuid": "1c539c27-8457-5e9b-8ddc-b7e56a59732b",
     "version": [
       1,
-      0,
+      1,
       0
     ],
     "min_engine_version": [
       1,
       21,
-      80
+      90
     ]
   },
   "modules": [
@@ -21,7 +21,7 @@
       "uuid": "07df643b-6741-5457-a784-d82199a34fc1",
       "version": [
         1,
-        0,
+        1,
         0
       ]
     }

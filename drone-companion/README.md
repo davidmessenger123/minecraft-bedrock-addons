@@ -28,7 +28,7 @@ called **Drone** by default.
 
 ## Requirements
 
-- Minecraft Bedrock **1.21.80 or newer**.
+- Minecraft Bedrock **1.21.90 or newer**.
 - Both the behavior pack and the resource pack enabled in the world.
 - The behavior pack declares `@minecraft/server` **2.0.0** and
   `@minecraft/server-ui` **2.0.0**. If your game ships a different 2.x module
@@ -40,7 +40,7 @@ called **Drone** by default.
 
 ## Installation
 
-1. Open **`DroneCompanion-1.0.0.mcaddon`** to import both packs at once.
+1. Open **`DroneCompanion-1.0.1.mcaddon`** to import both packs at once.
    Alternatively, copy the `behavior_pack` and `resource_pack` folders into the
    world's `behavior_packs/` and `resource_packs/` folders, or zip each folder
    and import it as a `.mcpack`.
@@ -125,7 +125,7 @@ already centred on it.
 ```
 DroneCompanion/
 ├── DroneCompanion.bbmodel                       # Blockbench source project
-├── DroneCompanion-1.0.0.mcaddon                 # packaged add-on
+├── DroneCompanion-1.0.1.mcaddon                 # packaged add-on
 ├── tools/
 │   ├── generate_textures.py                     # 64×64 atlas + controller icon
 │   ├── generate_pack_icon.py                    # 256×256 pack icons
@@ -223,6 +223,8 @@ in-game behaviour should be checked on your device.
 
 ## Changelog
 
+- **1.0.1** — fixed the controller's hotbar icon by switching to the modern
+  string `minecraft:icon` component; version bump only, no behavior changes.
 - **1.0.0** — initial release: 35-cube X-frame quadcopter, 64×64 procedural
   atlas, controller item and crafting recipe, Follow / Stay / Come / Scan /
   Light / Defend modes, ActionForm controller, owner binding, and a 256×256 pack

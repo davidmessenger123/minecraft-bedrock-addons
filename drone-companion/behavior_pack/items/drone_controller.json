@@ -8,9 +8,7 @@
       }
     },
     "components": {
-      "minecraft:icon": {
-        "texture": "drone_controller"
-      },
+      "minecraft:icon": "drone_controller",
       "minecraft:display_name": {
         "value": "item.drone.controller"
       },

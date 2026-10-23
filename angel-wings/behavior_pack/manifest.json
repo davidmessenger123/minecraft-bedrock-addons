@@ -2,17 +2,17 @@
   "format_version": 2,
   "header": {
     "name": "Angel Wings",
-    "description": "Elytra-style Angel Wings that let you fly in Minecraft Bedrock Edition.",
+    "description": "Elytra-style Angel Wings with momentum-preserving glide, flapping and a 46-unit feather model.",
     "uuid": "a1b2c3d4-1111-4444-8888-123456789abc",
     "version": [
       1,
-      1,
-      1
+      2,
+      0
     ],
     "min_engine_version": [
       1,
       21,
-      80
+      90
     ]
   },
   "modules": [
@@ -22,8 +22,8 @@
       "uuid": "a1b2c3d4-2222-4444-8888-123456789abc",
       "version": [
         1,
-        1,
-        1
+        2,
+        0
       ]
     },
     {
@@ -33,8 +33,8 @@
       "uuid": "a1b2c3d4-3333-4444-8888-123456789abc",
       "version": [
         1,
-        1,
-        1
+        2,
+        0
       ],
       "entry": "scripts/angel_wings.js"
     }
@@ -44,8 +44,8 @@
       "uuid": "a1b2c3d4-4444-4444-8888-123456789abc",
       "version": [
         1,
-        1,
-        1
+        2,
+        0
       ]
     },
     {

@@ -1,2 +1,4 @@
 item.mod:angel_wings=Angel Wings
 item.mod:angel_wings.name=Angel Wings
+pack.name=Angel Wings
+pack.description=Angel Wings with momentum-preserving glide and flapping.

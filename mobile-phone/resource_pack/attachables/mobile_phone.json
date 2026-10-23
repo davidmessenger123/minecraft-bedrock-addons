@@ -4,18 +4,28 @@
     "description": {
       "identifier": "phone:mobile_phone",
       "materials": {
-        "default": "entity_alphatest"
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
       },
       "textures": {
-        "default": "textures/entity/mobile_phone"
+        "default": "textures/entity/mobile_phone",
+        "enchanted": "textures/misc/enchanted_item_glint"
       },
       "geometry": {
         "default": "geometry.phone.mobile_phone"
       },
+      "animations": {
+        "hold_first_person": "animation.phone.mobile_phone.hold_first_person",
+        "hold_third_person": "animation.phone.mobile_phone.hold_third_person"
+      },
       "scripts": {
-        "parent_setup": "v1.10.0",
         "animate": [
-          "controller.animation.item.phone"
+          {
+            "hold_first_person": "context.is_first_person == 1.0"
+          },
+          {
+            "hold_third_person": "context.is_first_person == 0.0"
+          }
         ]
       },
       "render_controllers": [

@@ -9,7 +9,7 @@
  * needing a custom navigation component.
  *
  * REQUIREMENTS
- *   Minecraft Bedrock 1.21.80+ (Script API 2.x).
+ *   Minecraft Bedrock 1.21.90+ (Script API 2.x).
  *   The behavior pack manifest declares @minecraft/server 2.0.0 and
  *   @minecraft/server-ui 2.0.0.
  */
