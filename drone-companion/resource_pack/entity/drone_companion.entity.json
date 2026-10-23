@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "drone:companion",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/drone_companion"
+      },
+      "geometry": {
+        "default": "geometry.drone_companion"
+      },
+      "animations": {
+        "rotors": "animation.drone_companion.rotors",
+        "hover": "animation.drone_companion.hover",
+        "camera": "animation.drone_companion.camera"
+      },
+      "scripts": {
+        "animate": [
+          "rotors",
+          "hover",
+          "camera"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.default"
+      ]
+    }
+  }
+}

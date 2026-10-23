@@ -1,0 +1,60 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Drone Companion (Behavior)",
+    "description": "Summon a hovering quadcopter companion with follow, stay, scan, light and defense modes.",
+    "uuid": "2dba3803-4167-4be1-b284-879e84a220b3",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "description": "Drone Companion entities, item and recipe",
+      "type": "data",
+      "uuid": "6dfc3776-e6ea-4231-aa89-895f80a1a840",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "description": "Drone Companion controller and flight logic",
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/drone_companion.js",
+      "uuid": "0358d598-901d-4d66-a07b-b0f2730de65f",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "3e015879-b628-409b-8c70-b9881bbdd7ed",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "2.0.0"
+    }
+  ]
+}

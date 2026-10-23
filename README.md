@@ -1,11 +1,12 @@
 # Minecraft Bedrock Add-ons
 
-Two add-ons for **Minecraft Bedrock Edition 1.21.80+**:
+Three add-ons for **Minecraft Bedrock Edition 1.21.80+**:
 
 | Add-on | Version | Download |
 | --- | --- | --- |
 | **Angel Wings** | 1.1.1 | [AngelWings-1.1.1.mcaddon](angel-wings/AngelWings-1.1.1.mcaddon) |
 | **Mobile Phone** | 1.0.0 | [MobilePhone-1.0.0.mcaddon](mobile-phone/MobilePhone-1.0.0.mcaddon) |
+| **Drone Companion** | 1.0.0 | [DroneCompanion-1.0.0.mcaddon](drone-companion/DroneCompanion-1.0.0.mcaddon) |
 
 ## Install
 
@@ -14,7 +15,7 @@ Two add-ons for **Minecraft Bedrock Edition 1.21.80+**:
    It imports the behavior and resource packs together.
 3. Enable **both** packs for your world under **Settings → World → Behavior Packs** and
    **Resource Packs** (or Global Resources).
-4. Enable **Beta APIs** / **Script APIs** for the world. Both add-ons use the Script API.
+4. Enable **Beta APIs** / **Script APIs** for the world. All three add-ons use the Script API.
 5. Reload the world.
 
 ## Angel Wings
@@ -43,12 +44,28 @@ A hand-held phone item with a 3D model and a form-based phone UI for running adm
 
 See [mobile-phone/README.md](mobile-phone/README.md) for the recipe, apps, and model details.
 
+## Drone Companion
+
+A summonable quadcopter companion with a controller item and a form-based order menu.
+
+- Item: `drone:controller`
+- Craft it with iron, redstone, copper, amethyst, and an ender pearl (see the drone README).
+- Use the controller to summon your drone and open its menu.
+- Orders: **Follow**, **Stay**, **Come**, **Scan**, **Light**, and **Defend**.
+- Scan highlights nearby monsters; Light places a level-15 light block; Defend zaps the nearest monster.
+- The drone is script-driven and hovers near you. It has no inventory or chest.
+
+See [drone-companion/README.md](drone-companion/README.md) for the recipe, controls, model details, and Blockbench source.
+
 ## Requirements
 
 - Minecraft Bedrock **1.21.80 or newer**
 - **Beta APIs** / **Script APIs** enabled in the world
 - Angel Wings uses `@minecraft/server` **2.0.0**. If your game ships a newer 2.x module,
   update the version in `angel-wings/behavior_pack/manifest.json`.
+- Drone Companion declares `@minecraft/server` **2.0.0** and
+  `@minecraft/server-ui` **2.0.0**. If your game ships newer 2.x modules, update
+  the versions in `drone-companion/behavior_pack/manifest.json`.
 
 ## Source layout
 
@@ -56,8 +73,10 @@ See [mobile-phone/README.md](mobile-phone/README.md) for the recipe, apps, and m
 | --- | --- |
 | `angel-wings/` | Angel Wings behavior/resource packs, `.mcaddon`, Blockbench model, texture generator |
 | `mobile-phone/` | Mobile Phone behavior/resource packs, `.mcaddon`, `.mcpack` alternatives, Blockbench model |
+| `drone-companion/` | Drone Companion behavior/resource packs, `.mcaddon`, Blockbench model, texture and validation tools |
 
 ## Releases
 
 - [Angel Wings 1.1.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/angel-wings-v1.1.1)
 - [Mobile Phone 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/mobile-phone-v1.0.0)
+- [Drone Companion 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.0)

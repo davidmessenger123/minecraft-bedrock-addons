@@ -1,0 +1,45 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.drone_companion.rotors": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "rotor_fl": {
+          "rotation": [0, "math.mod(query.anim_time * 1440, 360)", 0]
+        },
+        "rotor_fr": {
+          "rotation": [0, "-math.mod(query.anim_time * 1440, 360)", 0]
+        },
+        "rotor_bl": {
+          "rotation": [0, "-math.mod(query.anim_time * 1440, 360)", 0]
+        },
+        "rotor_br": {
+          "rotation": [0, "math.mod(query.anim_time * 1440, 360)", 0]
+        }
+      }
+    },
+    "animation.drone_companion.hover": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "body": {
+          "position": [0, "math.sin(query.anim_time * 180) * 1.5", 0]
+        }
+      }
+    },
+    "animation.drone_companion.camera": {
+      "loop": true,
+      "animation_length": 4.0,
+      "bones": {
+        "camera": {
+          "rotation": [
+            "math.sin(query.anim_time * 90) * 3",
+            "math.sin(query.anim_time * 90) * 12",
+            0
+          ]
+        }
+      }
+    }
+  }
+}
