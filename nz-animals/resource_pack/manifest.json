@@ -1,0 +1,46 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "NZ Animals Resource Pack",
+    "description": "Models, textures and animations for the NZ Animals add-on.",
+    "uuid": "33edd2ce-7a4d-af7f-10c7-4f484482a5a0",
+    "version": [
+      1,
+      1,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      130
+    ]
+  },
+  "modules": [
+    {
+      "description": "NZ Animals resources",
+      "type": "resources",
+      "uuid": "8dd217d7-aa2e-d7a0-d7a9-effabc6bbb38",
+      "version": [
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "7a24b466-643b-2054-a6da-f50226a26939",
+      "version": [
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

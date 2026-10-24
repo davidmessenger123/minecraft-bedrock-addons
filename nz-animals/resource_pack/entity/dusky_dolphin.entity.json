@@ -1,0 +1,34 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "nza:dusky_dolphin",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/dusky_dolphin/dusky_dolphin"
+      },
+      "geometry": {
+        "default": "geometry.nza.dusky_dolphin"
+      },
+      "animations": {
+        "movement": "controller.animation.nza.swim",
+        "walk": "animation.nza.swim.walk",
+        "idle": "animation.nza.swim.idle"
+      },
+      "scripts": {
+        "animate": [
+          "movement"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.nza"
+      ],
+      "spawn_egg": {
+        "base_color": "#6C7076",
+        "overlay_color": "#767A80"
+      }
+    }
+  }
+}

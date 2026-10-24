@@ -1,0 +1,71 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "nza:yellow_eyed_penguin",
+      "population_control": "animal"
+    },
+    "conditions": [
+      {
+        "minecraft:weight": {
+          "default": 3
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 5
+        },
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "forest"
+        },
+        "minecraft:spawns_on_surface": {}
+      },
+      {
+        "minecraft:weight": {
+          "default": 3
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 5
+        },
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "beach"
+        },
+        "minecraft:spawns_on_surface": {}
+      },
+      {
+        "minecraft:weight": {
+          "default": 3
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 5
+        },
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "shore"
+        },
+        "minecraft:spawns_on_surface": {}
+      }
+    ]
+  }
+}

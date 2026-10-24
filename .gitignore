@@ -2,3 +2,7 @@
 __MACOSX/
 *.tmp
 *.log
+__pycache__/
+*.pyc
+nz-animals/build/
+nz-animals/refs/

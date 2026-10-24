@@ -1,12 +1,13 @@
 # Minecraft Bedrock Add-ons
 
-Three add-ons for **Minecraft Bedrock Edition 1.21.90+**:
+Four add-ons for **Minecraft Bedrock Edition**:
 
 | Add-on | Version | Download |
 | --- | --- | --- |
 | **Angel Wings** | 1.2.0 | [AngelWings-1.2.0.mcaddon](angel-wings/AngelWings-1.2.0.mcaddon) |
 | **Mobile Phone** | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
 | **Drone Companion** | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
+| **NZ Animals** | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
 
 ## Install
 
@@ -15,8 +16,9 @@ Three add-ons for **Minecraft Bedrock Edition 1.21.90+**:
    It imports the behavior and resource packs together.
 3. Enable **both** packs for your world under **Settings → World → Behavior Packs** and
    **Resource Packs** (or Global Resources).
-4. No experiments are required: the packs use stable Script API 2.0.0 modules. If your
-   build only exposes them behind **Beta APIs**, enable that experiment.
+4. No experiments are required. The three scripted add-ons use stable Script API
+   2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
+   experiment.
 5. Reload the world.
 
 ## Angel Wings
@@ -60,11 +62,31 @@ A summonable quadcopter companion with a controller item and a form-based order 
 
 See [drone-companion/README.md](drone-companion/README.md) for the recipe, controls, model details, and Blockbench source.
 
+## NZ Animals
+
+29 New Zealand native species — birds, penguins, a tuatara, a weta, a huhu,
+a Powelliphanta snail, seals and marine mammals — with custom models,
+textures, spawn rules, animations and Creative spawn eggs.
+
+- 29 species under the `nza:` namespace.
+- Shared archetype builders give every species jointed wings and feathers,
+  seal and penguin flippers, segmented swimmer bodies, six insect legs, and a
+  flat spiral-disc snail shell.
+- Per-profile walk and idle animations; collision boxes are body-only.
+- Requires Bedrock **1.21.130+**.
+- Summon with `/summon nza:kiwi`, or use the spawn eggs in the Creative inventory.
+
+See [nz-animals/README.md](nz-animals/README.md) for the full roster,
+measurements, model notes and build instructions. The
+[contact sheet](nz-animals/preview/_contact_sheet.png) shows all 29 models.
+
 ## Requirements
 
-- Minecraft Bedrock **1.21.90 or newer**
-- Stable Script API **2.0.0** modules (no experiments required; enable **Beta APIs** only
-  if your build exposes those modules behind it)
+- Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
+  Companion; **1.21.130 or newer** for NZ Animals.
+- The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
+  required; enable **Beta APIs** only if your build exposes those modules behind it).
+  NZ Animals is data-only and has no Script API dependency.
 - Angel Wings uses `@minecraft/server` **2.0.0**. If your game ships a newer 2.x module,
   update the version in `angel-wings/behavior_pack/manifest.json`.
 - Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
@@ -79,9 +101,11 @@ See [drone-companion/README.md](drone-companion/README.md) for the recipe, contr
 | `angel-wings/` | Angel Wings behavior/resource packs, `.mcaddon`, Blockbench model, geometry and texture generators |
 | `mobile-phone/` | Mobile Phone behavior/resource packs, `.mcaddon`, `.mcpack` alternatives, Blockbench model |
 | `drone-companion/` | Drone Companion behavior/resource packs, `.mcaddon`, Blockbench model, texture and validation tools |
+| `nz-animals/` | NZ Animals behavior/resource packs, `.mcaddon`, model/animation generators, validators and preview renders |
 
 ## Releases
 
 - [Angel Wings 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/angel-wings-v1.2.0)
 - [Mobile Phone 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/mobile-phone-v1.1.0)
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
+- [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)

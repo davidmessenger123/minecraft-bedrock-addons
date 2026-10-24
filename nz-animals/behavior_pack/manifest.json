@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "NZ Animals Behaviour Pack",
+    "description": "Adds New Zealand native animals that are not in vanilla Minecraft.",
+    "uuid": "7a24b466-643b-2054-a6da-f50226a26939",
+    "version": [
+      1,
+      1,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      130
+    ]
+  },
+  "modules": [
+    {
+      "description": "NZ Animals behaviours",
+      "type": "data",
+      "uuid": "9760c07f-d6b9-ec00-8d63-683d803fa8b3",
+      "version": [
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "dependencies": [],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

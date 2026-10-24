@@ -1,0 +1,51 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "nza:rockhopper_penguin",
+      "population_control": "animal"
+    },
+    "conditions": [
+      {
+        "minecraft:weight": {
+          "default": 4
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 6
+        },
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "cold"
+        },
+        "minecraft:spawns_on_surface": {}
+      },
+      {
+        "minecraft:weight": {
+          "default": 4
+        },
+        "minecraft:herd": {
+          "min_size": 2,
+          "max_size": 6
+        },
+        "minecraft:brightness_filter": {
+          "min": 7,
+          "max": 15,
+          "adjust_for_weather": false
+        },
+        "minecraft:biome_filter": {
+          "test": "has_biome_tag",
+          "operator": "==",
+          "value": "shore"
+        },
+        "minecraft:spawns_on_surface": {}
+      }
+    ]
+  }
+}

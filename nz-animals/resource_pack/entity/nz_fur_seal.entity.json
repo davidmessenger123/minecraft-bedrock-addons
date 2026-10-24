@@ -1,0 +1,34 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "nza:nz_fur_seal",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/nz_fur_seal/nz_fur_seal"
+      },
+      "geometry": {
+        "default": "geometry.nza.nz_fur_seal"
+      },
+      "animations": {
+        "movement": "controller.animation.nza.seal",
+        "walk": "animation.nza.seal.walk",
+        "idle": "animation.nza.seal.idle"
+      },
+      "scripts": {
+        "animate": [
+          "movement"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.nza"
+      ],
+      "spawn_egg": {
+        "base_color": "#68523E",
+        "overlay_color": "#745C44"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.nza.quadruped": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "blend_transition": 0.2,
+          "animations": [
+            {
+              "walk": "math.min(1.0, query.modified_move_speed * 6.0)"
+            },
+            "idle"
+          ]
+        }
+      }
+    }
+  }
+}
