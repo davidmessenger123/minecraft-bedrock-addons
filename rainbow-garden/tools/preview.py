@@ -139,8 +139,11 @@ def render_geometry(geo_path: Path, tex_path: Path, size: int = 240) -> Image.Im
                 for gx in range(gw):
                     s0, s1 = gx / gw, (gx + 1) / gw
                     t0, t1 = gy / gh, (gy + 1) / gh
+                    # Bedrock's up-face UV origin is the back-left corner, so
+                    # texture V runs from the back edge toward the front edge.
+                    tv = (1 - (t0 + t1) * 0.5) if face == "up" else (t0 + t1) * 0.5
                     col = sample_pixel(tex, u + (s0 + s1) * 0.5 * uw,
-                                       v + (t0 + t1) * 0.5 * uh)
+                                       v + tv * uh)
                     if col is None:
                         continue
                     cell = []

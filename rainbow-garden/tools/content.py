@@ -11,10 +11,10 @@ from __future__ import annotations
 
 import math
 import random
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw
 
 NS = "rg"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 PACK_NAME = "Rainbow Garden"
 BP_NAME = "Rainbow Garden Behaviour Pack"
 RP_NAME = "Rainbow Garden Resource Pack"
@@ -95,8 +95,10 @@ MUSHROOM_UV = {"stem": (0, 0), "cap": (16, 0), "underside": (44, 0)}
 BUTTERFLY_UV = {
     "body": (0, 0),
     "head": (8, 0),
-    "wing_upper": (0, 20),
-    "wing_lower": (0, 38),
+    "wing_upper_right": (0, 20),
+    "wing_upper_left": (12, 20),
+    "wing_lower_right": (0, 30),
+    "wing_lower_left": (10, 30),
 }
 
 
@@ -255,32 +257,62 @@ def lantern_texture() -> Image.Image:
 
 
 def _wing_masks() -> tuple[Image.Image, Image.Image]:
-    upper = Image.new("L", (32, 16), 0)
+    # These masks are drawn for the right wing, with the narrow body edge at
+    # x=0 and the rounded outer tip at x=width-1.  The left wing is the
+    # horizontal mirror of this texture.
+    upper = Image.new("L", (11, 7), 0)
     du = ImageDraw.Draw(upper)
-    du.ellipse([0, 0, 23, 15], fill=255)
-    du.ellipse([8, 1, 31, 15], fill=255)
-    du.polygon([(0, 10), (12, 3), (21, 11), (8, 15)], fill=255)
+    du.polygon([
+        (0, 2), (2, 0), (6, 0), (9, 1), (10, 3),
+        (9, 5), (6, 6), (3, 6), (1, 5), (0, 4),
+    ], fill=255)
 
-    lower = Image.new("L", (32, 14), 0)
+    lower = Image.new("L", (9, 5), 0)
     dl = ImageDraw.Draw(lower)
-    dl.ellipse([8, 0, 31, 13], fill=255)
-    dl.ellipse([0, 4, 18, 13], fill=255)
+    dl.polygon([
+        (0, 2), (2, 0), (5, 0), (8, 2),
+        (8, 3), (6, 4), (3, 4), (1, 3),
+    ], fill=255)
     return upper, lower
 
 
 def _paint_wing(width: int, height: int, mask: Image.Image) -> Image.Image:
-    grad = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    gp = grad.load()
+    wing = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    px = wing.load()
     for yy in range(height):
         for xx in range(width):
-            # Most of the visible wing samples the top-left of the texture, so
-            # compress the full rainbow into that area.
-            t = min(1.0, (xx / 11.0 + yy / 7.0) / 2.0)
-            c = _rainbow(t)
-            gp[xx, yy] = c + (255,)
-    wing = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    wing.paste(grad, (0, 0), mask)
-    return wing
+            if mask.getpixel((xx, yy)) < 128:
+                continue
+            t = (xx / max(1, width - 1)) * 0.8 + (yy / max(1, height - 1)) * 0.2
+            px[xx, yy] = _rainbow(t) + (255,)
+
+    # A dark one-pixel edge makes the silhouette readable against the sky.
+    outlined = wing.copy()
+    op = outlined.load()
+    for yy in range(height):
+        for xx in range(width):
+            if mask.getpixel((xx, yy)) < 128:
+                continue
+            edge = False
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = xx + dx, yy + dy
+                if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                    edge = True
+                elif mask.getpixel((nx, ny)) < 128:
+                    edge = True
+            if edge:
+                op[xx, yy] = (38, 24, 72, 255)
+
+    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    od.line([(0, 3), (width - 2, 1)], fill=(48, 30, 86, 210), width=1)
+    od.line([(0, 3), (width - 2, 3)], fill=(48, 30, 86, 210), width=1)
+    od.line([(0, 3), (width - 3, height - 2)], fill=(48, 30, 86, 210), width=1)
+    for sx, sy in ((width // 3, 2), (width // 2 + 1, height // 2)):
+        od.ellipse([sx - 1, sy - 1, sx + 1, sy + 1], fill=(255, 255, 255, 230))
+    overlay.putalpha(ImageChops.multiply(overlay.getchannel("A"), mask))
+    outlined.alpha_composite(overlay)
+    return outlined
 
 
 def butterfly_texture() -> Image.Image:
@@ -298,27 +330,18 @@ def butterfly_texture() -> Image.Image:
     d.ellipse([hx + 4, hy + 2, hx + 6, hy + 4], fill=(180, 246, 255, 255))
 
     upper_mask, lower_mask = _wing_masks()
-    upper = _paint_wing(32, 16, upper_mask)
-    lower = _paint_wing(32, 14, lower_mask)
-    ux, uy = BUTTERFLY_UV["wing_upper"]
-    lx, ly = BUTTERFLY_UV["wing_lower"]
-    img.alpha_composite(upper, (ux, uy))
-    img.alpha_composite(lower, (lx, ly))
-
-    # Dark veins and white spots make the wing pattern readable at a glance.
-    d.arc([ux, uy, ux + 23, uy + 15], 190, 350, fill=(38, 24, 72, 255), width=1)
-    d.arc([lx + 8, ly, lx + 31, ly + 13], 180, 330, fill=(38, 24, 72, 255), width=1)
-    for x0, y0, x1, y1 in [
-        (ux + 2, uy + 8, ux + 18, uy + 2),
-        (ux + 5, uy + 12, ux + 24, uy + 7),
-        (lx + 12, ly + 4, lx + 28, ly + 1),
-        (lx + 14, ly + 10, lx + 28, ly + 8),
-    ]:
-        d.line([(x0, y0), (x1, y1)], fill=(48, 30, 86, 210), width=1)
-    for sx, sy, r in [(5, 4, 1), (16, 7, 1), (23, 3, 1), (12, 10, 1)]:
-        d.ellipse([ux + sx - r, uy + sy - r, ux + sx + r, uy + sy + r], fill=(255, 255, 255, 230))
-    for sx, sy, r in [(14, 5, 1), (24, 9, 1)]:
-        d.ellipse([lx + sx - r, ly + sy - r, lx + sx + r, ly + sy + r], fill=(255, 255, 255, 230))
+    upper_right = _paint_wing(11, 7, upper_mask)
+    lower_right = _paint_wing(9, 5, lower_mask)
+    upper_left = upper_right.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    lower_left = lower_right.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    for key, wing in (
+        ("wing_upper_right", upper_right),
+        ("wing_upper_left", upper_left),
+        ("wing_lower_right", lower_right),
+        ("wing_lower_left", lower_left),
+    ):
+        x, y = BUTTERFLY_UV[key]
+        img.alpha_composite(wing, (x, y))
     return img
 
 
@@ -554,9 +577,9 @@ def butterfly_geometry():
             bone(
                 "left_wing",
                 [
-                    cube([-12, 6, -5], [11, 1, 7], BUTTERFLY_UV["wing_upper"],
+                    cube([-12, 6, -5], [11, 1, 7], BUTTERFLY_UV["wing_upper_left"],
                          rotation=[0, 0, -18], pivot=[0, 6, 0]),
-                    cube([-10, 5, 0], [9, 1, 5], BUTTERFLY_UV["wing_lower"],
+                    cube([-10, 5, 0], [9, 1, 5], BUTTERFLY_UV["wing_lower_left"],
                          rotation=[0, 0, -8], pivot=[0, 5, 0]),
                 ],
                 pivot=[0, 6, 0],
@@ -565,9 +588,9 @@ def butterfly_geometry():
             bone(
                 "right_wing",
                 [
-                    cube([1, 6, -5], [11, 1, 7], BUTTERFLY_UV["wing_upper"],
+                    cube([1, 6, -5], [11, 1, 7], BUTTERFLY_UV["wing_upper_right"],
                          rotation=[0, 0, 18], pivot=[0, 6, 0]),
-                    cube([1, 5, 0], [9, 1, 5], BUTTERFLY_UV["wing_lower"],
+                    cube([1, 5, 0], [9, 1, 5], BUTTERFLY_UV["wing_lower_right"],
                          rotation=[0, 0, 8], pivot=[0, 5, 0]),
                 ],
                 pivot=[0, 6, 0],

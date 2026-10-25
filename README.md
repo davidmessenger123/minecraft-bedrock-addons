@@ -8,7 +8,7 @@ Five add-ons for **Minecraft Bedrock Edition**:
 | **Mobile Phone** | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
 | **Drone Companion** | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
 | **NZ Animals** | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
-| **Rainbow Garden** | 1.0.0 | [RainbowGarden-1.0.0.mcaddon](rainbow-garden/RainbowGarden-1.0.0.mcaddon) |
+| **Rainbow Garden** | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 
 ## Install
 
@@ -128,4 +128,4 @@ controls, recipes, safety notes and build instructions. The
 - [Mobile Phone 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/mobile-phone-v1.1.0)
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
 - [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)
-- [Rainbow Garden 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.0)
+- [Rainbow Garden 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.1)

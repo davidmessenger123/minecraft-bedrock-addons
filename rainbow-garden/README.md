@@ -28,7 +28,7 @@ Rainbow Garden is designed around short, successful play sessions rather than re
 
 ## Install
 
-1. Download **`RainbowGarden-1.0.0.mcaddon`** from this folder.
+1. Download **`RainbowGarden-1.0.1.mcaddon`** from this folder.
 2. Open it with Minecraft Bedrock (double-click it, or use **Open with → Minecraft**). It imports both the behaviour and resource packs together.
 3. Enable **both** packs for the world under **Settings → World → Behaviour Packs** and **Resource Packs**.
 4. No experiments are required.
@@ -122,7 +122,7 @@ The version is read from `tools/VERSION`. Change it there to produce a different
 ```text
 rainbow-garden/
 ├── README.md
-├── RainbowGarden-1.0.0.mcaddon
+├── RainbowGarden-1.0.1.mcaddon
 ├── behavior_pack/
 ├── resource_pack/
 ├── preview/
