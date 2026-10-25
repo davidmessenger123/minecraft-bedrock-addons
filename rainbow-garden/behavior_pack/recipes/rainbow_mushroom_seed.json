@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "rg:rainbow_mushroom_seed_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "rg:rainbow_seed_red"
+      },
+      {
+        "item": "rg:rainbow_seed_purple"
+      },
+      {
+        "item": "minecraft:red_mushroom"
+      }
+    ],
+    "result": {
+      "item": "rg:rainbow_mushroom_seed",
+      "count": 1
+    }
+  }
+}

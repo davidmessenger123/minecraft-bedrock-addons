@@ -1,0 +1,46 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Rainbow Garden Resource Pack",
+    "description": "Models, textures and animations for Rainbow Garden.",
+    "uuid": "32173581-f636-4ba2-b930-f22fec9cd38c",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      130
+    ]
+  },
+  "modules": [
+    {
+      "description": "Models, textures and animations for Rainbow Garden.",
+      "type": "resources",
+      "uuid": "a425237d-f9cf-461d-9ba5-7e8f2356b819",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "544a84ed-27aa-4c04-9b68-2266ada591f3",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

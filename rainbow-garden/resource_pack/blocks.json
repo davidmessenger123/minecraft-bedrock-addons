@@ -1,0 +1,29 @@
+{
+  "rg:rainbow_flower_red": {
+    "sound": "grass"
+  },
+  "rg:rainbow_flower_orange": {
+    "sound": "grass"
+  },
+  "rg:rainbow_flower_yellow": {
+    "sound": "grass"
+  },
+  "rg:rainbow_flower_green": {
+    "sound": "grass"
+  },
+  "rg:rainbow_flower_blue": {
+    "sound": "grass"
+  },
+  "rg:rainbow_flower_purple": {
+    "sound": "grass"
+  },
+  "rg:rainbow_tree": {
+    "sound": "wood"
+  },
+  "rg:rainbow_mushroom": {
+    "sound": "grass"
+  },
+  "rg:rainbow_lantern": {
+    "sound": "glass"
+  }
+}

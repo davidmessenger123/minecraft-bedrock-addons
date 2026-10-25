@@ -1,0 +1,35 @@
+{
+  "resource_pack_name": "rainbow_garden",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "rg_rainbow_flower_red": {
+      "textures": "textures/blocks/rainbow_flower_red"
+    },
+    "rg_rainbow_flower_orange": {
+      "textures": "textures/blocks/rainbow_flower_orange"
+    },
+    "rg_rainbow_flower_yellow": {
+      "textures": "textures/blocks/rainbow_flower_yellow"
+    },
+    "rg_rainbow_flower_green": {
+      "textures": "textures/blocks/rainbow_flower_green"
+    },
+    "rg_rainbow_flower_blue": {
+      "textures": "textures/blocks/rainbow_flower_blue"
+    },
+    "rg_rainbow_flower_purple": {
+      "textures": "textures/blocks/rainbow_flower_purple"
+    },
+    "rg_rainbow_tree": {
+      "textures": "textures/blocks/rainbow_tree"
+    },
+    "rg_rainbow_mushroom": {
+      "textures": "textures/blocks/rainbow_mushroom"
+    },
+    "rg_rainbow_lantern": {
+      "textures": "textures/blocks/rainbow_lantern"
+    }
+  }
+}

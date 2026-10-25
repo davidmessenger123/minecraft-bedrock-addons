@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "rg:rainbow_butterfly",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/rainbow_butterfly"
+      },
+      "geometry": {
+        "default": "geometry.rg.rainbow_butterfly"
+      },
+      "animations": {
+        "fly": "animation.rg.rainbow_butterfly.fly"
+      },
+      "scripts": {
+        "animate": [
+          "fly"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.rg.rainbow_butterfly"
+      ],
+      "spawn_egg": {
+        "base_color": "#ff7ab8",
+        "overlay_color": "#7ad7ff"
+      }
+    }
+  }
+}

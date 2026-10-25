@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "rg:rainbow_lantern_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " G ",
+      "GLG",
+      " G "
+    ],
+    "key": {
+      "G": {
+        "item": "minecraft:glass"
+      },
+      "L": {
+        "item": "minecraft:glowstone_dust"
+      }
+    },
+    "result": {
+      "item": "rg:rainbow_lantern",
+      "count": 1
+    }
+  }
+}

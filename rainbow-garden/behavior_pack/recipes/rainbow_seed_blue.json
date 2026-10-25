@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "rg:rainbow_seed_blue_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:light_blue_dye"
+      },
+      {
+        "item": "minecraft:wheat_seeds"
+      }
+    ],
+    "result": {
+      "item": "rg:rainbow_seed_blue",
+      "count": 4
+    }
+  }
+}

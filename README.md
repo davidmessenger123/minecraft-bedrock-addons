@@ -1,6 +1,6 @@
 # Minecraft Bedrock Add-ons
 
-Four add-ons for **Minecraft Bedrock Edition**:
+Five add-ons for **Minecraft Bedrock Edition**:
 
 | Add-on | Version | Download |
 | --- | --- | --- |
@@ -8,6 +8,7 @@ Four add-ons for **Minecraft Bedrock Edition**:
 | **Mobile Phone** | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
 | **Drone Companion** | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
 | **NZ Animals** | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
+| **Rainbow Garden** | 1.0.0 | [RainbowGarden-1.0.0.mcaddon](rainbow-garden/RainbowGarden-1.0.0.mcaddon) |
 
 ## Install
 
@@ -80,13 +81,30 @@ See [nz-animals/README.md](nz-animals/README.md) for the full roster,
 measurements, model notes and build instructions. The
 [contact sheet](nz-animals/preview/_contact_sheet.png) shows all 29 models.
 
+## Rainbow Garden
+
+A gentle, data-only garden add-on designed for a 4-year-old and adult co-play.
+Magic seeds instantly grow giant rainbow flowers, a rainbow tree and a giant
+mushroom; a glowing lantern and invulnerable rainbow butterflies finish the scene.
+
+- 6 giant flower colours, a rainbow tree, a rainbow mushroom and a rainbow lantern.
+- 8 magic seed items that place fully grown plants instantly.
+- A passive, invulnerable rainbow butterfly with a spawn egg and natural plains spawning.
+- 9 simple recipes, plus `/function rainbow_garden/starter` for a one-command kit.
+- No scripts, experiments, combat, failure states, chat hooks or external services.
+- Requires Bedrock **1.21.130+**.
+
+See [rainbow-garden/README.md](rainbow-garden/README.md) for installation,
+controls, recipes, safety notes and build instructions. The
+[contact sheet](rainbow-garden/preview/_contact_sheet.png) shows every model.
+
 ## Requirements
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
-  Companion; **1.21.130 or newer** for NZ Animals.
+  Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden.
 - The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
-  NZ Animals is data-only and has no Script API dependency.
+  NZ Animals and Rainbow Garden are data-only and have no Script API dependency.
 - Angel Wings uses `@minecraft/server` **2.0.0**. If your game ships a newer 2.x module,
   update the version in `angel-wings/behavior_pack/manifest.json`.
 - Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
@@ -102,6 +120,7 @@ measurements, model notes and build instructions. The
 | `mobile-phone/` | Mobile Phone behavior/resource packs, `.mcaddon`, `.mcpack` alternatives, Blockbench model |
 | `drone-companion/` | Drone Companion behavior/resource packs, `.mcaddon`, Blockbench model, texture and validation tools |
 | `nz-animals/` | NZ Animals behavior/resource packs, `.mcaddon`, model/animation generators, validators and preview renders |
+| `rainbow-garden/` | Rainbow Garden behavior/resource packs, `.mcaddon`, content generators, validator and preview renders |
 
 ## Releases
 
@@ -109,3 +128,4 @@ measurements, model notes and build instructions. The
 - [Mobile Phone 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/mobile-phone-v1.1.0)
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
 - [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)
+- [Rainbow Garden 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.0)

@@ -1,0 +1,20 @@
+[
+  "textures/blocks/rainbow_flower_red",
+  "textures/items/rainbow_seed_red",
+  "textures/blocks/rainbow_flower_orange",
+  "textures/items/rainbow_seed_orange",
+  "textures/blocks/rainbow_flower_yellow",
+  "textures/items/rainbow_seed_yellow",
+  "textures/blocks/rainbow_flower_green",
+  "textures/items/rainbow_seed_green",
+  "textures/blocks/rainbow_flower_blue",
+  "textures/items/rainbow_seed_blue",
+  "textures/blocks/rainbow_flower_purple",
+  "textures/items/rainbow_seed_purple",
+  "textures/blocks/rainbow_tree",
+  "textures/blocks/rainbow_mushroom",
+  "textures/blocks/rainbow_lantern",
+  "textures/items/rainbow_tree_seed",
+  "textures/items/rainbow_mushroom_seed",
+  "textures/entity/rainbow_butterfly"
+]

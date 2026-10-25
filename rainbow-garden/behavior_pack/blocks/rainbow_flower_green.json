@@ -1,0 +1,54 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "rg:rainbow_flower_green",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.rg.rainbow_flower",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "rg_rainbow_flower_green",
+          "render_method": "alpha_test"
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.rg.rainbow_flower",
+        "material_instances": {
+          "*": {
+            "texture": "rg_rainbow_flower_green",
+            "render_method": "alpha_test"
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.1
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:destruction_particles": {
+        "texture": "rg_rainbow_flower_green",
+        "particle_count": 24
+      },
+      "minecraft:light_emission": 2,
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#54dc78",
+      "minecraft:display_name": "tile.rg:rainbow_flower_green.name",
+      "minecraft:collision_box": false,
+      "minecraft:selection_box": {
+        "origin": [
+          -6,
+          0,
+          -6
+        ],
+        "size": [
+          12,
+          16,
+          12
+        ]
+      }
+    }
+  }
+}

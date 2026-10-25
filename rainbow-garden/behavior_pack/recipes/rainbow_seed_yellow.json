@@ -1,0 +1,23 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "rg:rainbow_seed_yellow_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:yellow_dye"
+      },
+      {
+        "item": "minecraft:wheat_seeds"
+      }
+    ],
+    "result": {
+      "item": "rg:rainbow_seed_yellow",
+      "count": 4
+    }
+  }
+}

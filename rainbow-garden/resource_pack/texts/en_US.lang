@@ -1,0 +1,45 @@
+pack.name=Rainbow Garden
+pack.description=A gentle rainbow garden with giant flowers, glowing trees, mushrooms, lanterns and butterflies. Made for young children.
+
+tile.rg:rainbow_flower_red.name=Red Rainbow Flower
+tile.rg.rainbow_flower_red.name=Red Rainbow Flower
+tile.rg:rainbow_flower_orange.name=Orange Rainbow Flower
+tile.rg.rainbow_flower_orange.name=Orange Rainbow Flower
+tile.rg:rainbow_flower_yellow.name=Yellow Rainbow Flower
+tile.rg.rainbow_flower_yellow.name=Yellow Rainbow Flower
+tile.rg:rainbow_flower_green.name=Green Rainbow Flower
+tile.rg.rainbow_flower_green.name=Green Rainbow Flower
+tile.rg:rainbow_flower_blue.name=Blue Rainbow Flower
+tile.rg.rainbow_flower_blue.name=Blue Rainbow Flower
+tile.rg:rainbow_flower_purple.name=Purple Rainbow Flower
+tile.rg.rainbow_flower_purple.name=Purple Rainbow Flower
+tile.rg:rainbow_tree.name=Rainbow Tree
+tile.rg.rainbow_tree.name=Rainbow Tree
+tile.rg:rainbow_mushroom.name=Rainbow Mushroom
+tile.rg.rainbow_mushroom.name=Rainbow Mushroom
+tile.rg:rainbow_lantern.name=Rainbow Lantern
+tile.rg.rainbow_lantern.name=Rainbow Lantern
+
+item.rg:rainbow_seed_red=Red Rainbow Seed
+item.rg:rainbow_seed_red.name=Red Rainbow Seed
+item.rg:rainbow_seed_orange=Orange Rainbow Seed
+item.rg:rainbow_seed_orange.name=Orange Rainbow Seed
+item.rg:rainbow_seed_yellow=Yellow Rainbow Seed
+item.rg:rainbow_seed_yellow.name=Yellow Rainbow Seed
+item.rg:rainbow_seed_green=Green Rainbow Seed
+item.rg:rainbow_seed_green.name=Green Rainbow Seed
+item.rg:rainbow_seed_blue=Blue Rainbow Seed
+item.rg:rainbow_seed_blue.name=Blue Rainbow Seed
+item.rg:rainbow_seed_purple=Purple Rainbow Seed
+item.rg:rainbow_seed_purple.name=Purple Rainbow Seed
+item.rg:rainbow_tree_seed=Rainbow Tree Seed
+item.rg:rainbow_tree_seed.name=Rainbow Tree Seed
+item.rg:rainbow_mushroom_seed=Rainbow Mushroom Seed
+item.rg:rainbow_mushroom_seed.name=Rainbow Mushroom Seed
+
+entity.rg:rainbow_butterfly.name=Rainbow Butterfly
+entity.rg.rainbow_butterfly.name=Rainbow Butterfly
+item.spawn_egg.entity.rg:rainbow_butterfly.name=Rainbow Butterfly Spawn Egg
+item.spawn_egg.entity.rg.rainbow_butterfly.name=Rainbow Butterfly Spawn Egg
+item.rg:rainbow_butterfly_spawn_egg=Rainbow Butterfly Spawn Egg
+item.rg:rainbow_butterfly_spawn_egg.name=Rainbow Butterfly Spawn Egg

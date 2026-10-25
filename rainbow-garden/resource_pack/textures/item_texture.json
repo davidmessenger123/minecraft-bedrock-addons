@@ -1,0 +1,30 @@
+{
+  "resource_pack_name": "rainbow_garden",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "rg_rainbow_seed_red": {
+      "textures": "textures/items/rainbow_seed_red"
+    },
+    "rg_rainbow_seed_orange": {
+      "textures": "textures/items/rainbow_seed_orange"
+    },
+    "rg_rainbow_seed_yellow": {
+      "textures": "textures/items/rainbow_seed_yellow"
+    },
+    "rg_rainbow_seed_green": {
+      "textures": "textures/items/rainbow_seed_green"
+    },
+    "rg_rainbow_seed_blue": {
+      "textures": "textures/items/rainbow_seed_blue"
+    },
+    "rg_rainbow_seed_purple": {
+      "textures": "textures/items/rainbow_seed_purple"
+    },
+    "rg_rainbow_tree_seed": {
+      "textures": "textures/items/rainbow_tree_seed"
+    },
+    "rg_rainbow_mushroom_seed": {
+      "textures": "textures/items/rainbow_mushroom_seed"
+    }
+  }
+}

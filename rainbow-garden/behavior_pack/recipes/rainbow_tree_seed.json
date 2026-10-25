@@ -1,0 +1,32 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "rg:rainbow_tree_seed_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "rg:rainbow_seed_red"
+      },
+      {
+        "item": "rg:rainbow_seed_orange"
+      },
+      {
+        "item": "rg:rainbow_seed_yellow"
+      },
+      {
+        "item": "rg:rainbow_seed_green"
+      },
+      {
+        "item": "minecraft:oak_sapling"
+      }
+    ],
+    "result": {
+      "item": "rg:rainbow_tree_seed",
+      "count": 1
+    }
+  }
+}

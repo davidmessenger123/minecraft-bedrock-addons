@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Rainbow Garden Behaviour Pack",
+    "description": "Blocks, seeds and a gentle butterfly for Rainbow Garden.",
+    "uuid": "544a84ed-27aa-4c04-9b68-2266ada591f3",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      130
+    ]
+  },
+  "modules": [
+    {
+      "description": "Blocks, seeds and a gentle butterfly for Rainbow Garden.",
+      "type": "data",
+      "uuid": "e7e18f25-d72e-40e5-94a5-5f429a98a8b9",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}
