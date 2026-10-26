@@ -1,25 +1,28 @@
-# Minecraft Bedrock Add-ons
+# Minecraft Bedrock Add-ons & Texture Packs
 
-Five add-ons for **Minecraft Bedrock Edition**:
+Five add-ons and one texture pack for **Minecraft Bedrock Edition**:
 
-| Add-on | Version | Download |
-| --- | --- | --- |
-| **Angel Wings** | 1.2.0 | [AngelWings-1.2.0.mcaddon](angel-wings/AngelWings-1.2.0.mcaddon) |
-| **Mobile Phone** | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
-| **Drone Companion** | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
-| **NZ Animals** | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
-| **Rainbow Garden** | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
+| Project | Type | Version | Download |
+| --- | --- | --- | --- |
+| **Angel Wings** | Add-on | 1.2.0 | [AngelWings-1.2.0.mcaddon](angel-wings/AngelWings-1.2.0.mcaddon) |
+| **Mobile Phone** | Add-on | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
+| **Drone Companion** | Add-on | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
+| **NZ Animals** | Add-on | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
+| **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
+| **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 
 ## Install
 
-1. Download the `.mcaddon` file for the add-on you want.
+1. Download the `.mcaddon` or `.mcpack` file you want.
 2. Open it with Minecraft Bedrock (double-click it, or use **Open with → Minecraft**).
-   It imports the behavior and resource packs together.
-3. Enable **both** packs for your world under **Settings → World → Behavior Packs** and
-   **Resource Packs** (or Global Resources).
+   An `.mcaddon` imports its behavior and resource packs together; an `.mcpack`
+   imports a resource pack.
+3. Enable the packs for your world under **Settings → World → Behavior Packs** and
+   **Resource Packs** (or Global Resources). Texture packs such as Petal & Star are
+   activated under **Resource Packs** or **Global Resources**.
 4. No experiments are required. The three scripted add-ons use stable Script API
    2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
-   experiment.
+   experiment. Texture packs and the data-only add-ons have no Script API dependency.
 5. Reload the world.
 
 ## Angel Wings
@@ -98,13 +101,37 @@ See [rainbow-garden/README.md](rainbow-garden/README.md) for installation,
 controls, recipes, safety notes and build instructions. The
 [contact sheet](rainbow-garden/preview/_contact_sheet.png) shows every model.
 
+## Petal & Star
+
+A soft pastel storybook texture pack for Minecraft Bedrock, made for a
+4-year-old adventurer. It turns the Overworld into a gentle garden of minty
+grass, blossom-covered leaves, candy-coloured wool, smiling skies and friendly
+pastel animals.
+
+- 130 textures: blocks, eight wood families, flowers, all 16 wool colours,
+  glass, water, lights, items, sky and animal recolours.
+- Texture-only: no scripts, no behaviour changes, no sounds, no UI changes,
+  and no experiments.
+- Soft pastels, rounded shapes and warm cocoa outlines; no flashing effects or
+  added horror imagery.
+- Hostile mobs, fire and lava are unchanged, so danger stays visually obvious.
+  Peaceful or Creative difficulty is recommended for the gentlest world.
+- Requires Bedrock **1.21.0+**.
+
+See [petal-and-star/README.md](petal-and-star/README.md) for the full contents,
+install notes and build instructions. The
+[contact sheet](petal-and-star/preview/_contact_sheet.png) shows the palette,
+blocks, flowers, items, sky and animal portraits.
+
 ## Requirements
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
-  Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden.
+  Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden;
+  **1.21.0 or newer** for Petal & Star.
 - The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
-  NZ Animals and Rainbow Garden are data-only and have no Script API dependency.
+  NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
+  Petal & Star is a texture-only resource pack.
 - Angel Wings uses `@minecraft/server` **2.0.0**. If your game ships a newer 2.x module,
   update the version in `angel-wings/behavior_pack/manifest.json`.
 - Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
@@ -121,6 +148,7 @@ controls, recipes, safety notes and build instructions. The
 | `drone-companion/` | Drone Companion behavior/resource packs, `.mcaddon`, Blockbench model, texture and validation tools |
 | `nz-animals/` | NZ Animals behavior/resource packs, `.mcaddon`, model/animation generators, validators and preview renders |
 | `rainbow-garden/` | Rainbow Garden behavior/resource packs, `.mcaddon`, content generators, validator and preview renders |
+| `petal-and-star/` | Petal & Star resource pack, `.mcpack`, texture generator, validator and preview renders |
 
 ## Releases
 
@@ -129,3 +157,4 @@ controls, recipes, safety notes and build instructions. The
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
 - [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)
 - [Rainbow Garden 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.1)
+- [Petal & Star 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/petal-and-star-v1.0.0)

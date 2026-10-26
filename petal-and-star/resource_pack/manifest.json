@@ -1,0 +1,36 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Petal & Star",
+    "description": "A soft pastel storybook texture pack for little adventurers. Flowers, stars, and friendly animals.",
+    "uuid": "4f7f2e2a-7a1b-4f2c-9d4e-2b6a9c8d1e01",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "description": "Soft pastel blocks, flowers, items, sky and friendly animal textures.",
+      "type": "resources",
+      "uuid": "a1c3e5f7-2b4d-4c6e-8f90-1a2b3c4d5e02",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "Petal & Star"
+    ],
+    "license": "MIT"
+  }
+}
