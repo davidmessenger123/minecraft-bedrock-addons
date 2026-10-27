@@ -3,7 +3,12 @@ import { world, system } from "@minecraft/server";
 const DROID_ID = "r2d2:droid";
 const SOUNDS = ["mob.r2d2.beep", "mob.r2d2.chirp", "mob.r2d2.whistle"];
 const COOLDOWN_TICKS = 80;
+const HOLO_PROPERTY = "r2d2:holo_active";
+const HOLO_SOUND_ON = "mob.r2d2.holo_on";
+const HOLO_SOUND_OFF = "mob.r2d2.holo_off";
+const TOGGLE_COOLDOWN_TICKS = 10;
 const lastSound = new Map();
+const lastToggle = new Map();
 let tick = 0;
 
 function dimensions() {
@@ -68,12 +73,62 @@ function playSound(entity) {
   }
 }
 
+function toggleHologram(droid, player) {
+  const now = system.currentTick;
+  const last = lastToggle.get(droid.id);
+  if (last !== undefined && now - last < TOGGLE_COOLDOWN_TICKS) {
+    return;
+  }
+  lastToggle.set(droid.id, now);
+
+  let active = false;
+  try {
+    active = droid.getProperty(HOLO_PROPERTY) === true;
+  } catch (error) {
+    return;
+  }
+
+  const next = !active;
+  try {
+    droid.setProperty(HOLO_PROPERTY, next);
+  } catch (error) {
+    return;
+  }
+
+  const sound = next ? HOLO_SOUND_ON : HOLO_SOUND_OFF;
+  const pitch = next ? 1.0 : 0.9;
+  try {
+    droid.playSound(sound, { volume: 0.7, pitch });
+  } catch (error) {
+    try {
+      world.playSound(sound, droid.location, { volume: 0.7, pitch });
+    } catch (innerError) {
+      /* audio is optional */
+    }
+  }
+
+  try {
+    player.onScreenDisplay.setActionBar({
+      translate: next ? "action.r2d2.holo_on" : "action.r2d2.holo_off"
+    });
+  } catch (error) {
+    /* action bar feedback is optional */
+  }
+}
+
 world.afterEvents.entitySpawn.subscribe((event) => {
   if (event.entity.typeId !== DROID_ID) {
     return;
   }
   tryTame(event.entity);
   playSound(event.entity);
+});
+
+world.afterEvents.playerInteractWithEntity.subscribe((event) => {
+  if (event.target.typeId !== DROID_ID) {
+    return;
+  }
+  toggleHologram(event.target, event.player);
 });
 
 system.runInterval(() => {
@@ -88,6 +143,7 @@ system.runInterval(() => {
     for (const droid of droids) {
       if (!droid.isValid) {
         lastSound.delete(droid.id);
+        lastToggle.delete(droid.id);
         continue;
       }
       const last = lastSound.get(droid.id) || 0;

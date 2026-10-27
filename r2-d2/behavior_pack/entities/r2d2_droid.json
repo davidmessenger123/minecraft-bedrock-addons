@@ -5,7 +5,14 @@
       "identifier": "r2d2:droid",
       "is_spawnable": true,
       "is_summonable": true,
-      "is_experimental": false
+      "is_experimental": false,
+      "properties": {
+        "r2d2:holo_active": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        }
+      }
     },
     "component_groups": {},
     "components": {
@@ -70,6 +77,14 @@
         "probability": 1.0,
         "tame_items": [
           "minecraft:redstone"
+        ]
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "interact_text": "action.interact.holo",
+            "cooldown": 0.5
+          }
         ]
       }
     }

@@ -2706,6 +2706,18 @@
 						15,
 						0
 					],
+					"locators": {
+						"holo_projector": [
+							0.45,
+							18.25,
+							-2.25
+						],
+						"holo_display": [
+							0,
+							20,
+							-1.2
+						]
+					},
 					"cubes": [
 						{
 							"origin": [

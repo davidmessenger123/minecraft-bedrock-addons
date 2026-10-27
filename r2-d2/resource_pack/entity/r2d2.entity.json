@@ -15,12 +15,20 @@
       "animations": {
         "idle": "animation.r2d2.idle",
         "move": "animation.r2d2.move",
-        "controller": "controller.animation.r2d2.general"
+        "holo": "animation.r2d2.holo",
+        "controller": "controller.animation.r2d2.general",
+        "holo_controller": "controller.animation.r2d2.holo"
       },
       "scripts": {
         "animate": [
-          "controller"
+          "controller",
+          "holo_controller"
         ]
+      },
+      "particle_effects": {
+        "holo_beam": "r2d2:holo_beam",
+        "holo_orb": "r2d2:holo_orb",
+        "holo_motes": "r2d2:holo_motes"
       },
       "render_controllers": [
         "controller.render.default"

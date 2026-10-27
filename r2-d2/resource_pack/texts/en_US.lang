@@ -1,1 +1,4 @@
 entity.r2d2:droid.name=R2-D2 Droid
+action.interact.holo=Toggle Hologram
+action.r2d2.holo_on=§bR2-D2 hologram online
+action.r2d2.holo_off=§7R2-D2 hologram offline

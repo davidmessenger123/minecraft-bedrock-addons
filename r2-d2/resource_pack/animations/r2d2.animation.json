@@ -95,6 +95,52 @@
           }
         }
       }
+    },
+    "animation.r2d2.holo": {
+      "loop": true,
+      "animation_length": 1.0,
+      "particle_effects": {
+        "0.0": [
+          {
+            "effect": "holo_beam",
+            "locator": "holo_projector"
+          },
+          {
+            "effect": "holo_orb",
+            "locator": "holo_display"
+          },
+          {
+            "effect": "holo_motes",
+            "locator": "holo_display"
+          }
+        ],
+        "0.25": [
+          {
+            "effect": "holo_beam",
+            "locator": "holo_projector"
+          }
+        ],
+        "0.5": [
+          {
+            "effect": "holo_beam",
+            "locator": "holo_projector"
+          },
+          {
+            "effect": "holo_orb",
+            "locator": "holo_display"
+          },
+          {
+            "effect": "holo_motes",
+            "locator": "holo_display"
+          }
+        ],
+        "0.75": [
+          {
+            "effect": "holo_beam",
+            "locator": "holo_projector"
+          }
+        ]
+      }
     }
   }
 }

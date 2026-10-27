@@ -11,7 +11,7 @@ Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
-| **R2-D2 Droid** | Add-on | 1.1.0 | [R2D2-1.1.0.mcaddon](r2-d2/R2D2-1.1.0.mcaddon) |
+| **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 
 ## Install
 
@@ -22,7 +22,7 @@ Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 3. Enable the packs for your world under **Settings → World → Behavior Packs** and
    **Resource Packs** (or Global Resources). Texture packs such as Petal & Star are
    activated under **Resource Packs** or **Global Resources**.
-4. No experiments are required. The three scripted add-ons use stable Script API
+4. No experiments are required. The four scripted add-ons use stable Script API
    2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
    experiment. Texture packs and the data-only add-ons have no Script API dependency.
 5. Reload the world.
@@ -149,15 +149,18 @@ The [block](candyland/previews/blocks.png) and
 ## R2-D2 Droid
 
 A detailed R2-D2 style astromech droid companion with a 106-cube Blockbench
-model, a 256×256 colour atlas, idle and move animations, and custom
-beep/chirp/whistle sounds.
+model, a 256×256 colour atlas, idle and move animations, a toggleable
+holoprojector, and custom beep/chirp/whistle sounds.
 
 - Spawnable droid that tames to and follows the nearest player.
 - Layered dome, radar eye, status lights, holoprojector, antennas, vents,
   shoulder hubs and treaded feet.
 - Idle dome scan plus a moving/rolling leg animation.
+- Right-click the droid to toggle a cyan hologram: a rising particle beam and a
+  star-map orb that follow the rotating dome.
 - Fire-immune, knockback-resistant and pushable-proof.
-- Custom sounds: `mob.r2d2.beep`, `mob.r2d2.chirp`, `mob.r2d2.whistle`.
+- Custom sounds: `mob.r2d2.beep`, `mob.r2d2.chirp`, `mob.r2d2.whistle`,
+  `mob.r2d2.holo_on`, `mob.r2d2.holo_off`.
 - Requires Bedrock **1.21.90+** and stable Script API **2.0.0**.
 
 See [r2-d2/README.md](r2-d2/README.md) for install notes, controls, model
@@ -165,10 +168,10 @@ details and the Blockbench source.
 
 ## Requirements
 
-- Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
-  Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden;
-  **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland; **1.21.90 or newer** for R2-D2 Droid.
-- The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
+- Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone, Drone
+  Companion and R2-D2 Droid; **1.21.130 or newer** for NZ Animals and Rainbow
+  Garden; **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland.
+- The four scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
   Petal & Star is a texture-only resource pack.
@@ -204,3 +207,4 @@ details and the Blockbench source.
 - [Candyland 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.1)
 - [R2-D2 Droid 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.0.0)
 - [R2-D2 Droid 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.1.0)
+- [R2-D2 Droid 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.2.0)

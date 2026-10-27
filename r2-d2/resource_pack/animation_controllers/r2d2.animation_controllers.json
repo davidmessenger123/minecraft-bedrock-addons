@@ -25,6 +25,28 @@
           ]
         }
       }
+    },
+    "controller.animation.r2d2.holo": {
+      "initial_state": "off",
+      "states": {
+        "off": {
+          "transitions": [
+            {
+              "on": "query.property('r2d2:holo_active')"
+            }
+          ]
+        },
+        "on": {
+          "animations": [
+            "holo"
+          ],
+          "transitions": [
+            {
+              "off": "!query.property('r2d2:holo_active')"
+            }
+          ]
+        }
+      }
     }
   }
 }
