@@ -182,3 +182,4 @@ The [block](candyland/previews/blocks.png) and
 - [Rainbow Garden 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.1)
 - [Petal & Star 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/petal-and-star-v1.0.0)
 - [Candyland 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.0)
+- [Candyland 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.1)
