@@ -1,0 +1,77 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "r2d2:droid",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "component_groups": {},
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "r2d2",
+          "droid",
+          "mob"
+        ]
+      },
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:collision_box": {
+        "width": 0.7,
+        "height": 1.0
+      },
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "fall",
+            "deals_damage": false
+          }
+        ]
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:persistent": {},
+      "minecraft:nameable": {},
+      "minecraft:movement": {
+        "value": 0.3
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "avoid_water": false,
+        "avoid_damage_blocks": true
+      },
+      "minecraft:behavior.follow_owner": {
+        "priority": 2,
+        "speed_multiplier": 1.0,
+        "start_distance": 12,
+        "stop_distance": 3
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 4,
+        "look_distance": 8,
+        "probability": 0.02
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 5,
+        "speed_multiplier": 0.8
+      },
+      "minecraft:tameable": {
+        "probability": 1.0,
+        "tame_items": [
+          "minecraft:redstone"
+        ]
+      }
+    }
+  }
+}

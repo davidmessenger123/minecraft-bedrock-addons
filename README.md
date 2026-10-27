@@ -1,6 +1,6 @@
 # Minecraft Bedrock Add-ons & Texture Packs
 
-Five add-ons and two texture packs for **Minecraft Bedrock Edition**:
+Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
@@ -11,6 +11,7 @@ Five add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
+| **R2-D2 Droid** | Add-on | 1.0.0 | [R2D2-1.0.0.mcaddon](r2-d2/R2D2-1.0.0.mcaddon) |
 
 ## Install
 
@@ -145,11 +146,24 @@ full texture counts, design notes, validation results and rebuild commands.
 The [block](candyland/previews/blocks.png) and
 [item](candyland/previews/items.png) contact sheets show the visual style.
 
+## R2-D2 Droid
+
+An R2-D2 style astromech droid companion with a Blockbench model, looping dome
+and leg animations, and custom beep/chirp/whistle sounds.
+
+- Spawnable droid that tames to and follows the nearest player.
+- Fire-immune, knockback-resistant and pushable-proof.
+- Custom sounds: `mob.r2d2.beep`, `mob.r2d2.chirp`, `mob.r2d2.whistle`.
+- Requires Bedrock **1.21.90+** and stable Script API **2.0.0**.
+
+See [r2-d2/README.md](r2-d2/README.md) for install notes, controls, model
+details and the Blockbench source.
+
 ## Requirements
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
   Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden;
-  **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland.
+  **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland; **1.21.90 or newer** for R2-D2 Droid.
 - The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
@@ -172,6 +186,7 @@ The [block](candyland/previews/blocks.png) and
 | `rainbow-garden/` | Rainbow Garden behavior/resource packs, `.mcaddon`, content generators, validator and preview renders |
 | `petal-and-star/` | Petal & Star resource pack, `.mcpack`, texture generator, validator and preview renders |
 | `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
+| `r2-d2/` | R2-D2 droid add-on, `.mcaddon`, Blockbench model, sounds and validation tools |
 
 ## Releases
 

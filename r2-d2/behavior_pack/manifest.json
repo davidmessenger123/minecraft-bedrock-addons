@@ -1,0 +1,56 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "An R2-D2 style astromech droid companion.",
+    "name": "R2-D2 Droid",
+    "uuid": "93223788-7b81-4934-8edb-b91bd3322976",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "description": "Behavior pack",
+      "type": "data",
+      "uuid": "2637b69b-3fe5-426e-9528-2f5d2cd86d98",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "description": "R2-D2 script",
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/r2d2_droid.js",
+      "uuid": "6ba8392a-7f15-4846-be87-bdb86285f996",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "c9df9ef6-a712-4e91-b7e3-4efa3db368b4",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    }
+  ]
+}

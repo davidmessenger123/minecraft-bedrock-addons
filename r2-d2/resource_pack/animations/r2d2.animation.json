@@ -1,0 +1,23 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.r2d2.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "dome": {
+          "rotation": [0, "math.mod(query.anim_time * 180, 360)", 0]
+        },
+        "left_leg": {
+          "rotation": ["math.sin(query.anim_time * 360) * 2", 0, 0]
+        },
+        "right_leg": {
+          "rotation": ["-math.sin(query.anim_time * 360) * 2", 0, 0]
+        },
+        "center_foot": {
+          "rotation": ["math.sin(query.anim_time * 720) * 3", 0, 0]
+        }
+      }
+    }
+  }
+}

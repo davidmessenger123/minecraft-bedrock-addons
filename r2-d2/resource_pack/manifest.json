@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "Resources for the R2-D2 droid.",
+    "name": "R2-D2 Droid Resources",
+    "uuid": "c9df9ef6-a712-4e91-b7e3-4efa3db368b4",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ]
+  },
+  "modules": [
+    {
+      "description": "Resource pack",
+      "type": "resources",
+      "uuid": "a06807dd-731c-4cc4-93cc-26964a7a2240",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

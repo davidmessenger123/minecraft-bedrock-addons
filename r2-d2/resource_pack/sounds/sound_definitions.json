@@ -1,0 +1,17 @@
+{
+  "mob.r2d2.beep": {
+    "sounds": [
+      "sounds/r2d2/beep"
+    ]
+  },
+  "mob.r2d2.chirp": {
+    "sounds": [
+      "sounds/r2d2/chirp"
+    ]
+  },
+  "mob.r2d2.whistle": {
+    "sounds": [
+      "sounds/r2d2/whistle"
+    ]
+  }
+}
