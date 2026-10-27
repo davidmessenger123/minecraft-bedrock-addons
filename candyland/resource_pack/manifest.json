@@ -1,0 +1,36 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Candyland",
+    "description": "Every vanilla colour texture, reimagined as candy: blocks, items, mobs, skies and menus.",
+    "uuid": "8fd3aba8-2722-5b48-8788-a8bd1da389a3",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      50
+    ]
+  },
+  "modules": [
+    {
+      "description": "Candyland resource pack",
+      "type": "resources",
+      "uuid": "62f4e67d-9eb1-5d53-94f3-3d01be1d4bc8",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "Candyland"
+    ],
+    "license": "Fan project. Not affiliated with Mojang or Microsoft."
+  }
+}

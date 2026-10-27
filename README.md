@@ -1,6 +1,6 @@
 # Minecraft Bedrock Add-ons & Texture Packs
 
-Five add-ons and one texture pack for **Minecraft Bedrock Edition**:
+Five add-ons and two texture packs for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
@@ -10,6 +10,7 @@ Five add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **NZ Animals** | Add-on | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
+| **Candyland** | Texture pack | 1.0.0 | [Candyland-v1.0.0.mcpack](candyland/dist/Candyland-v1.0.0.mcpack) |
 
 ## Install
 
@@ -123,11 +124,32 @@ install notes and build instructions. The
 [contact sheet](petal-and-star/preview/_contact_sheet.png) shows the palette,
 blocks, flowers, items, sky and animal portraits.
 
+## Candyland
+
+A complete candy-themed texture pack: peppermint stone, chocolate dirt, mint
+leaves, strawberry mobs, lavender menus and sugar-crystal skies. Every runtime
+colour texture in the Bedrock samples tree has a replacement.
+
+- 5,085 vanilla colour textures replaced, plus 2 compatibility textures.
+- 1,294 blocks, 916 items, 848 entity skins, 1,643 UI and 193 GUI textures;
+  83 animated flipbooks.
+- Blocks and items are rebuilt at 32×32; entities, UI, maps and other
+  UV-sensitive assets keep their native resolution.
+- Custom skies, weather, sun/moon phases, block-break cracks, flames, portals,
+  paintings and original Marketplace promo art.
+- Tint masks stay grayscale and the biome colour maps were rebuilt.
+- Requires Bedrock **1.26.50+**.
+
+See [candyland/README.md](candyland/README.md) for install instructions, the
+full texture counts, design notes, validation results and rebuild commands.
+The [block](candyland/previews/blocks.png) and
+[item](candyland/previews/items.png) contact sheets show the visual style.
+
 ## Requirements
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone and Drone
   Companion; **1.21.130 or newer** for NZ Animals and Rainbow Garden;
-  **1.21.0 or newer** for Petal & Star.
+  **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland.
 - The three scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
@@ -149,6 +171,7 @@ blocks, flowers, items, sky and animal portraits.
 | `nz-animals/` | NZ Animals behavior/resource packs, `.mcaddon`, model/animation generators, validators and preview renders |
 | `rainbow-garden/` | Rainbow Garden behavior/resource packs, `.mcaddon`, content generators, validator and preview renders |
 | `petal-and-star/` | Petal & Star resource pack, `.mcpack`, texture generator, validator and preview renders |
+| `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
 
 ## Releases
 

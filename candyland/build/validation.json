@@ -1,0 +1,14 @@
+{
+  "source_colour_bases": 5085,
+  "inventory_textures": 5085,
+  "generated_images": 5087,
+  "expected_images": 5085,
+  "compatibility_images": 2,
+  "atlas_references": 3275,
+  "flipbooks": 83,
+  "pack_files": 5094,
+  "mcpack_bytes": 6369207,
+  "icon": "256x256",
+  "errors": [],
+  "warnings": []
+}
