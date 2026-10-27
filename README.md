@@ -11,7 +11,7 @@ Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
-| **R2-D2 Droid** | Add-on | 1.0.0 | [R2D2-1.0.0.mcaddon](r2-d2/R2D2-1.0.0.mcaddon) |
+| **R2-D2 Droid** | Add-on | 1.1.0 | [R2D2-1.1.0.mcaddon](r2-d2/R2D2-1.1.0.mcaddon) |
 
 ## Install
 
@@ -148,10 +148,14 @@ The [block](candyland/previews/blocks.png) and
 
 ## R2-D2 Droid
 
-An R2-D2 style astromech droid companion with a Blockbench model, looping dome
-and leg animations, and custom beep/chirp/whistle sounds.
+A detailed R2-D2 style astromech droid companion with a 106-cube Blockbench
+model, a 256×256 colour atlas, idle and move animations, and custom
+beep/chirp/whistle sounds.
 
 - Spawnable droid that tames to and follows the nearest player.
+- Layered dome, radar eye, status lights, holoprojector, antennas, vents,
+  shoulder hubs and treaded feet.
+- Idle dome scan plus a moving/rolling leg animation.
 - Fire-immune, knockback-resistant and pushable-proof.
 - Custom sounds: `mob.r2d2.beep`, `mob.r2d2.chirp`, `mob.r2d2.whistle`.
 - Requires Bedrock **1.21.90+** and stable Script API **2.0.0**.

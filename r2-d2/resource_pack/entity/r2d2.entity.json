@@ -13,11 +13,13 @@
         "default": "geometry.r2d2"
       },
       "animations": {
-        "idle": "animation.r2d2.idle"
+        "idle": "animation.r2d2.idle",
+        "move": "animation.r2d2.move",
+        "controller": "controller.animation.r2d2.general"
       },
       "scripts": {
         "animate": [
-          "idle"
+          "controller"
         ]
       },
       "render_controllers": [
