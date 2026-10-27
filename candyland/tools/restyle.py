@@ -60,21 +60,22 @@ def _range(px):
     if not vals:
         return 0.0, 1.0
     vals.sort()
-    lo = vals[int(len(vals) * .02)] / 255.0
-    hi = vals[min(len(vals) - 1, int(len(vals) * .98))] / 255.0
+    lo = vals[int(len(vals) * .05)] / 255.0
+    hi = vals[min(len(vals) - 1, int(len(vals) * .95))] / 255.0
     if hi - lo < .10:
         mid = (hi + lo) / 2
         lo, hi = mid - .05, mid + .05
     return lo, hi
 
 
-def restyle(entry, ramp, scale=None, keep_hue=0.0, contrast=1.0,
-            brightness=0.0, grey=False, saturation=1.0, flip=False):
+def restyle(entry, ramp, scale=None, keep_hue=0.0, contrast=0.65,
+            brightness=0.07, grey=False, saturation=1.18, flip=False):
     w, h, px = load_source(entry)
     ramp = get_ramp(ramp) if isinstance(ramp, str) else ramp
     lo, hi = _range(px)
     if scale is None:
         scale = scale_for(entry)
+    contrast = min(contrast, 0.7)
     out = Canvas(w * scale, h * scale)
     for y in range(h):
         for x in range(w):
@@ -85,6 +86,10 @@ def restyle(entry, ramp, scale=None, keep_hue=0.0, contrast=1.0,
             l = ((0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0 - lo) / (hi - lo)
             l = (l - .5) * contrast + .5 + brightness
             col = ramp.at(clamp(l, 0.0, 1.0))
+            if saturation != 1.0 and not grey:
+                from candy import rgb_to_hsv, hsv_to_rgb
+                h0, s0, v0 = rgb_to_hsv(*col)
+                col = hsv_to_rgb(h0, min(1.0, s0 * saturation), v0)
             if keep_hue:
                 col = mix(col, (r, g, b), keep_hue)
             if grey:
@@ -131,8 +136,8 @@ GREY_RAMP = Ramp([(64, 64, 64), (104, 104, 104), (144, 144, 144),
 UI_NEUTRAL = get_ramp("silver_lilac")
 
 
-def candy_paint(entry, scale=None, sat_boost=1.0, contrast=1.05,
-                brightness=0.0, outline=None, grey=False, neutral=None):
+def candy_paint(entry, scale=None, sat_boost=1.4, contrast=0.65,
+                brightness=0.05, outline=None, grey=False, neutral=None):
     """Map every pixel to the candy ramp of its hue family.
 
     Keeps multi-colour art (flowers, items, skins) readable while replacing
@@ -154,6 +159,7 @@ def candy_paint(entry, scale=None, sat_boost=1.0, contrast=1.05,
             if not a:
                 continue
             l = ((0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0 - lo) / (hi - lo)
+            contrast = min(contrast, 0.7)
             l = (l - .5) * contrast + .5 + brightness
             if grey:
                 col = GREY_RAMP.at(clamp(l, 0.0, 1.0))
@@ -162,6 +168,10 @@ def candy_paint(entry, scale=None, sat_boost=1.0, contrast=1.05,
                 col = cache.get(key)
                 if col is None:
                     col = _paint_pixel(r, g, b, l, neutral)
+                    if sat_boost != 1.0:
+                        from candy import rgb_to_hsv, hsv_to_rgb
+                        h0, s0, v0 = rgb_to_hsv(*col)
+                        col = hsv_to_rgb(h0, min(1.0, s0 * sat_boost), v0)
                     cache[key] = col
             for sy in range(scale):
                 for sx in range(scale):

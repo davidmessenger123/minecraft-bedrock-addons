@@ -663,7 +663,12 @@ def fluid_still(c, seed, ramp, foam, frame, frames):
                     c.set((x + xx) % c.w, (y + yy) % c.h, foam)
 
 
-def fluid_flow(c, seed, ramp, foam, frame, frames, w=16, h=16):
+def fluid_flow(c, seed, ramp, foam, frame, frames, w=None, h=None):
+    """One fluid frame, filling the whole canvas instead of a hard-coded 16x16 tile."""
+    if w is None:
+        w = c.w
+    if h is None:
+        h = c.h
     n = ValueNoise(seed)
     for y in range(h):
         for x in range(w):
@@ -673,7 +678,7 @@ def fluid_flow(c, seed, ramp, foam, frame, frames, w=16, h=16):
                 t += .12
             c.set(x, y, ramp.at(max(0, min(1, t)), ))
     rnd = random.Random(seed + frame * 7)
-    for _ in range(4):
+    for _ in range(max(4, (w * h) // 64)):
         x, y = rnd.randrange(w), rnd.randrange(h)
         c.set(x, y, foam)
 

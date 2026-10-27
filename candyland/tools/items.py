@@ -14,10 +14,10 @@ def item_canvas(name, e):
     # flat utility icons should keep their square silhouette
     if name.startswith("light_block") or name in (
             "chalkboard_large", "chalkboard_medium", "chalkboard_small"):
-        return restyle.candy_paint(e, outline=None, contrast=1.15)
+        return restyle.candy_paint(e, outline=None, contrast=0.68)
     if name == "potion_overlay":
-        return restyle.candy_paint(e, outline=None, contrast=1.2)
+        return restyle.candy_paint(e, outline=None, contrast=0.68)
     if name.startswith("record_") or name.startswith("music_disc_"):
-        return restyle.candy_paint(e, outline=OUTLINE, contrast=1.1,
+        return restyle.candy_paint(e, outline=OUTLINE, contrast=0.68,
                                    sat_boost=1.2)
-    return restyle.candy_paint(e, outline=OUTLINE, contrast=1.12)
+    return restyle.candy_paint(e, outline=OUTLINE, contrast=0.68)

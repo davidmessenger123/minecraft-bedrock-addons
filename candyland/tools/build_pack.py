@@ -22,7 +22,7 @@ import pnglib
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "resource_pack")
 DIST = os.path.join(ROOT, "dist")
-VERSION = [1, 0, 0]
+VERSION = [1, 0, 1]
 VERSION_STR = ".".join(map(str, VERSION))
 PACK_NAME = "Candyland"
 

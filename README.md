@@ -10,7 +10,7 @@ Five add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **NZ Animals** | Add-on | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
-| **Candyland** | Texture pack | 1.0.0 | [Candyland-v1.0.0.mcpack](candyland/dist/Candyland-v1.0.0.mcpack) |
+| **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
 
 ## Install
 

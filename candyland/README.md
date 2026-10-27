@@ -39,7 +39,7 @@ More previews:
 
 ### Windows 10/11, Android, iOS/iPadOS
 
-1. Download **`dist/Candyland-v1.0.0.mcpack`**.
+1. Download **`dist/Candyland-v1.0.1.mcpack`**.
 2. Open the `.mcpack` file with Minecraft. The game imports it automatically.
 3. Go to **Settings → Global Resources → My Packs**, select **Candyland**, and
    activate it. For a specific world, use **World Settings → Resource Packs**.
@@ -54,7 +54,7 @@ Manual install locations (useful if file association does not work):
 - **iOS/iPadOS:** use the Files app to share the `.mcpack` to Minecraft; direct
   filesystem access is restricted by the app sandbox.
 
-`dist/Candyland-v1.0.0.zip` contains exactly the same files and can be unpacked
+`dist/Candyland-v1.0.1.zip` contains exactly the same files and can be unpacked
 into `resource_packs` manually. Keep the folder name `Candyland` (or any name
 you like) and make sure `manifest.json` is at its root.
 
@@ -146,8 +146,8 @@ candyland/
 ├── build/            # inventory, problems, validation report
 ├── previews/         # README images
 └── dist/
-    ├── Candyland-v1.0.0.mcpack
-    └── Candyland-v1.0.0.zip
+    ├── Candyland-v1.0.1.mcpack
+    └── Candyland-v1.0.1.zip
 ```
 
 ## Notes and limitations

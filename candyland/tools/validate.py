@@ -269,7 +269,7 @@ def main():
             errors.append("invalid %s UUID: %r" % (label, value))
     if header.get("min_engine_version") != [1, 26, 50]:
         warnings.append("unexpected min_engine_version: %r" % (header.get("min_engine_version"),))
-    if header.get("version") != [1, 0, 0]:
+    if header.get("version") != [1, 0, 1]:
         warnings.append("unexpected pack version: %r" % (header.get("version"),))
     if module.get("type") != "resources":
         errors.append("manifest module is not a resources module")

@@ -311,7 +311,7 @@ def block_canvas(name, e):
             return c
         if "carved" in name or "chiseled" in name or "smooth" in name:
             return restyle.restyle(e, get_ramp(ramp), keep_hue=.1,
-                                   contrast=1.05)
+                                   contrast=0.68)
         c = Canvas(32)
         P.sandstone(c, seed, get_ramp(ramp), get_ramp("caramel"))
         return c
@@ -418,7 +418,7 @@ def block_canvas(name, e):
         ramp = ("sea_glass" if "oxidized" in name else
                 "copper_wrap" if "weathered" in name else "copper_candy")
         return restyle.restyle(e, get_ramp(ramp), keep_hue=.10,
-                               contrast=1.15)
+                               contrast=0.68)
 
     # ---------------------------------------------------------- dyes
     if name.startswith("wool_colored_"):
@@ -436,7 +436,7 @@ def block_canvas(name, e):
     if name.startswith("glass_pane_top"):
         return restyle.restyle(e, dye_ramp(name) if dye_of(name)
                                else get_ramp("sugar_glass"),
-                               keep_hue=.08, contrast=1.1)
+                               keep_hue=.08, contrast=0.68)
     if name == "glass" or name.startswith("glass_"):
         c = Canvas(32)
         tint = dye_col(name) if dye_of(name) else (236, 250, 255)
@@ -444,10 +444,10 @@ def block_canvas(name, e):
         return c
     if name.startswith("shulker_top"):
         pal = dye_ramp(name) if dye_of(name) else get_ramp("grape_taffy")
-        return restyle.restyle(e, pal, keep_hue=.15, contrast=1.05)
+        return restyle.restyle(e, pal, keep_hue=.15, contrast=0.68)
     if name.startswith("candle"):
         pal = dye_ramp(name) if dye_of(name) else get_ramp("marshmallow")
-        c = restyle.restyle(e, pal, keep_hue=.05, contrast=1.0)
+        c = restyle.restyle(e, pal, keep_hue=.05, contrast=0.68)
         if "lit" in name:
             restyle.glow(c, (255, 230, 150), .4)
         return c
@@ -514,16 +514,16 @@ def block_canvas(name, e):
     # ---------------------------------------------------------- fallback
     pal = fallback_palette(name)
     if e.get("tint_mask"):
-        return restyle.restyle(e, get_ramp(pal), grey=True, contrast=1.05)
+        return restyle.restyle(e, get_ramp(pal), grey=True, contrast=0.68)
     if name.startswith(("fire", "soul_fire", "campfire", "soul_campfire")):
         c = restyle.restyle(e, get_ramp("lemon_drop"), keep_hue=.35,
-                            contrast=1.1)
+                            contrast=0.68)
         restyle.glow(c, (255, 240, 170), .25)
         return c
     if restyle.has_transparency(e):
         return restyle.candy_paint(e, outline=(48, 26, 42))
     return restyle.restyle(e, get_ramp(pal), keep_hue=keep_hue_for(name),
-                           contrast=1.08)
+                           contrast=0.68)
 
 
 def fallback_palette(name):

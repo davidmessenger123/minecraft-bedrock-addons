@@ -93,8 +93,10 @@ WARM_LIGHT = hex_rgb("#fff6e6")
 COOL_LIGHT = hex_rgb("#fff3fb")
 
 
-def make_ramp(base, spread=1.0, shadow=None, light=None, cool=False):
+def make_ramp(base, spread=0.45, shadow=None, light=None, cool=False):
     b = base if isinstance(base, tuple) else hex_rgb(base)
+    h0, s0, v0 = rgb_to_hsv(*b)
+    b = hsv_to_rgb(h0, min(1.0, s0 * 1.18), v0)
     if shadow is not None and isinstance(shadow, str):
         shadow = hex_rgb(shadow)
     if light is not None and isinstance(light, str):
@@ -102,12 +104,13 @@ def make_ramp(base, spread=1.0, shadow=None, light=None, cool=False):
     L = luma(b)
     lo = max(4, L - 82 * spread)
     hi = min(255, L + 72 * spread)
-    targets = [lo + (hi - lo) * f for f in (0.0, 0.16, 0.33, 0.51, 0.72, 1.0)]
-    targets[3] = min(max(targets[3], targets[2] + 1), targets[4] - 1)
+    targets = [lo + (hi - lo) * f for f in
+               (0.0, 0.12, 0.24, 0.38, 0.52, 0.66, 0.82, 1.0)]
     dark = shadow or DARK_ANCHOR
     lite = light or (COOL_LIGHT if cool else WARM_LIGHT)
-    hues = [mix(dark, b, 0.28), mix(dark, b, 0.55), mix(dark, b, 0.78),
-            b, mix(b, lite, 0.42), mix(b, lite, 0.72)]
+    hues = [mix(dark, b, 0.16), mix(dark, b, 0.34), mix(dark, b, 0.52),
+            mix(dark, b, 0.72), b, mix(b, lite, 0.28),
+            mix(b, lite, 0.52), mix(b, lite, 0.76)]
     tones = [at_luma(h, t) for h, t in zip(hues, targets)]
     # enforce strictly increasing luma after integer truncation
     for i in range(1, 6):
@@ -239,7 +242,7 @@ MATERIALS = {
 }
 
 
-def get_ramp(key, spread=1.0):
+def get_ramp(key, spread=0.72):
     if isinstance(key, Ramp):
         return key
     if key.startswith("#"):

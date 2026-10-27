@@ -83,12 +83,12 @@ def expected_dims(entry):
     return entry["w"], entry["h"]
 
 
-def grey(entry, contrast=1.0):
+def grey(entry, contrast=0.68):
     return restyle.restyle(entry, "marshmallow", scale=1, grey=True,
                            contrast=contrast)
 
 
-def paint(entry, contrast=1.03, neutral=None, brightness=0.0):
+def paint(entry, contrast=0.68, neutral=None, brightness=0.02):
     return restyle.candy_paint(entry, scale=1, contrast=contrast,
                                neutral=neutral, brightness=brightness)
 
@@ -281,13 +281,13 @@ def build(only=None):
             elif cat == "models":
                 if name == "elytra":
                     c = restyle.restyle(e, "silver_lilac", scale=1,
-                                        contrast=1.04)
+                                        contrast=0.68)
                 else:
                     c = paint(e, 1.02)
             elif cat == "trims":
                 if "/color_palettes/" in base:
                     ramp, bright = TRIM_PALETTES[name]
-                    c = restyle.restyle(e, ramp, scale=1, contrast=1.02,
+                    c = restyle.restyle(e, ramp, scale=1, contrast=0.68,
                                         brightness=bright)
                 else:
                     c = grey(e)
@@ -304,7 +304,7 @@ def build(only=None):
                 c = paint(e, 1.02)
             elif cat == "map":
                 if name == "map_background":
-                    c = restyle.restyle(e, "vanilla", scale=1, contrast=1.0)
+                    c = restyle.restyle(e, "vanilla", scale=1, contrast=0.68)
                 else:
                     c = paint(e, 1.0)
             elif cat == "misc":
