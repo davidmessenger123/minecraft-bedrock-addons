@@ -4,7 +4,7 @@
   <a href="banner.png"><img src="banner.png" alt="The Model Collection — all Minecraft Bedrock add-on models" width="100%"></a>
 </p>
 
-Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
+Seven add-ons and one texture pack for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
@@ -13,7 +13,6 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Drone Companion** | Add-on | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
 | **NZ Animals** | Add-on | 1.1.9 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
-| **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
@@ -25,7 +24,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
    An `.mcaddon` imports its behavior and resource packs together; an `.mcpack`
    imports a resource pack.
 3. Enable the packs for your world under **Settings → World → Behavior Packs** and
-   **Resource Packs** (or Global Resources). Texture packs such as Petal & Star are
+   **Resource Packs** (or Global Resources). The Candyland texture pack is
    activated under **Resource Packs** or **Global Resources**.
 4. No experiments are required. The five scripted add-ons use stable Script API
    2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
@@ -109,28 +108,6 @@ See [rainbow-garden/README.md](rainbow-garden/README.md) for installation,
 controls, recipes, safety notes and build instructions. The
 [contact sheet](rainbow-garden/preview/_contact_sheet.png) shows every model.
 
-## Petal & Star
-
-A soft pastel storybook texture pack for Minecraft Bedrock, made for a
-4-year-old adventurer. It turns the Overworld into a gentle garden of minty
-grass, blossom-covered leaves, candy-coloured wool, smiling skies and friendly
-pastel animals.
-
-- 130 textures: blocks, eight wood families, flowers, all 16 wool colours,
-  glass, water, lights, items, sky and animal recolours.
-- Texture-only: no scripts, no behaviour changes, no sounds, no UI changes,
-  and no experiments.
-- Soft pastels, rounded shapes and warm cocoa outlines; no flashing effects or
-  added horror imagery.
-- Hostile mobs, fire and lava are unchanged, so danger stays visually obvious.
-  Peaceful or Creative difficulty is recommended for the gentlest world.
-- Requires Bedrock **1.21.0+**.
-
-See [petal-and-star/README.md](petal-and-star/README.md) for the full contents,
-install notes and build instructions. The
-[contact sheet](petal-and-star/preview/_contact_sheet.png) shows the palette,
-blocks, flowers, items, sky and animal portraits.
-
 ## Candyland
 
 A complete candy-themed texture pack: peppermint stone, chocolate dirt, mint
@@ -204,12 +181,10 @@ details and the Blockbench source.
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone, Drone
   Companion and R2-D2 Droid; **1.21.130 or newer** for NZ Animals and Rainbow
-  Garden; **1.21.0 or newer** for Petal & Star; **1.26.60 or newer** for Candyland;
-  **1.26.60 or newer** for Bloomlands.
+  Garden; **1.26.60 or newer** for Candyland and Bloomlands.
 - The five scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
-  NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
-  Petal & Star is a texture-only resource pack.
+  NZ Animals and Rainbow Garden are data-only and have no Script API dependency.
 - Angel Wings and Bloomlands use `@minecraft/server` **2.0.0**. If your game ships a
   newer 2.x module, update the version in the appropriate `behavior_pack/manifest.json`.
 - Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
@@ -226,7 +201,6 @@ details and the Blockbench source.
 | `drone-companion/` | Drone Companion behavior/resource packs, `.mcaddon`, Blockbench model, texture and validation tools |
 | `nz-animals/` | NZ Animals behavior/resource packs, `.mcaddon`, model/animation generators, validators and preview renders |
 | `rainbow-garden/` | Rainbow Garden behavior/resource packs, `.mcaddon`, content generators, validator and preview renders |
-| `petal-and-star/` | Petal & Star resource pack, `.mcpack`, texture generator, validator and preview renders |
 | `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
 | `r2-d2/` | R2-D2 droid add-on, `.mcaddon`, Blockbench model, sounds and validation tools |
 | `bloomlands/` | Bloomlands custom dimension add-on, `.mcaddon`, block/mob models, previews and build/validation tools |
@@ -242,7 +216,6 @@ details and the Blockbench source.
 - [NZ Animals 1.1.8](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.8)
 - [NZ Animals 1.1.9](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.9)
 - [Rainbow Garden 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.1)
-- [Petal & Star 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/petal-and-star-v1.0.0)
 - [Candyland 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.0)
 - [Candyland 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.1)
 - [Candyland 1.0.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.2)
