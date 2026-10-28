@@ -84,7 +84,7 @@
         }
       },
       "type": "cube",
-      "uuid": "e45a7671-5720-44f4-950e-668207c83156"
+      "uuid": "9162aeaa-f690-4c6d-9af5-faaa4ccf2463"
     },
     {
       "name": "tool_1",
@@ -160,7 +160,7 @@
         }
       },
       "type": "cube",
-      "uuid": "5655663e-92da-4a0c-8a9b-95366bb6652b"
+      "uuid": "f8167031-bd16-44c1-bf87-b68ed3cf3807"
     },
     {
       "name": "tool_2",
@@ -236,7 +236,7 @@
         }
       },
       "type": "cube",
-      "uuid": "9a50d367-9772-45aa-a429-54f0d3558cc1"
+      "uuid": "e8579d7e-4000-49da-8d24-6e454ed2cc61"
     },
     {
       "name": "tool_3",
@@ -312,7 +312,7 @@
         }
       },
       "type": "cube",
-      "uuid": "006b67ea-6d4c-42bc-8292-921a92c2e2ae"
+      "uuid": "3fd2e874-f81c-4d46-855f-41680e8e19a7"
     },
     {
       "name": "tool_4",
@@ -388,7 +388,7 @@
         }
       },
       "type": "cube",
-      "uuid": "64606614-ff64-46d0-ae42-9b418bd1c465"
+      "uuid": "d2791515-90e6-4d02-8040-c1d4dcb6ba99"
     },
     {
       "name": "tool_5",
@@ -464,7 +464,7 @@
         }
       },
       "type": "cube",
-      "uuid": "b6762d0e-daa2-4a15-81dc-4b1079f98dc6"
+      "uuid": "b63de6cd-fed6-4278-b678-39a202db65ae"
     },
     {
       "name": "tool_6",
@@ -540,7 +540,7 @@
         }
       },
       "type": "cube",
-      "uuid": "8059329f-f4ed-4db0-afdc-d48731ceee0a"
+      "uuid": "7a2a8fd8-501e-4292-8591-f3c0d8989f14"
     },
     {
       "name": "tool_7",
@@ -616,7 +616,7 @@
         }
       },
       "type": "cube",
-      "uuid": "112beb06-93b1-48e8-8823-5a2bb8a1b098"
+      "uuid": "2ece0063-8458-418d-805b-e4000df0a792"
     },
     {
       "name": "tool_8",
@@ -692,7 +692,7 @@
         }
       },
       "type": "cube",
-      "uuid": "bda94638-2d07-4233-9105-a0ca98e42a33"
+      "uuid": "f7a92b0c-e9b9-479e-829c-38bc5b9bae4d"
     },
     {
       "name": "tool_9",
@@ -768,7 +768,7 @@
         }
       },
       "type": "cube",
-      "uuid": "63abcfbc-1057-465b-9a31-feee135c44fa"
+      "uuid": "4d53b762-1244-4be9-bb9a-e77201eb9ce9"
     },
     {
       "name": "tool_10",
@@ -844,7 +844,7 @@
         }
       },
       "type": "cube",
-      "uuid": "4927d68a-c649-4da0-a840-48e7774f19a3"
+      "uuid": "6161ff99-ab2d-4499-a0dd-af1661a6a802"
     },
     {
       "name": "tool_11",
@@ -920,7 +920,7 @@
         }
       },
       "type": "cube",
-      "uuid": "7bbff37d-c6a9-4483-b781-020e3cd5c8a4"
+      "uuid": "748210cc-37e6-44f4-93ee-a6b6d193a851"
     },
     {
       "name": "tool_12",
@@ -996,7 +996,7 @@
         }
       },
       "type": "cube",
-      "uuid": "d21bc0f1-7851-4952-9df8-d55aaafb1bd5"
+      "uuid": "ea5cc631-478b-4e4f-a130-9aec13ab4156"
     },
     {
       "name": "tool_13",
@@ -1072,7 +1072,7 @@
         }
       },
       "type": "cube",
-      "uuid": "45192a8b-1b51-4178-9649-afb8476a0dd6"
+      "uuid": "c9242e44-7aa2-45fa-babb-44db6950daf8"
     }
   ],
   "outliner": [
@@ -1083,22 +1083,22 @@
         0,
         0
       ],
-      "uuid": "642b7e82-66b3-4366-b8bb-9b33d9cb3fa5",
+      "uuid": "03a0d52e-1354-4eb2-9141-69c94fc0046c",
       "children": [
-        "e45a7671-5720-44f4-950e-668207c83156",
-        "5655663e-92da-4a0c-8a9b-95366bb6652b",
-        "9a50d367-9772-45aa-a429-54f0d3558cc1",
-        "006b67ea-6d4c-42bc-8292-921a92c2e2ae",
-        "64606614-ff64-46d0-ae42-9b418bd1c465",
-        "b6762d0e-daa2-4a15-81dc-4b1079f98dc6",
-        "8059329f-f4ed-4db0-afdc-d48731ceee0a",
-        "112beb06-93b1-48e8-8823-5a2bb8a1b098",
-        "bda94638-2d07-4233-9105-a0ca98e42a33",
-        "63abcfbc-1057-465b-9a31-feee135c44fa",
-        "4927d68a-c649-4da0-a840-48e7774f19a3",
-        "7bbff37d-c6a9-4483-b781-020e3cd5c8a4",
-        "d21bc0f1-7851-4952-9df8-d55aaafb1bd5",
-        "45192a8b-1b51-4178-9649-afb8476a0dd6"
+        "9162aeaa-f690-4c6d-9af5-faaa4ccf2463",
+        "f8167031-bd16-44c1-bf87-b68ed3cf3807",
+        "e8579d7e-4000-49da-8d24-6e454ed2cc61",
+        "3fd2e874-f81c-4d46-855f-41680e8e19a7",
+        "d2791515-90e6-4d02-8040-c1d4dcb6ba99",
+        "b63de6cd-fed6-4278-b678-39a202db65ae",
+        "7a2a8fd8-501e-4292-8591-f3c0d8989f14",
+        "2ece0063-8458-418d-805b-e4000df0a792",
+        "f7a92b0c-e9b9-479e-829c-38bc5b9bae4d",
+        "4d53b762-1244-4be9-bb9a-e77201eb9ce9",
+        "6161ff99-ab2d-4499-a0dd-af1661a6a802",
+        "748210cc-37e6-44f4-93ee-a6b6d193a851",
+        "ea5cc631-478b-4e4f-a130-9aec13ab4156",
+        "c9242e44-7aa2-45fa-babb-44db6950daf8"
       ]
     }
   ],

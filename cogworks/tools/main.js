@@ -34,6 +34,7 @@ const ALLOY_SMELTER = "cw:alloy_smelter";
 const WIND_TURBINE = "cw:wind_turbine";
 const SOLAR_PANEL = "cw:solar_panel";
 const WATER_WHEEL = "cw:water_wheel";
+const TRANSFORMER = "cw:transformer";
 const ENERGY_METER = "cw:energy_meter";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
@@ -46,7 +47,7 @@ const WRENCH = "cw:wrench";
 const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
 
-const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL]);
+const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER]);
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
@@ -464,6 +465,43 @@ function takeHeld(player, typeId, count) {
     }
 }
 
+function inventoryCount(player, typeId) {
+    try {
+        const container = player.getComponent("minecraft:inventory")?.container;
+        if (!container) return 0;
+        let total = 0;
+        for (let slot = 0; slot < container.size; slot++) {
+            const item = container.getItem(slot);
+            if (item?.typeId === typeId) total += item.amount;
+        }
+        return total;
+    } catch {
+        return 0;
+    }
+}
+
+function upgradeProcessor(player, block, kind) {
+    const definitions = {
+        speed: { item: "cw:gear", count: 2, max: 3, label: "Speed" },
+        efficiency: { item: "cw:circuit", count: 2, max: 3, label: "Efficiency" },
+        parallel: { item: "cw:motor", count: 1, max: 3, label: "Parallel" },
+    };
+    const definition = definitions[kind];
+    if (!definition) return;
+    const current = Number(read(block, kind, 0));
+    if (current >= definition.max) {
+        action(player, `${definition.label} is already max level.`);
+        return;
+    }
+    if (inventoryCount(player, definition.item) < definition.count) {
+        action(player, `Need ${definition.count} ${formatName(definition.item)}.`);
+        return;
+    }
+    takeHeld(player, definition.item, definition.count);
+    write(block, kind, current + 1);
+    action(player, `${definition.label} upgraded to ${current + 1}.`);
+}
+
 function insertStorage(start, typeId, amount) {
     if (!start || amount < 1) return 0;
     const group = storageGroup(start);
@@ -699,26 +737,61 @@ function storageHas(core, recipe) {
 
 function openRecipeTerminal(player, core) {
     const queue = readJson(core, "queue", []);
+    const current = MACHINE_RECIPES.find((recipe) => recipe.id === queue[0]);
+    const progress = Number(read(core, "queueProgress", 0));
+    const currentText = current
+        ? `Running: ${current.name} ${progress}/${Number(current.time || 40)}`
+        : "No active job";
     const form = new ActionFormData()
         .title("Storage Terminal — Recipe Queue")
-        .body(`Queued jobs: ${queue.length}\nSelect a machine recipe to append it to the queue. The terminal consumes stored ingredients and returns results to storage.`);
+        .body(`${currentText}\nQueued jobs: ${queue.length}\nSelect a machine recipe to append it to the queue. The terminal consumes stored ingredients and returns results to storage.`);
+    let index = 0;
+    let cancelIndex = -1;
+    let rotateIndex = -1;
+    if (queue.length) {
+        cancelIndex = index++;
+        form.button("Cancel current job");
+        rotateIndex = index++;
+        form.button("Move first job to back");
+    }
+    const recipeStart = index;
     for (const recipe of MACHINE_RECIPES) {
         form.button(`${recipe.name} [${recipe.machine}]`);
+        index++;
     }
+    const clearIndex = index++;
     form.button("Clear queue");
+    const backIndex = index++;
     form.button("Back");
     form.show(player).then((response) => {
         if (!response || response.canceled) return;
-        if (response.selection === MACHINE_RECIPES.length) {
+        if (response.selection === cancelIndex) {
+            const next = readJson(core, "queue", []);
+            next.shift();
+            writeJson(core, "queue", next);
+            write(core, "queueProgress", 0);
+            action(player, "Current job cancelled.");
+            return;
+        }
+        if (response.selection === rotateIndex) {
+            const next = readJson(core, "queue", []);
+            next.push(next.shift());
+            writeJson(core, "queue", next);
+            write(core, "queueProgress", 0);
+            action(player, "Queue rotated.");
+            return;
+        }
+        if (response.selection === clearIndex) {
             writeJson(core, "queue", []);
+            write(core, "queueProgress", 0);
             action(player, "Recipe queue cleared.");
             return;
         }
-        if (response.selection > MACHINE_RECIPES.length) {
+        if (response.selection === backIndex) {
             later(() => openStorage(player, core, "", true));
             return;
         }
-        const recipe = MACHINE_RECIPES[response.selection];
+        const recipe = MACHINE_RECIPES[response.selection - recipeStart];
         if (!recipe) return;
         const next = readJson(core, "queue", []);
         if (next.length >= 64) {
@@ -883,7 +956,7 @@ function energyBlocks(start) {
 function networkEnergy(block) {
     let total = 0;
     for (const part of energyBlocks(block)) {
-        if ([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL].includes(part.typeId)) {
+        if ([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER].includes(part.typeId)) {
             total += Number(read(part, "energy", 0));
         }
     }
@@ -891,7 +964,7 @@ function networkEnergy(block) {
 }
 
 function drainEnergy(block, amount) {
-    const sources = new Set([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL]);
+    const sources = new Set([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER]);
     const parts = energyBlocks(block).filter((part) => sources.has(part.typeId));
     let total = parts.reduce((sum, part) => sum + Number(read(part, "energy", 0)), 0);
     if (total < amount) return false;
@@ -982,6 +1055,24 @@ function tickWaterWheel(block) {
     const current = Number(read(block, "energy", 0));
     const budget = Math.min(2000, current + Math.min(12, 2 + water * 2));
     write(block, "energy", chargeBatteries(block, budget));
+}
+
+function tickTransformer(block) {
+    let energy = Number(read(block, "energy", 0));
+    if (energy < 10000) {
+        for (const next of allNeighbors(block)) {
+            if (!next || ![GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, BATTERY].includes(next.typeId)) continue;
+            const available = Number(read(next, "energy", 0));
+            if (available <= 0) continue;
+            const moved = Math.min(available, 10000 - energy);
+            if (moved <= 0) continue;
+            write(next, "energy", available - moved);
+            energy += moved;
+            if (energy >= 10000) break;
+        }
+    }
+    write(block, "energy", energy);
+    markStatus(block, energy > 0 ? "working" : "idle");
 }
 
 function storageAdjacent(block) {
@@ -1122,22 +1213,28 @@ function tickProcessor(block) {
         return;
     }
     const progress = Number(read(block, "progress", 0));
+    const speed = Number(read(block, "speed", 0));
+    const efficiency = Number(read(block, "efficiency", 0));
+    const parallel = Number(read(block, "parallel", 0));
     if (progress < Number(recipe.time || 40)) {
-        if (!drainEnergy(block, 1)) {
+        const cost = Math.max(0, Math.round(1 - efficiency * 0.2));
+        if (cost > 0 && !drainEnergy(block, cost)) {
             markStatus(block, "blocked");
             return;
         }
-        write(block, "progress", progress + 1);
+        write(block, "progress", Math.min(Number(recipe.time || 40), progress + 1 + speed));
         markStatus(block, "working");
         return;
     }
-    if (!drainEnergy(block, recipe.energy)) {
+    const recipeEnergy = Math.max(1, Math.round(recipe.energy * (1 - efficiency * 0.15)));
+    if (!drainEnergy(block, recipeEnergy)) {
         markStatus(block, "blocked");
         return;
     }
     consumeRecipe(input, recipe);
+    const copies = 1 + Math.min(3, parallel);
     for (const [typeId, amount] of Object.entries(recipe.output)) {
-        output[typeId] = Number(output[typeId] || 0) + amount;
+        output[typeId] = Number(output[typeId] || 0) + amount * copies;
     }
     write(block, "progress", 0);
     writeJson(block, "input", input);
@@ -1222,6 +1319,26 @@ function releaseQuarryChunks(block, data) {
     data.chunkArea = undefined;
 }
 
+function showQuarryMarkers(block, data) {
+    if (!data.area) return;
+    try {
+        const y = data.area.max.y + 1;
+        const map = new MolangVariableMap();
+        map.setColorRGB("variable.color", { red: 0.25, green: 0.95, blue: 0.78 });
+        for (const x of [data.area.min.x, data.area.max.x]) {
+            for (const z of [data.area.min.z, data.area.max.z]) {
+                block.dimension.spawnParticle(
+                    "minecraft:colored_flame_particle",
+                    { x: x + 0.5, y, z: z + 0.5 },
+                    map,
+                );
+            }
+        }
+    } catch {
+        // Markers are cosmetic.
+    }
+}
+
 function tickQuarry(block) {
     const data = readJson(block, "data", { buffer: {} });
     data.buffer = data.buffer || {};
@@ -1283,6 +1400,7 @@ function tickQuarry(block) {
         }
         data.scanned = Number(data.scanned || 0) + 1;
         if (!target || !mineable(target)) continue;
+        if (data.oreOnly && !target.typeId.includes("ore")) continue;
         if (!drainEnergy(block, 2)) {
             data.active = false;
             blocked = true;
@@ -1315,6 +1433,7 @@ function tickMachine(block) {
             case WIND_TURBINE: tickWindTurbine(block); break;
             case SOLAR_PANEL: tickSolarPanel(block); break;
             case WATER_WHEEL: tickWaterWheel(block); break;
+            case TRANSFORMER: tickTransformer(block); break;
             case CONVEYOR:
             case FILTER:
             case SPLITTER:
@@ -1379,6 +1498,7 @@ function setQuarryArea(player, quarry, a, b) {
     data.filters = data.filters || {};
     data.fortune = Boolean(data.fortune);
     data.silk = Boolean(data.silk);
+    data.oreOnly = Boolean(data.oreOnly);
     data.buffer = data.buffer || {};
     writeJson(quarry, "data", data);
     action(player, `Quarry area set (${maxX - minX + 1}x${maxZ - minZ + 1}, to bedrock). Connect storage and power.`);
@@ -1499,6 +1619,50 @@ function chainsaw(player, block) {
     return mined > 0;
 }
 
+function copyBlueprint(player, block) {
+    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode"];
+    const dataKeys = ["filters", "fortune", "silk", "oreOnly"];
+    const values = {};
+    for (const key of keys) {
+        const value = read(block, key, undefined);
+        if (value !== undefined) values[key] = value;
+    }
+    const data = readJson(block, "data", null);
+    const nested = {};
+    if (data) {
+        for (const key of dataKeys) {
+            if (data[key] !== undefined) nested[key] = data[key];
+        }
+    }
+    player.setDynamicProperty("cw:blueprint", JSON.stringify({
+        typeId: block.typeId,
+        values,
+        data: nested,
+    }));
+    action(player, `Blueprint copied from ${formatName(block.typeId)}.`);
+}
+
+function applyBlueprint(player, block) {
+    const raw = player.getDynamicProperty("cw:blueprint");
+    if (typeof raw !== "string") return false;
+    let blueprint;
+    try { blueprint = JSON.parse(raw); } catch { return false; }
+    if (!blueprint || blueprint.typeId !== block.typeId) {
+        action(player, "The blueprint is for a different machine.");
+        return true;
+    }
+    for (const [key, value] of Object.entries(blueprint.values || {})) {
+        write(block, key, value);
+    }
+    if (blueprint.data && Object.keys(blueprint.data).length) {
+        const data = readJson(block, "data", {});
+        Object.assign(data, blueprint.data);
+        writeJson(block, "data", data);
+    }
+    action(player, `Blueprint applied to ${formatName(block.typeId)}.`);
+    return true;
+}
+
 function rotateConveyor(block) {
     const current = facing(block);
     const next = FACINGS[(FACINGS.indexOf(current) + 1) % FACINGS.length];
@@ -1616,11 +1780,22 @@ function openProcessor(player, block) {
     const output = readJson(block, "output", {});
     const recipes = recipesForMachine(block.typeId);
     const lines = recipes.map((recipe) => `${recipe.name} (${recipe.energy} E, ${recipe.time} ticks)`);
+    const speed = Number(read(block, "speed", 0));
+    const efficiency = Number(read(block, "efficiency", 0));
+    const parallel = Number(read(block, "parallel", 0));
     const form = new ActionFormData()
         .title(formatName(block.typeId))
-        .body(`Status: ${read(block, "status", "idle")}\nProgress: ${Number(read(block, "progress", 0))}\nInput: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}\n\nRecipes:\n${lines.join("\n")}`);
-    form.button("Close");
-    form.show(player).catch(() => {});
+        .body(`Status: ${read(block, "status", "idle")}\nProgress: ${Number(read(block, "progress", 0))}\nModules: Speed ${speed}/3, Efficiency ${efficiency}/3, Parallel ${parallel}/3\nInput: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}\n\nRecipes:\n${lines.join("\n")}`)
+        .button(`Speed +1 (2 gears)`)
+        .button(`Efficiency +1 (2 circuits)`)
+        .button(`Parallel +1 (1 motor)`)
+        .button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) upgradeProcessor(player, block, "speed");
+        else if (response.selection === 1) upgradeProcessor(player, block, "efficiency");
+        else if (response.selection === 2) upgradeProcessor(player, block, "parallel");
+    }).catch(() => {});
 }
 
 function openMachine(player, block) {
@@ -1636,6 +1811,14 @@ function openMachine(player, block) {
         const energy = Number(read(block, "energy", 0));
         const form = new ActionFormData().title(formatName(block.typeId))
             .body(`Energy: ${Math.floor(energy)}/2000\nNetwork: ${networkEnergy(block)}\nHeight: Y ${block.location.y}`);
+        form.button("Close");
+        form.show(player).catch(() => {});
+        return;
+    }
+    if (block.typeId === TRANSFORMER) {
+        const energy = Number(read(block, "energy", 0));
+        const form = new ActionFormData().title("Power Transformer")
+            .body(`Buffered energy: ${Math.floor(energy)}/10,000\nNetwork: ${networkEnergy(block)}\n\nPulls adjacent generation/battery energy into its high-capacity buffer.`);
         form.button("Close");
         form.show(player).catch(() => {});
         return;
@@ -1706,11 +1889,12 @@ function openMachine(player, block) {
         const percent = Math.min(100, Math.floor(scanned / total * 100));
         const filters = Object.keys(data.filters || {});
         const form = new ActionFormData().title("Quarry Controller")
-            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
+            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nOres only: ${data.oreOnly ? "on" : "off"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
             .button(data.active ? "Pause quarry" : "Start quarry")
             .button("Clear output filters")
             .button("Toggle fortune")
             .button("Toggle silk touch")
+            .button("Toggle ores only")
             .button("Close");
         form.show(player).then((response) => {
             if (!response || response.canceled) return;
@@ -1732,6 +1916,12 @@ function openMachine(player, block) {
                 action(player, `Quarry silk touch: ${data.silk ? "on" : "off"}.`);
                 return;
             }
+            if (response.selection === 4) {
+                data.oreOnly = !data.oreOnly;
+                writeJson(block, "data", data);
+                action(player, `Quarry ores only: ${data.oreOnly ? "on" : "off"}.`);
+                return;
+            }
             if (response.selection !== 0) return;
             if (!quarryArea(data)) {
                 action(player, "Use the Quarry Surveyor on two corners first.");
@@ -1742,8 +1932,10 @@ function openMachine(player, block) {
                 return;
             }
             data.active = !data.active;
-            if (data.active) ensureQuarryChunks(block, data);
-            else releaseQuarryChunks(block, data);
+            if (data.active) {
+                ensureQuarryChunks(block, data);
+                showQuarryMarkers(block, data);
+            } else releaseQuarryChunks(block, data);
             writeJson(block, "data", data);
             action(player, data.active ? "Quarry started." : "Quarry paused.");
         }).catch(() => {});
@@ -1757,6 +1949,16 @@ function interact(event) {
     const item = event.itemStack;
     if (!player || !block) return;
 
+    if (item?.typeId === WRENCH) {
+        if (player.isSneaking) {
+            copyBlueprint(player, block);
+            return;
+        }
+        if (!BELT_TYPES.has(block.typeId)) {
+            if (!applyBlueprint(player, block)) action(player, "Sneak-use the wrench on a machine to copy its settings.");
+            return;
+        }
+    }
     if (item?.typeId === WRENCH && BELT_TYPES.has(block.typeId)) {
         const direction = rotateConveyor(block);
         damageHeld(player, item);
@@ -1829,7 +2031,7 @@ function interact(event) {
         later(() => openTerminal(player, block));
         return;
     }
-    if (block.typeId === WIND_TURBINE || block.typeId === SOLAR_PANEL || block.typeId === WATER_WHEEL || block.typeId === ENERGY_METER) {
+    if (block.typeId === WIND_TURBINE || block.typeId === SOLAR_PANEL || block.typeId === WATER_WHEEL || block.typeId === TRANSFORMER || block.typeId === ENERGY_METER) {
         later(() => openMachine(player, block));
         return;
     }

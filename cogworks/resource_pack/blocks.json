@@ -59,6 +59,9 @@
   "cw:water_wheel": {
     "sound": "wood"
   },
+  "cw:transformer": {
+    "sound": "metal"
+  },
   "cw:energy_meter": {
     "sound": "metal"
   },

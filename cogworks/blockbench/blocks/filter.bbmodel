@@ -84,7 +84,7 @@
         }
       },
       "type": "cube",
-      "uuid": "607f3f5c-73b3-4e25-bcb7-188a92a8fc15"
+      "uuid": "829d925d-2486-45c3-9833-fb26565f97f7"
     },
     {
       "name": "body_1",
@@ -160,7 +160,7 @@
         }
       },
       "type": "cube",
-      "uuid": "12804ae8-79a8-45d3-978b-11793e3b334e"
+      "uuid": "cd94beed-2d7f-4f5c-970e-14dd7d0c2e1d"
     },
     {
       "name": "body_2",
@@ -236,7 +236,7 @@
         }
       },
       "type": "cube",
-      "uuid": "9617f578-dcbf-485a-9299-044d071eecd1"
+      "uuid": "ae6fc0cf-7ecc-4052-a4e1-0a2caccd73c6"
     },
     {
       "name": "body_3",
@@ -312,7 +312,7 @@
         }
       },
       "type": "cube",
-      "uuid": "5e5364d2-1bc4-451e-a417-fc8a245f806f"
+      "uuid": "0dea8c8c-b9ac-4da1-b08e-05cb11e8cbc1"
     },
     {
       "name": "body_4",
@@ -388,7 +388,7 @@
         }
       },
       "type": "cube",
-      "uuid": "9605badc-ec8b-43ef-ac91-5d24b8d99bc8"
+      "uuid": "00a77e7e-34ae-4ab8-9a63-79c97a6b9931"
     },
     {
       "name": "body_5",
@@ -464,7 +464,7 @@
         }
       },
       "type": "cube",
-      "uuid": "0f697521-e025-4a55-85fa-ad45ade393c4"
+      "uuid": "c77b833a-b19e-40e9-a104-8879b918a456"
     },
     {
       "name": "body_6",
@@ -540,7 +540,7 @@
         }
       },
       "type": "cube",
-      "uuid": "726d7170-6418-4b52-8cb7-2daae32d3be6"
+      "uuid": "ade61a03-0041-49b8-a496-f41b965a6e8c"
     },
     {
       "name": "body_7",
@@ -616,7 +616,7 @@
         }
       },
       "type": "cube",
-      "uuid": "14c37286-3acd-4b00-8943-6cbbd33f0f96"
+      "uuid": "599ae570-ab3b-42ee-ab1e-968b61842b30"
     },
     {
       "name": "body_8",
@@ -692,7 +692,7 @@
         }
       },
       "type": "cube",
-      "uuid": "846dd54e-d045-465e-b628-c6210bdc8caf"
+      "uuid": "47227f5d-4339-4a20-a6cd-f9c33edc214e"
     },
     {
       "name": "body_9",
@@ -768,7 +768,7 @@
         }
       },
       "type": "cube",
-      "uuid": "727a2c84-437a-4677-b738-b59fcbdcd48a"
+      "uuid": "8ba4afae-d317-43e2-97d7-a64f92d9ef25"
     },
     {
       "name": "body_10",
@@ -844,7 +844,7 @@
         }
       },
       "type": "cube",
-      "uuid": "8d79ed21-c887-4e7e-8eed-dbd8ca220d8d"
+      "uuid": "67cdae77-34e0-4e81-8de7-6172cf891d0d"
     },
     {
       "name": "body_11",
@@ -920,7 +920,7 @@
         }
       },
       "type": "cube",
-      "uuid": "774e3f7f-5344-4557-8fbe-b2d2ec139b88"
+      "uuid": "e7098be1-2dcb-4620-b455-aa0408a8e89d"
     },
     {
       "name": "body_12",
@@ -996,7 +996,7 @@
         }
       },
       "type": "cube",
-      "uuid": "45226c0b-6f30-4066-9231-89704de1bfde"
+      "uuid": "63de5b32-ba75-4afe-8e1f-9ca5e7942dce"
     },
     {
       "name": "body_13",
@@ -1072,7 +1072,7 @@
         }
       },
       "type": "cube",
-      "uuid": "975847f9-c6d3-48ea-a197-a71f7f7024e9"
+      "uuid": "b2c5b5e4-6501-4fe5-9087-6e6c8b879f5e"
     }
   ],
   "outliner": [
@@ -1083,22 +1083,22 @@
         0,
         0
       ],
-      "uuid": "434812ec-c26c-4dd5-939d-ef4f0dd76218",
+      "uuid": "7d0144f3-6156-4185-aca7-99f3926e25a7",
       "children": [
-        "607f3f5c-73b3-4e25-bcb7-188a92a8fc15",
-        "12804ae8-79a8-45d3-978b-11793e3b334e",
-        "9617f578-dcbf-485a-9299-044d071eecd1",
-        "5e5364d2-1bc4-451e-a417-fc8a245f806f",
-        "9605badc-ec8b-43ef-ac91-5d24b8d99bc8",
-        "0f697521-e025-4a55-85fa-ad45ade393c4",
-        "726d7170-6418-4b52-8cb7-2daae32d3be6",
-        "14c37286-3acd-4b00-8943-6cbbd33f0f96",
-        "846dd54e-d045-465e-b628-c6210bdc8caf",
-        "727a2c84-437a-4677-b738-b59fcbdcd48a",
-        "8d79ed21-c887-4e7e-8eed-dbd8ca220d8d",
-        "774e3f7f-5344-4557-8fbe-b2d2ec139b88",
-        "45226c0b-6f30-4066-9231-89704de1bfde",
-        "975847f9-c6d3-48ea-a197-a71f7f7024e9"
+        "829d925d-2486-45c3-9833-fb26565f97f7",
+        "cd94beed-2d7f-4f5c-970e-14dd7d0c2e1d",
+        "ae6fc0cf-7ecc-4052-a4e1-0a2caccd73c6",
+        "0dea8c8c-b9ac-4da1-b08e-05cb11e8cbc1",
+        "00a77e7e-34ae-4ab8-9a63-79c97a6b9931",
+        "c77b833a-b19e-40e9-a104-8879b918a456",
+        "ade61a03-0041-49b8-a496-f41b965a6e8c",
+        "599ae570-ab3b-42ee-ab1e-968b61842b30",
+        "47227f5d-4339-4a20-a6cd-f9c33edc214e",
+        "8ba4afae-d317-43e2-97d7-a64f92d9ef25",
+        "67cdae77-34e0-4e81-8de7-6172cf891d0d",
+        "e7098be1-2dcb-4620-b455-aa0408a8e89d",
+        "63de5b32-ba75-4afe-8e1f-9ca5e7942dce",
+        "b2c5b5e4-6501-4fe5-9087-6e6c8b879f5e"
       ]
     }
   ],
