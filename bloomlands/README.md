@@ -19,6 +19,13 @@ Bloomling mobs.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.3
+
+- Changed the Bloomgate recipe from grass blocks to dirt. The portal still has
+  to be built on a 4x4 grass patch, but the item itself is now obtainable
+  without a Silk Touch pickaxe.
+- The recipe still uses only vanilla blocks: dirt, poppies and an amethyst block.
+
 ## What changed in 2.2.2
 
 - Bloomgate now builds the portal itself: use it while looking at a **grass
@@ -48,7 +55,7 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.2.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.3.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -67,11 +74,11 @@ script modules all load together.
 The **Bloomgate** item (`bl:bloom_portal`) uses only vanilla blocks:
 
 ```text
-G F G
+D F D
 F A F
-G F G
+D F D
 
-G = minecraft:grass_block
+D = minecraft:dirt
 F = minecraft:poppy
 A = minecraft:amethyst_block
 ```
@@ -190,7 +197,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.2.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.3.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

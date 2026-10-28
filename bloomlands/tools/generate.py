@@ -338,9 +338,9 @@ def build_recipes() -> None:
     recipes = {
         "bloom_portal": recipe_shaped(
             "bl:bloom_portal_recipe",
-            ["GFG", "FAF", "GFG"],
+            ["DFD", "FAF", "DFD"],
             {
-                "G": {"item": "minecraft:grass_block"},
+                "D": {"item": "minecraft:dirt"},
                 "F": {"item": "minecraft:poppy"},
                 "A": {"item": "minecraft:amethyst_block"},
             },

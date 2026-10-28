@@ -8,13 +8,13 @@
       "crafting_table"
     ],
     "pattern": [
-      "GFG",
+      "DFD",
       "FAF",
-      "GFG"
+      "DFD"
     ],
     "key": {
-      "G": {
-        "item": "minecraft:grass_block"
+      "D": {
+        "item": "minecraft:dirt"
       },
       "F": {
         "item": "minecraft:poppy"
