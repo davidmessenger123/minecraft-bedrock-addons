@@ -66,13 +66,9 @@ class Cube:
 
     @property
     def size(self) -> tuple[int, int, int]:
-        # a box may be inset by half a unit to break a coplanar face, so the
-        # extent can be fractional even though its size is a whole number
-        return (
-            int(round(self.hi[0] - self.lo[0])),
-            int(round(self.hi[1] - self.lo[1])),
-            int(round(self.hi[2] - self.lo[2])),
-        )
+        # Texture nets are measured in whole pixels even when the exported
+        # geometry keeps fractional model-space dimensions.
+        return tuple(max(1, int(round(self.hi[i] - self.lo[i]))) for i in range(3))
 
     def face_color(self, face: str) -> RGB:
         return self.faces.get(face, self.color)
@@ -133,18 +129,23 @@ class Model:
     def scaled(self, factor: float) -> "Model":
         """
         Convert a model authored in real-world centimetres into Minecraft
-        units (1 unit = 1/16 block). Every dimension that was non-zero stays
-        at least one unit, so thin plates never vanish.
+        units (1 unit = 1/16 block).
+
+        Box-UV still needs integer cube sizes, but keeping fractional
+        *origins* preserves the spacing and silhouette of small feathers,
+        toes and scales.  The generator also authors small species at the
+        24-unit detail floor, so this rounding is no longer destructive.
+        A tiny physical floor keeps degenerate boxes valid.
         """
-        def conv(v: float) -> int:
-            return int(round(v * factor))
+        def conv(v: float) -> float:
+            return round(v * factor, 4)
 
         for c in self.cubes:
             lo = [conv(v) for v in c.lo]
             hi = [conv(v) for v in c.hi]
             for i in range(3):
-                if hi[i] - lo[i] < 1 and abs(c.hi[i] - c.lo[i]) > 1e-6:
-                    hi[i] = lo[i] + 1
+                if hi[i] - lo[i] < 0.02 and abs(c.hi[i] - c.lo[i]) > 1e-6:
+                    hi[i] = round(lo[i] + 0.02, 4)
                 if hi[i] < lo[i]:
                     lo[i], hi[i] = hi[i], lo[i]
             c.lo = tuple(lo)
@@ -202,7 +203,7 @@ class Model:
         "north": (2, 1), "south": (2, -1),
     }
 
-    def deconflict(self, step: float = 0.02) -> int:
+    def deconflict(self, step: float = 0.0005) -> int:
         """
         Break coplanar box faces.
 
@@ -210,27 +211,22 @@ class Model:
         sit at exactly the same depth, so the renderer alternates between
         them and the texture flickers.
 
-        Every box is given its own small offset, the same offset on all
-        three axes so the model keeps its shape, and centred on zero so it
-        does not drift off the entity's origin. Because the offsets are
-        distinct and the largest of them is well under one unit, two boxes
-        can no longer share a face plane: their integer coordinates would
-        have to differ by exactly the offset between them, and no offset
-        pair is a whole unit.
-
+        Every box is given its own tiny offset, the same offset on all three
+        axes so the model keeps its shape, and centred on zero so it does not
+        drift off the entity's origin.  The offset spread must stay well
+        below 0.1 unit: a literal-scale 7-unit bird cannot absorb the old
+        0.7-unit spread without visibly tearing its tail and feet apart.
         Overlaps are irrelevant here - z-fighting needs coplanarity *and*
-        overlap - so this is enough.
-
-        The box *sizes* never change, so the texture layout is untouched,
-        and a box is 1/16 of a block, so the shift is invisible.
+        overlap - so a sub-pixel separation is enough.
         """
         n = len(self.cubes)
         if n < 2:
             return 0
-        # keep the total spread below one unit
+        # keep the whole spread below 0.08 unit even for the most detailed
+        # weta/snail/parrot models
         span = (n - 1) * step
-        if span >= 1.0:
-            step = 1.0 / (n - 1)
+        if span > 0.08:
+            step = 0.08 / (n - 1)
         mid = (n - 1) / 2.0
         for i, c in enumerate(self.cubes):
             d = (i - mid) * step
@@ -538,6 +534,18 @@ def render_texture(model: Model, palette: dict | None = None) -> tuple[list[list
             base = _shade(color, factor)
             _rect(pixels, gx1, gy1, gx2, gy2, base)
             _mottle(pixels, gx1, gy1, gx2, gy2, base, cube.name + face)
+            # A subtle one-pixel bevel/outline around each face makes the
+            # small, low-resolution boxes read as separate body parts instead
+            # of one flat silhouette.
+            if gx2 - gx1 > 1 and gy2 - gy1 > 1:
+                hi = _shade(base, 1.10)
+                lo = _shade(base, 0.76)
+                for x in range(gx1, gx2):
+                    pixels[gy1][x] = hi
+                    pixels[gy2 - 1][x] = lo
+                for y in range(gy1, gy2):
+                    pixels[y][gx1] = hi
+                    pixels[y][gx2 - 1] = lo
 
         # markings and legacy details share one drawing pass
         for det in list(cube.details) + list(cube.markings):
@@ -598,10 +606,12 @@ def to_geo_json(model: Model, offsets: dict[str, tuple[int, int]], identifier: s
     # Group cubes under their owning bone.
     by_bone: dict[str, list[dict]] = {}
     for c in model.cubes:
-        w, h, d = c.size
+        # Box-UV maps a cube by its integer size.  Keep the fractional
+        # origins (they preserve the silhouette) but round the cube size so
+        # the texture face rectangles and geometry agree.
         by_bone.setdefault(c.bone, []).append({
-            "origin": list(c.lo),
-            "size": list((w, h, d)),
+            "origin": [round(v, 4) for v in c.lo],
+            "size": list(c.size),
             "uv": list(offsets[c.name]),
         })
 

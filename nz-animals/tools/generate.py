@@ -28,6 +28,16 @@ NS = "nza"
 PACK_NAME = "NZ Animals"
 ADDON_FILENAME = "NZ_Animals.mcaddon"
 MIN_ENGINE = [1, 21, 130]
+# One Minecraft unit is 1/16 block. With a standard 1 m block this is
+# 6.25 cm, so the whole roster shares one real-world scale.
+#
+# Small species are authored at a larger internal resolution and then
+# reduced with the client entity's `scripts.scale`.  That keeps real-world
+# size and collision while avoiding the detail loss that comes from packing
+# a 40-70 cube kiwi or tuatara into only seven model units.
+CM_PER_UNIT = 6.25
+MIN_TARGET = 3.0
+DETAIL_TARGET = 24.0
 
 # ---------------------------------------------------------------------------
 # roster
@@ -298,8 +308,14 @@ def egg_colors(spec: dict) -> tuple[str, str]:
     return hexify(body), hexify(head)
 
 
-def client_entity(spec: dict) -> dict:
+def client_entity(spec: dict, render_scale: float) -> dict:
     base, overlay = egg_colors(spec)
+    scripts: dict = {"animate": ["movement"]}
+    if abs(render_scale - 1.0) > 1e-4:
+        # Constant Molang scale.  Geometry, UVs and animations stay at the
+        # detailed internal resolution; only the rendered model is reduced
+        # to the species' real-world size.
+        scripts["scale"] = f"{render_scale:.5f}"
     return {
         "format_version": "1.10.0",
         "minecraft:client_entity": {
@@ -315,7 +331,7 @@ def client_entity(spec: dict) -> dict:
                     "walk": f"animation.{NS}.{spec['motion']}.walk",
                     "idle": f"animation.{NS}.{spec['motion']}.idle",
                 },
-                "scripts": {"animate": ["movement"]},
+                "scripts": scripts,
                 "render_controllers": [f"controller.render.{NS}"],
                 "spawn_egg": {"base_color": base, "overlay_color": overlay},
             }
@@ -435,7 +451,7 @@ def animations(profile: str) -> dict:
                 "rotation": [f"{_sin_time(1.6)} * 10.0",
                              f"{_sin_time(0.9)} * 12.0",
                              f"{_sin_time(1.1)} * 3.0"],
-                "position": [0.0, f"{_cos_time(1.6)} * 0.6,", 0.0],
+                "position": [0.0, f"{_cos_time(1.6)} * 0.6", 0.0],
             },
             "left_wing": {"rotation": [0.0, 0.0, f"{_sin_time(0.8)} * 3.0"]},
             "right_wing": {"rotation": [0.0, 0.0, f"{_sin_time(0.8)} * -3.0"]},
@@ -454,7 +470,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.7)} * 8.0",
                              f"{_sin_time(0.8)} * 10.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.7)} * 0.5,", 0.0],
+                "position": [0.0, f"{_cos_time(1.7)} * 0.5", 0.0],
             },
             "left_leg": {"rotation": [f"{_sin_time(1.7)} * 10.0", 0.0, 0.0]},
             "right_leg": {"rotation": [f"{_sin_time(1.7)} * -10.0", 0.0, 0.0]},
@@ -472,7 +488,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.4)} * 7.0",
                              f"{_sin_time(0.7)} * 14.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.4)} * 0.5,", 0.0],
+                "position": [0.0, f"{_cos_time(1.4)} * 0.5", 0.0],
             },
             "tail": {"rotation": [0.0, f"{_sin_time(2.2)} * 16.0", 0.0]},
         }
@@ -489,7 +505,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.2)} * 7.0",
                              f"{_sin_time(0.6)} * 12.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.2)} * 0.6,", 0.0],
+                "position": [0.0, f"{_cos_time(1.2)} * 0.6", 0.0],
             },
             "tail": {"rotation": [0.0, f"{_sin_time(1.8)} * 14.0", 0.0]},
         }
@@ -507,7 +523,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.6)} * 8.0",
                              f"{_sin_time(0.8)} * 10.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.6)} * 0.5,", 0.0],
+                "position": [0.0, f"{_cos_time(1.6)} * 0.5", 0.0],
             },
             "tail": {"rotation": [0.0, f"{_sin_time(1.6)} * 10.0", 0.0]},
         }
@@ -522,7 +538,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.1)} * 10.0",
                              f"{_sin_time(0.55)} * 14.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.1)} * 0.8,", 0.0],
+                "position": [0.0, f"{_cos_time(1.1)} * 0.8", 0.0],
             },
             "tail": {"rotation": [0.0, f"{_sin_time(1.5)} * 12.0", 0.0]},
         }
@@ -559,7 +575,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(3.0)} * 8.0",
                              f"{_sin_time(1.5)} * 10.0", 0.0],
-                "position": [0.0, f"{_cos_time(3.0)} * 0.4,", 0.0],
+                "position": [0.0, f"{_cos_time(3.0)} * 0.4", 0.0],
             },
             "left_antenna": {"rotation": [0.0, 0.0,
                                            f"{_sin_time(4.0)} * 14.0"]},
@@ -575,7 +591,7 @@ def animations(profile: str) -> dict:
             "head": {
                 "rotation": [f"{_sin_time(1.1)} * 6.0",
                              f"{_sin_time(0.55)} * 8.0", 0.0],
-                "position": [0.0, f"{_cos_time(1.1)} * 0.5,", 0.0],
+                "position": [0.0, f"{_cos_time(1.1)} * 0.5", 0.0],
             },
             "left_tentacle": {"rotation": [0.0, 0.0,
                                             f"{_sin_time(1.6)} * 10.0"]},
@@ -640,8 +656,9 @@ def main() -> int:
 
         model = BUILDERS[spec["arch"]](params, palette)
         model.attach_markings(RECIPES.get(sid, []))
-        # The builders work in real-world centimetres; scale so the animal
-        # ends up `target` units long (1 unit = 1/16 block).
+        # The builders work in real-world centimetres; scale to the shared
+        # real-world model scale (1 unit = 6.25 cm) or to the 24-unit detail
+        # floor, then shrink the rendered mesh on the client.
         lo_cm = [min(c.lo[i] for c in model.cubes) for i in range(3)]
         hi_cm = [max(c.hi[i] for c in model.cubes) for i in range(3)]
         if spec.get("scale_by") == "height":
@@ -649,7 +666,15 @@ def main() -> int:
             ref_cm = hi_cm[1] - lo_cm[1]
         else:
             ref_cm = max(hi_cm[0] - lo_cm[0], hi_cm[2] - lo_cm[2])
-        model.scaled(spec["target"] / max(1e-6, ref_cm))
+        # Real-world size in Minecraft units.  1 unit = 6.25 cm; a small
+        # floor keeps the tiniest invertebrates from disappearing.
+        real_units = max(MIN_TARGET, ref_cm / CM_PER_UNIT)
+        # Build small species at a detailed internal resolution, then scale
+        # the rendered model back down on the client.  Large species are
+        # already above the detail floor.
+        detail_units = max(real_units, DETAIL_TARGET)
+        render_scale = real_units / detail_units
+        model.scaled(detail_units / max(1e-6, ref_cm))
         # Boxes that end up flush after scaling would z-fight, and the
         # texture would flicker. Inset them by half a unit, then re-ground:
         # the per-cube offsets can otherwise push the whole model a fraction
@@ -661,9 +686,13 @@ def main() -> int:
 
         geo = nzlib.to_geo_json(model, offsets, f"geometry.{NS}.{sid}", (w, h))
         write_json(os.path.join(rp, "models", "entity", f"{sid}.geo.json"), geo)
-        write_json(os.path.join(rp, "entity", f"{sid}.entity.json"), client_entity(spec))
+        write_json(os.path.join(rp, "entity", f"{sid}.entity.json"),
+                   client_entity(spec, render_scale))
 
         lo, hi = model_bounds(model)
+        # Collision is in real-world units, not the detailed internal mesh.
+        lo = [v * render_scale for v in lo]
+        hi = [v * render_scale for v in hi]
         write_json(os.path.join(bp, "entities", f"{sid}.json"), behaviour_entity(spec, lo, hi))
         write_json(os.path.join(bp, "spawn_rules", f"{sid}.json"), spawn_rules(spec))
         write_json(os.path.join(bp, "loot_tables", "entities", f"{sid}.json"), loot_table(spec))

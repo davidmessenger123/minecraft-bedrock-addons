@@ -54,7 +54,7 @@
           ],
           "position": [
             0.0,
-            "math.cos(query.life_time * 1.4) * 0.5,",
+            "math.cos(query.life_time * 1.4) * 0.5",
             0.0
           ]
         },

@@ -21,8 +21,8 @@
         "max": 20
       },
       "minecraft:collision_box": {
-        "width": 1.38,
-        "height": 0.96
+        "width": 1.06,
+        "height": 0.7
       },
       "minecraft:movement": {
         "value": 0.25

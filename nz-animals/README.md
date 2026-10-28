@@ -4,20 +4,29 @@ Adds New Zealand native animals that have **no equivalent mob in vanilla
 Minecraft Bedrock**: 29 new species, each with its own model, texture, AI
 profile, spawn rules and Creative-mode spawn egg.
 
-## What changed in 1.1.0
+## What changed in 1.1.8
 
+- **Fixed the in-game animation failure.** Eight idle clips contained a
+  trailing comma inside a Molang `position` expression
+  (`"math.cos(...) * 0.6,"`). Bedrock rejected those clips, so the affected
+  mobs stayed in their bind pose. The generator and validator now reject that
+  pattern, and every animation expression parses cleanly.
+- **Real-world sizing.** The roster now uses one real scale
+  (**1 model unit = 6.25 cm**). Small birds, lizards and invertebrates are
+  authored at a 24-unit internal resolution and rendered down with the
+  client entity's `scripts.scale`, keeping their real size without collapsing
+  their toes, eyes and feather tips into 1-unit blocks. Collision boxes are
+  calculated at the displayed size.
+- **Model detail pass.** Added bevel shading to the generated atlas, bird
+  back-feather ridges, folded-wing feather tips, toe claws, a 24-unit detail
+  pass for small species, and an octagonal, multi-stage Powelliphanta shell.
+  The old z-fighting offset was reduced from 0.7 units to under 0.08 units so
+  it cannot tear small models apart.
 - Rebuilt all 29 models around the shared archetype builders: jointed wings
   with primary and secondary feathers, six insect legs, penguin and seal
-  flippers, segmented swimmer bodies, a flat spiral-disc snail shell, and
-  side-facing eyes.
-- Replaced the old two-pose cycles with larger per-profile walk and idle
-  animations. The walk blend weight is 6.0, so the legs and wings move as
-  soon as the mob starts walking.
-- Grounded every model at y=0 after the z-fighting offsets, so nothing sits
-  half a unit into the ground.
-- Collision boxes now use the torso, head and leg bones only. Wings, fins,
-  flippers, tails and antennae no longer inflate the hitbox.
-- Corrected the tūī bill to black; it had been orange.
+  flippers, segmented swimmer bodies, and side-facing eyes.
+- Walk and idle clips keep the per-profile motion; collision boxes exclude
+  wings, fins, flippers, tails and antennae.
 
 ## Repository layout
 
@@ -204,9 +213,10 @@ are the committed copies of it, and are what the `.mcaddon` contains.
 
 Every species is described in **real-world centimetres** in `tools/roster.py`,
 and the builders lay the animal out in those centimetres — so the proportions
-are literally correct rather than eyeballed. Each entry then gives a
-`target`: how long the animal should be in Minecraft units (1 unit = 1/16 of a
-block). The generator scales one to the other.
+are literally correct rather than eyeballed. The generator now uses one shared
+conversion for the whole roster: **1 Minecraft unit = 6.25 cm**. Very small
+invertebrates receive a 3-unit floor so they remain visible at Minecraft's
+resolution; everything else is scaled at real-world relative size.
 
 The measurements are **sourced, not invented**:
 
@@ -301,11 +311,14 @@ not the colour I assumed":
 Run `python3 tools/fetch_refs.py` to download the reference photographs into
 `refs/` if you want to re-check the colours against them.
 
-`target` is chosen so each species lands at a sensible Minecraft mob size
-(a chicken is 16 units / 1 block) rather than at literal real-world scale,
-which would make a kiwi four units tall and a sperm whale thirteen blocks
-long. A tui ends up about the size of a chicken; the moa is three blocks tall;
-the orca is five blocks long.
+The displayed size is the real-world size: a kiwi is about 0.45 blocks long,
+a tui about 0.3 blocks, a moa about 2.6 blocks tall and an orca about 6.9
+blocks long. Species below 24 model units are authored at 24 units and scaled
+down on the client, so their geometry keeps useful detail at those small
+sizes. The only deliberate exception is a **3-unit floor** for the tiniest
+invertebrates, which would otherwise disappear below Minecraft's rendering
+resolution. The files in `preview/` render that internal detail mesh, so they
+show the modelling detail rather than the smaller in-game projection.
 
 Each model is built from many small boxes rather than one blob:
 

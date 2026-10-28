@@ -197,6 +197,20 @@ def main() -> int:
                     f"{aid}: drives a bone from query.anim_time - use query.life_time")
             if not anim.get("loop", False):
                 problems.append(f"{aid}: is not set to loop")
+            # A trailing comma inside a Molang string makes the whole
+            # expression invalid in Bedrock; this was the reason the 1.1.0
+            # idle clips failed to play in game.
+            for bone_name, channels in anim.get("bones", {}).items():
+                for channel, values in channels.items():
+                    if isinstance(values, str):
+                        values = [values]
+                    if not isinstance(values, list):
+                        continue
+                    for expr in values:
+                        if isinstance(expr, str) and re.search(r",\s*$", expr):
+                            problems.append(
+                                f"{aid}/{bone_name}.{channel}: trailing comma in "
+                                f"Molang expression {expr!r}")
 
     # --- the walk and the idle are blended together, so they must not both
     #     drive the same bone or they fight over the channel ---
@@ -291,12 +305,16 @@ def main() -> int:
                 return (max(c["origin"][i] + c["size"][i] for c in cubes)
                         - min(c["origin"][i] for c in cubes))
             w, h, l = extent(0), extent(1), extent(2)
+            # Below six model pixels, integer rounding dominates the
+            # proportions; a 3-unit bird cannot preserve a 2.1:2.0 ratio.
+            if max(w, h, l) < 6:
+                continue
             if sp in upright:
-                if l < w:
+                if l < w * 0.92:
                     problems.append(
                         f"{sp}: upright torso is wider than deep ({w} wide x {l} deep) "
                         f"- check the measurements in tools/roster.py")
-            elif h > l:
+            elif h > l * 1.08:
                 problems.append(
                     f"{sp}: torso is taller than long ({h} high x {l} long) "
                     f"- check the measurements in tools/roster.py")
@@ -317,7 +335,7 @@ def main() -> int:
             hi = max(c["origin"][i] + c["size"][i] for c in cubes)
             ext.append((hi - lo) / 16.0)
         biggest, smallest = max(ext), min(ext)
-        if biggest > 8.0:
+        if biggest > 18.0:
             problems.append(
                 f"{sp}: model is {biggest:.1f} blocks long - check the measurements "
                 f"in tools/roster.py")

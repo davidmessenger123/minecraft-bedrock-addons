@@ -3,7 +3,10 @@ Detailed, proportion-accurate model builders for the NZ animals.
 
 Everything is authored in REAL-WORLD CENTIMETRES so the proportions are
 literally correct, then scaled to Minecraft units (1 unit = 1/16 block) by
-`Model.scaled()`, which the roster drives from each species' target length.
+`Model.scaled()`.  The generator applies one shared real-world scale
+(1 unit = 6.25 cm) and uses a larger internal resolution plus the client
+entity's `scripts.scale` for small species, preserving detail without
+changing their displayed size.
 
 The models are deliberately built from many overlapping boxes.  A single box
 per body part is cheap, but it reads as a cardboard carton in game: no
@@ -76,6 +79,12 @@ def _foot(m: Model, bone: str, prefix: str, cx: float, cz: float,
               cz + half + foot_len * 0.15),
              (cx + off * leg_d + leg_d * 0.16, y_top * 0.78,
               cz + half + foot_len * 0.95), toe)
+        claw = tuple(max(0, int(v * 0.55)) for v in toe)
+        _box(m, bone, f"{prefix}_claw{i}",
+             (cx + off * leg_d - leg_d * 0.10, 0,
+              cz + half + foot_len * 0.90),
+             (cx + off * leg_d + leg_d * 0.10, y_top * 0.30,
+              cz + half + foot_len * 1.08), claw)
     _box(m, bone, f"{prefix}_back_toe",
          (cx - leg_d * 0.2, 0, cz - half - foot_len * 0.55),
          (cx + leg_d * 0.2, y_top * 0.7, cz - half - foot_len * 0.05), toe)
@@ -155,6 +164,13 @@ def build_bird(p: dict, pal: dict) -> Model:
          (-body_w * 0.32, hip + body_h * 0.62, body_back - body_len * 0.24),
          (body_w * 0.32, hip + body_h * 0.82, body_back - body_len * 0.04),
          back)
+    # A low ridge of back feathers breaks the rectangular torso silhouette.
+    for i in range(3):
+        z0 = body_front + body_len * (0.24 + i * 0.18)
+        _box(m, "body", f"back_feather{i}",
+             (-body_w * 0.24, body_top - body_h * 0.03, z0),
+             (body_w * 0.24, body_top + body_h * 0.035,
+              z0 + body_len * 0.13), back)
 
     # --- neck: two stepped boxes, hidden under the head -------------------
     neck_top = body_top + head_h * 0.26
@@ -285,6 +301,13 @@ def build_bird(p: dict, pal: dict) -> Model:
                  (x0, shoulder_y - body_h * 0.08, wing_root_z + body_len * 0.84),
                  (x1, shoulder_y + body_h * 0.09, wing_root_z + body_len * 0.96),
                  wing_top)
+            # Three small feather tips along the folded trailing edge.
+            for i in range(3):
+                z0 = wing_root_z + body_len * (0.72 + i * 0.075)
+                _box(m, bone, f"{side}_wing_fold{i}",
+                     (x0, shoulder_y - body_h * (0.06 + i * 0.025), z0),
+                     (x1, shoulder_y + body_h * (0.05 - i * 0.01),
+                      z0 + body_len * 0.085), wing_top)
 
     # --- legs and feet ----------------------------------------------------
     leg_x = body_w * 0.26
@@ -628,6 +651,13 @@ def build_ratite(p: dict, pal: dict) -> Model:
          (-body_w * 0.34, body_top - body_h * 0.10, body_front + body_len * 0.12),
          (body_w * 0.34, body_top + body_h * 0.02, body_back - body_len * 0.12),
          back)
+    # Ragged back feathers along the spine.
+    for i in range(4):
+        z0 = body_front + body_len * (0.20 + i * 0.16)
+        _box(m, "body", f"back_feather{i}",
+             (-body_w * 0.26, body_top - body_h * 0.02, z0),
+             (body_w * 0.26, body_top + body_h * 0.05,
+              z0 + body_len * 0.12), back)
 
     # --- neck: three stepped boxes, leaning forward ----------------------
     neck_base_z = body_front + body_w * 0.16
@@ -1087,9 +1117,17 @@ def build_snail(p: dict, pal: dict) -> Model:
     sh3 = pal.get("shell_top", sh)
     dark = pal.get("dark", sh2)
 
-    _box(m, "shell", "shell_base",
-         (-shell_w * 0.50, foot_h, -shell_d * 0.50),
-         (shell_w * 0.50, foot_h + shell_h * 0.45, shell_d * 0.50), sh2)
+    # An octagonal disc built from three overlapping sections.  A single
+    # cube made the shell read as a square cardboard box from above.
+    _box(m, "shell", "shell_base_mid",
+         (-shell_w * 0.50, foot_h, -shell_d * 0.34),
+         (shell_w * 0.50, foot_h + shell_h * 0.45, shell_d * 0.34), sh2)
+    _box(m, "shell", "shell_base_front",
+         (-shell_w * 0.34, foot_h, -shell_d * 0.50),
+         (shell_w * 0.34, foot_h + shell_h * 0.45, -shell_d * 0.30), sh2)
+    _box(m, "shell", "shell_base_back",
+         (-shell_w * 0.34, foot_h, shell_d * 0.30),
+         (shell_w * 0.34, foot_h + shell_h * 0.45, shell_d * 0.50), sh2)
     _box(m, "shell", "shell_spire",
          (-shell_w * 0.10, foot_h + shell_h * 0.45, -shell_d * 0.10),
          (shell_w * 0.10, foot_h + shell_h * 0.65, shell_d * 0.10), sh3)
@@ -1100,6 +1138,17 @@ def build_snail(p: dict, pal: dict) -> Model:
     _box(m, "shell", "shell_aperture",
          (shell_w * 0.14, foot_h + shell_h * 0.04, -shell_d * 0.56),
          (shell_w * 0.40, foot_h + shell_h * 0.40, -shell_d * 0.52), dark)
+
+    # Three low spiral steps around the crown.  They are deliberately offset
+    # toward the opening so the top view reads as a coil, not a wedding cake.
+    for i in range(3):
+        r = shell_w * (0.30 - i * 0.07)
+        zc = -shell_d * (0.04 + i * 0.06)
+        y0 = foot_h + shell_h * (0.47 + i * 0.07)
+        y1 = foot_h + shell_h * (0.55 + i * 0.07)
+        _box(m, "shell", f"shell_coil{i}",
+             (-r, y0, zc - r * 0.75),
+             (r, y1, zc + r * 0.75), sh3 if i % 2 == 0 else sh)
 
     # --- head and eye stalks ---------------------------------------------
     hz = -foot_len * 0.50

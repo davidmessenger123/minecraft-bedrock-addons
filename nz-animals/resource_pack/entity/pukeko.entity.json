@@ -20,7 +20,8 @@
       "scripts": {
         "animate": [
           "movement"
-        ]
+        ],
+        "scale": "0.40585"
       },
       "render_controllers": [
         "controller.render.nza"
