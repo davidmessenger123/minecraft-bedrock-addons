@@ -19607,7 +19607,7 @@
    ],
    "src_ext": "png",
    "fmt": "PNG",
-   "size": 387,
+   "size": 372,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,
@@ -19625,7 +19625,7 @@
    ],
    "src_ext": "png",
    "fmt": "PNG",
-   "size": 286,
+   "size": 276,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,
@@ -66264,6 +66264,24 @@
    "used": false
   },
   {
+   "base": "ui/audio_colored_24x24",
+   "name": "audio_colored_24x24",
+   "category": "ui",
+   "w": 24,
+   "h": 24,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 281,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
    "base": "ui/auto_save",
    "name": "auto_save",
    "category": "ui",
@@ -70596,6 +70614,24 @@
    "src_ext": "png",
    "fmt": "PNG",
    "size": 259,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
+   "base": "ui/creator_icon",
+   "name": "creator_icon",
+   "category": "ui",
+   "w": 20,
+   "h": 17,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 484,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,
@@ -75120,6 +75156,24 @@
    "used": false
   },
   {
+   "base": "ui/gift_glyph",
+   "name": "gift_glyph",
+   "category": "ui",
+   "w": 9,
+   "h": 9,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 144,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
    "base": "ui/gift_square",
    "name": "gift_square",
    "category": "ui",
@@ -75186,6 +75240,42 @@
    "src_ext": "png",
    "fmt": "PNG",
    "size": 121,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
+   "base": "ui/glyph_audio_pack",
+   "name": "glyph_audio_pack",
+   "category": "ui",
+   "w": 12,
+   "h": 12,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 146,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
+   "base": "ui/glyph_audio_pack_small",
+   "name": "glyph_audio_pack_small",
+   "category": "ui",
+   "w": 9,
+   "h": 9,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 150,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,
@@ -75815,7 +75905,7 @@
    ],
    "src_ext": "png",
    "fmt": "PNG",
-   "size": 268,
+   "size": 265,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,
@@ -90216,6 +90306,24 @@
    "src_ext": "png",
    "fmt": "PNG",
    "size": 470,
+   "animated": false,
+   "flipbook": null,
+   "tint_mask": false,
+   "used": false
+  },
+  {
+   "base": "ui/time",
+   "name": "time",
+   "category": "ui",
+   "w": 16,
+   "h": 16,
+   "frames": 1,
+   "exts": [
+    "png"
+   ],
+   "src_ext": "png",
+   "fmt": "PNG",
+   "size": 214,
    "animated": false,
    "flipbook": null,
    "tint_mask": false,

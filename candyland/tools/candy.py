@@ -2,6 +2,21 @@
 import math
 import random
 
+
+def stable_seed(text):
+    """Stable 31-bit seed for reproducible texture variation.
+
+    Python's built-in hash() is salted per process, so using it for texture
+    seeds made two builds of the same pack produce different block and UI art.
+    FNV-1a keeps rebuilds byte-for-byte deterministic.
+    """
+    value = 2166136261
+    for byte in str(text).encode("utf-8"):
+        value ^= byte
+        value = (value * 16777619) & 0xFFFFFFFF
+    return value & 0x7FFFFFFF
+
+
 # ------------------------------------------------------------------ colour
 
 def clamp(v, lo=0, hi=255):

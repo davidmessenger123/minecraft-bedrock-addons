@@ -10,16 +10,16 @@ mobs, lavender menus, sugar-crystal skies, and hand-drawn UI art.
 
 | | |
 |---|---|
-| Source colour textures replaced | **5,085** |
-| Compatibility textures added | **2** (`cake`, `camera`) |
-| Generated images shipped | **5,087** |
+| Source colour textures replaced | **5,091** |
+| Compatibility textures added | **4** (`cake`, `camera`, two pale-moss aliases) |
+| Generated images shipped | **5,095** |
 | Blocks / items | 1,294 / 916 |
-| Entity / UI / GUI | 848 / 1,643 / 193 |
+| Entity / UI / GUI | 848 / 1,649 / 193 |
 | Trims / particles / models | 57 / 31 / 26 |
 | Paintings / environment / maps | 22 / 18 / 16 |
 | Colormaps / misc / atlases | 8 / 5 / 2 |
 | Animated flipbooks | 83 |
-| Pack size | **6.4 MB** / 6.1 MiB (`.mcpack`) |
+| Pack size | **6.6 MB** / 6.3 MiB (`.mcpack`) |
 
 Every runtime *colour* texture in the Bedrock samples tree is covered. The 3,134
 PBR companion maps (`_mers`, normal maps, height maps) are intentionally not
@@ -39,7 +39,7 @@ More previews:
 
 ### Windows 10/11, Android, iOS/iPadOS
 
-1. Download **`dist/Candyland-v1.0.1.mcpack`**.
+1. Download **`dist/Candyland-v1.0.2.mcpack`**.
 2. Open the `.mcpack` file with Minecraft. The game imports it automatically.
 3. Go to **Settings → Global Resources → My Packs**, select **Candyland**, and
    activate it. For a specific world, use **World Settings → Resource Packs**.
@@ -54,7 +54,7 @@ Manual install locations (useful if file association does not work):
 - **iOS/iPadOS:** use the Files app to share the `.mcpack` to Minecraft; direct
   filesystem access is restricted by the app sandbox.
 
-`dist/Candyland-v1.0.1.zip` contains exactly the same files and can be unpacked
+`dist/Candyland-v1.0.2.zip` contains exactly the same files and can be unpacked
 into `resource_packs` manually. Keep the folder name `Candyland` (or any name
 you like) and make sure `manifest.json` is at its root.
 
@@ -74,6 +74,9 @@ has the pack applied. Availability varies by platform and game version.
   Animated block strips keep their frame layout. Entities, UI, GUI, maps and
   other UV-sensitive assets stay at their original resolution so skins and
   layouts do not break.
+- **Default-compatible layout:** texture paths, extensions, atlas keys, flipbook
+  metadata and UV grids follow the Bedrock **1.26.60.5** resource tree. The
+  deliberate departures are the candy palette and the 2× block/item resolution.
 - **Tint-aware:** grass, leaves, vines, water masks and other runtime-tinted
   textures stay luminance masks; the `colormap/` assets were replaced with
   candy-tinted biome maps.
@@ -83,19 +86,23 @@ has the pack applied. Availability varies by platform and game version.
 - **Original promo slots:** the Marketplace sidebar and Realms store images are
   replaced with original lollipop badges and a candy landscape rather than
   derivative third-party art.
-- **Atlas compatibility:** `terrain_texture.json`, `item_texture.json`,
-  `flipbook_textures.json` and `texture_list.json` keep vanilla names and layout.
-  Two stale pale-moss aliases in the sample config were pointed at the real
-  texture names, and compatibility `blocks/cake.png` and `items/camera.png`
-  assets were added for legacy entries that the samples do not include.
+- **Atlas fidelity:** `terrain_texture.json`, `item_texture.json`,
+  `flipbook_textures.json` and `texture_list.json` are copied byte-for-byte from
+  Bedrock **1.26.60.5**. Four compatibility images are added for references that
+  the samples leave dangling, including legacy `hanging_pale_moss_middle` and
+  `hanging_pale_moss_tip` aliases; the vanilla configs themselves are untouched.
+- **Sample coverage:** the current 1.26.60.5 sample tree adds six UI textures
+  (`time`, creator/gift glyphs and audio-pack glyphs) which are included here.
 
 ## Validation
 
-The pack was checked with `tools/validate.py`:
+The pack was checked with `tools/validate.py` against Bedrock **1.26.60.5**:
 
-- all 5,085 source colour bases have an inventory entry and an output image;
+- all 5,091 source colour bases have an inventory entry and a matching output
+  path, extension and dimensions;
 - every generated PNG/TGA/JPEG decodes and has the expected dimensions;
 - all 3,275 texture references in the terrain and item atlases resolve;
+- the four vanilla texture configs are byte-identical to the sample tree;
 - all 83 flipbook frame indices fit their vertical strips;
 - the manifest UUIDs, module type, 256×256 icon and `.mcpack` archive are valid;
 - result: **0 errors, 0 warnings**.
@@ -123,8 +130,9 @@ python3 tools/build_pack.py      # icon, manifest, .mcpack, .zip
 python3 tools/validate.py        # full structural check
 ```
 
-`tools/build_pack.py` uses deterministic UUIDs derived from the pack identity,
-so rebuilding version 1.0.0 produces the same manifest identity. Change
+`tools/build_pack.py` uses deterministic UUIDs derived from the pack identity.
+Block, item and UI variation seeds are also stable across processes, so rebuilding
+the same version reproduces the same manifest identity and texture bytes. Change
 `VERSION` in that script for a new release.
 
 ## Layout
@@ -146,16 +154,15 @@ candyland/
 ├── build/            # inventory, problems, validation report
 ├── previews/         # README images
 └── dist/
-    ├── Candyland-v1.0.1.mcpack
-    └── Candyland-v1.0.1.zip
+    ├── Candyland-v1.0.2.mcpack
+    └── Candyland-v1.0.2.zip
 ```
 
 ## Notes and limitations
 
 - **Bedrock only.** This pack uses Bedrock texture paths and the Bedrock manifest
-  format; it is not a Java resource pack. It targets Bedrock **1.26.50** (the
-  `min_engine_version` in the manifest); lower that value if you need to test it
-  on an older client.
+  format; it is not a Java resource pack. It targets Bedrock **1.26.60** (the
+  `min_engine_version` in the manifest) and the 1.26.60.5 Bedrock samples.
 - **No PBR/RTX set.** Shader packs may still apply their own PBR materials; the
   colour art is designed for standard rendering.
 - **UI layout is preserved.** Panels are re-themed, but button positions and
@@ -163,8 +170,8 @@ candyland/
 - **Tiny effects stay tiny.** One-pixel particles and some legacy 1×1 effects
   cannot carry much detail by design.
 - **Legacy entries.** A few vanilla sample config entries refer to assets that
-  are absent from the samples; compatibility assets and corrected paths are
-  included where possible.
+  are absent from the samples; compatibility files are supplied beside the
+  vanilla paths, and the default atlas JSON remains unchanged.
 
 ## Credits
 

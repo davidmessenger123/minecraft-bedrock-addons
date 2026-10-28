@@ -22,7 +22,7 @@ import pnglib
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "resource_pack")
 DIST = os.path.join(ROOT, "dist")
-VERSION = [1, 0, 1]
+VERSION = [1, 0, 2]
 VERSION_STR = ".".join(map(str, VERSION))
 PACK_NAME = "Candyland"
 
@@ -253,6 +253,21 @@ def build_extras():
     c = camera_icon()
     pnglib.png_write(cam, c.w, c.h, c.px)
     extra.append(cam)
+
+    # The 1.26.60 terrain atlas still contains two legacy hanging_pale_moss
+    # aliases, while the shipped colour files use pale_hanging_moss.  Keep the
+    # default atlas byte-for-byte and provide the two alias files beside the
+    # real textures.
+    blocks_dir = os.path.join(PACK, "textures", "blocks")
+    for real, alias in (
+        ("pale_hanging_moss_middle.png", "hanging_pale_moss_middle.png"),
+        ("pale_hanging_moss_tip.png", "hanging_pale_moss_tip.png"),
+    ):
+        source = os.path.join(blocks_dir, real)
+        target = os.path.join(blocks_dir, alias)
+        if os.path.isfile(source):
+            shutil.copyfile(source, target)
+            extra.append(target)
     for path in extra:
         print("extra ->", path)
     return extra
@@ -270,7 +285,7 @@ def build_manifest():
             "description": "Every vanilla colour texture, reimagined as candy: blocks, items, mobs, skies and menus.",
             "uuid": header_id,
             "version": VERSION,
-            "min_engine_version": [1, 26, 50],
+            "min_engine_version": [1, 26, 60],
         },
         "modules": [
             {

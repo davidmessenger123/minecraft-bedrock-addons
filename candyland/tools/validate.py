@@ -25,7 +25,19 @@ SRC = os.path.join(SRC_ROOT, "textures")
 DIST = os.path.join(ROOT, "dist")
 ICON = os.path.join(PACK, "pack_icon.png")
 MANIFEST = os.path.join(PACK, "manifest.json")
-MCPACK = os.path.join(DIST, "Candyland-v1.0.0.mcpack")
+try:
+    _manifest_header = json.load(open(MANIFEST, encoding="utf-8"))["header"]
+    PACK_VERSION = _manifest_header["version"]
+except Exception:
+    PACK_VERSION = [1, 0, 2]
+PACK_VERSION_STR = ".".join(str(part) for part in PACK_VERSION)
+MCPACK = os.path.join(DIST, "Candyland-v%s.mcpack" % PACK_VERSION_STR)
+DEFAULT_CONFIGS = (
+    "terrain_texture.json",
+    "item_texture.json",
+    "flipbook_textures.json",
+    "texture_list.json",
+)
 
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import pnglib  # noqa: E402
@@ -140,6 +152,8 @@ def main():
     extras = {
         "blocks/cake.png": None,
         "items/camera.png": None,
+        "blocks/hanging_pale_moss_middle.png": None,
+        "blocks/hanging_pale_moss_tip.png": None,
     }
     actual = set()
     for root, _dirs, files in os.walk(TEX):
@@ -229,6 +243,23 @@ def main():
     if unresolved:
         errors.append("unresolved atlas references: %s" % unresolved[:30])
 
+    # Keep Mojang's atlas/layout JSON untouched.  Candyland changes pixels,
+    # not texture keys, frame layouts or atlas mappings.
+    config_diffs = []
+    for fn in DEFAULT_CONFIGS:
+        src_cfg = os.path.join(SRC, fn)
+        dst_cfg = os.path.join(TEX, fn)
+        if not os.path.isfile(src_cfg):
+            continue
+        if not os.path.isfile(dst_cfg):
+            config_diffs.append(fn)
+            continue
+        with open(src_cfg, "rb") as src_fh, open(dst_cfg, "rb") as dst_fh:
+            if src_fh.read() != dst_fh.read():
+                config_diffs.append(fn)
+    if config_diffs:
+        errors.append("vanilla texture configs differ: %s" % config_diffs)
+
     # ---------------------------------------------------------- flipbook frames
     flip = relaxed_json(os.path.join(TEX, "flipbook_textures.json"))
     bad_flips = []
@@ -267,9 +298,9 @@ def main():
     for label, value in (("header", header.get("uuid")), ("module", module.get("uuid"))):
         if not value or not UUID_RE.match(value):
             errors.append("invalid %s UUID: %r" % (label, value))
-    if header.get("min_engine_version") != [1, 26, 50]:
+    if header.get("min_engine_version") != [1, 26, 60]:
         warnings.append("unexpected min_engine_version: %r" % (header.get("min_engine_version"),))
-    if header.get("version") != [1, 0, 1]:
+    if header.get("version") != PACK_VERSION:
         warnings.append("unexpected pack version: %r" % (header.get("version"),))
     if module.get("type") != "resources":
         errors.append("manifest module is not a resources module")

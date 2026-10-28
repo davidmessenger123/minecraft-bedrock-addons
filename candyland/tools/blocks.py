@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from candy import (Canvas, Ramp, clamp, get_ramp, make_ramp, mix, luma,
-                   at_luma, hex_rgb, DYE_COLORS, DYE_ALIASES)  # noqa: E402
+                   at_luma, hex_rgb, DYE_COLORS, DYE_ALIASES, stable_seed)  # noqa: E402
 import patterns as P  # noqa: E402
 import restyle  # noqa: E402
 
@@ -100,7 +100,7 @@ def ores(name):
 
 def _ore_canvas(body, gem, name, deep):
     c = Canvas(32)
-    P.ore(c, abs(hash(name)) % 9999, get_ramp(body), get_ramp(gem),
+    P.ore(c, stable_seed(name) % 9999, get_ramp(body), get_ramp(gem),
           gems=3 if deep else 4, deep=deep)
     return c
 
@@ -127,7 +127,7 @@ def leaf_canvas(name, e):
     elif wood:
         ramp = WOODS[wood][3]
     c = Canvas(32)
-    P.leaves(c, abs(hash(name)) % 9999, get_ramp(ramp),
+    P.leaves(c, stable_seed(name) % 9999, get_ramp(ramp),
              opaque=("opaque" in name), colored=colored, flowers=flowers,
              density=.90)
     return c
@@ -137,7 +137,7 @@ def planks_canvas(name, e, boards=5):
     wood = wood_of(name) or "oak"
     pr, bark, core, leaf, style = WOODS[wood]
     c = Canvas(32)
-    P.planks(c, abs(hash(name)) % 9999, get_ramp(pr), get_ramp(core),
+    P.planks(c, stable_seed(name) % 9999, get_ramp(pr), get_ramp(core),
              boards=boards, grain=.38 if wood != "bamboo" else .22,
              knot=wood not in ("bamboo", "birch"))
     return c
@@ -148,16 +148,16 @@ def log_side_canvas(name, e, stripped=False):
     pr, bark, core, leaf, style = WOODS[wood]
     c = Canvas(32)
     if stripped:
-        P.log_side(c, abs(hash(name)) % 9999, get_ramp(core), get_ramp(pr),
+        P.log_side(c, stable_seed(name) % 9999, get_ramp(core), get_ramp(pr),
                    get_ramp(core), bark=False)
     elif wood in ("cherry", "crimson", "warped", "mangrove"):
-        P.log_side(c, abs(hash(name)) % 9999, get_ramp(bark), get_ramp(core),
+        P.log_side(c, stable_seed(name) % 9999, get_ramp(bark), get_ramp(core),
                    get_ramp(pr), bark=True)
     elif style == "bamboo":
-        P.log_side(c, abs(hash(name)) % 9999, get_ramp("sour_apple"),
+        P.log_side(c, stable_seed(name) % 9999, get_ramp("sour_apple"),
                    get_ramp("pistachio"), get_ramp("mint"), bark=False)
     else:
-        P.log_side(c, abs(hash(name)) % 9999, get_ramp(bark), get_ramp(core),
+        P.log_side(c, stable_seed(name) % 9999, get_ramp(bark), get_ramp(core),
                    get_ramp(pr), bark=True)
     return c
 
@@ -167,17 +167,17 @@ def log_end_canvas(name, e, stripped=False):
     pr, bark, core, leaf, style = WOODS[wood]
     c = Canvas(32)
     if stripped:
-        P.log_end(c, abs(hash(name)) % 9999, get_ramp(core), get_ramp(pr),
+        P.log_end(c, stable_seed(name) % 9999, get_ramp(core), get_ramp(pr),
                   get_ramp(core))
     else:
-        P.log_end(c, abs(hash(name)) % 9999, get_ramp(core), get_ramp(bark),
+        P.log_end(c, stable_seed(name) % 9999, get_ramp(core), get_ramp(bark),
                   get_ramp(pr))
     return c
 
 
 def block_canvas(name, e):
     """Return a Canvas for one block texture."""
-    seed = abs(hash(name)) % 99999
+    seed = stable_seed(name) % 99999
 
     # ---------------------------------------------------------- plants
     if (name.startswith("leaves_") or name.endswith("_leaves")

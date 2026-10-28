@@ -58,20 +58,13 @@ def build(limit=None):
         written += 1
         if i % 200 == 0:
             print("  %4d/%d  %5.1fs" % (i, len(entries), time.time() - t0))
-    # atlas config is copied verbatim: names and layout are unchanged
+    # atlas config is copied verbatim.  Keep the vanilla JSON exactly as
+    # shipped; compatibility texture aliases are added by build_pack.py.
     tex = os.path.join(PACK, "textures")
     os.makedirs(tex, exist_ok=True)
     src_cfg = os.path.join(restyle.SRC, "terrain_texture.json")
     dst_cfg = os.path.join(tex, "terrain_texture.json")
     shutil.copyfile(src_cfg, dst_cfg)
-    # The sample config has two stale aliases for pale hanging moss.  Point
-    # them at the textures that actually exist so no atlas lookup can fail.
-    with open(dst_cfg, encoding="utf-8") as fh:
-        cfg = fh.read()
-    cfg = cfg.replace("textures/blocks/hanging_pale_moss_",
-                      "textures/blocks/pale_hanging_moss_")
-    with open(dst_cfg, "w", encoding="utf-8") as fh:
-        fh.write(cfg)
     print("blocks: %d written in %.1fs" % (written, time.time() - t0))
     if problems:
         print("size problems:", len(problems))

@@ -20,7 +20,7 @@ import colormaps  # noqa: E402
 import environment  # noqa: E402
 import pnglib  # noqa: E402
 import restyle  # noqa: E402
-from candy import Canvas, clamp, get_ramp, hex_rgb, make_ramp, mix  # noqa: E402
+from candy import Canvas, clamp, get_ramp, hex_rgb, make_ramp, mix, stable_seed  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(ROOT, "resource_pack")
@@ -70,7 +70,7 @@ def write(entry, c):
     elif ext in ("jpg", "jpeg"):
         cache = "/tmp/opencode/jpgcache"
         os.makedirs(cache, exist_ok=True)
-        tmp = os.path.join(cache, str(abs(hash(entry["base"]))) + ".png")
+        tmp = os.path.join(cache, str(stable_seed(entry["base"])) + ".png")
         pnglib.png_write(tmp, c.w, c.h, c.px)
         subprocess.run(["magick", tmp, "-background", "#2a1626",
                         "-alpha", "remove", "-alpha", "off", "-quality", "92",
@@ -143,7 +143,7 @@ def candy_swirl(c, cx, cy, radius, shell, stripe, cream, turns=2.0):
 def promo_badge(entry):
     """Original candy badge for the Marketplace sidebar icon slots."""
     w, h = entry["w"], entry["h"]
-    seed = abs(hash(entry["base"])) % 99999
+    seed = stable_seed(entry["base"]) % 99999
     rnd = random.Random(seed)
     c = Canvas(w, h)
     palettes = [
