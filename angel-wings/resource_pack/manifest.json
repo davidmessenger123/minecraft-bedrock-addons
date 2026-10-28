@@ -2,11 +2,11 @@
   "format_version": 2,
   "header": {
     "name": "Angel Wings",
-    "description": "46-unit layered feather wings, cut-out texture, glide and flap animations.",
+    "description": "54-unit, 95-cube layered feather wings, cut-out texture, glide and flap animations.",
     "uuid": "a1b2c3d4-4444-4444-8888-123456789abc",
     "version": [
       1,
-      2,
+      3,
       0
     ],
     "min_engine_version": [
@@ -22,7 +22,7 @@
       "uuid": "a1b2c3d4-5555-4444-8888-123456789abc",
       "version": [
         1,
-        2,
+        3,
         0
       ]
     }

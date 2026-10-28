@@ -4,7 +4,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
-| **Angel Wings** | Add-on | 1.2.0 | [AngelWings-1.2.0.mcaddon](angel-wings/AngelWings-1.2.0.mcaddon) |
+| **Angel Wings** | Add-on | 1.3.0 | [AngelWings-1.3.0.mcaddon](angel-wings/AngelWings-1.3.0.mcaddon) |
 | **Mobile Phone** | Add-on | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
 | **Drone Companion** | Add-on | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
 | **NZ Animals** | Add-on | 1.1.0 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
@@ -39,7 +39,8 @@ A chest-slot angel-wing item with momentum-preserving, elytra-style flight.
 - Look up/down to trade speed for height or height for speed; W/A/S/D gives air control.
 - Sneak to fold the wings and fall normally.
 - 432 durability, repaired with phantom membranes (one point per second of flight).
-- 46-unit-wide, 40-cube layered feather model with a 128×128 cut-out atlas, rendered on
+- 54-unit-wide, 95-cube layered feather model with an ivory/gold leading arm,
+  fanned coverts, staggered primaries and a 128×128 cut-out atlas, rendered on
   the player's back through an attachable with grounded/airborne/flap animations.
 
 See [angel-wings/README.md](angel-wings/README.md) for the full controls, model details,
@@ -228,6 +229,7 @@ details and the Blockbench source.
 ## Releases
 
 - [Angel Wings 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/angel-wings-v1.2.0)
+- [Angel Wings 1.3.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/angel-wings-v1.3.0)
 - [Mobile Phone 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/mobile-phone-v1.1.0)
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
 - [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)

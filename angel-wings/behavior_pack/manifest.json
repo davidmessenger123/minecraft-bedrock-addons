@@ -2,11 +2,11 @@
   "format_version": 2,
   "header": {
     "name": "Angel Wings",
-    "description": "Elytra-style Angel Wings with momentum-preserving glide, flapping and a 46-unit feather model.",
+    "description": "Elytra-style Angel Wings with momentum-preserving glide, flapping and a detailed 54-unit, 95-cube feather model.",
     "uuid": "a1b2c3d4-1111-4444-8888-123456789abc",
     "version": [
       1,
-      2,
+      3,
       0
     ],
     "min_engine_version": [
@@ -22,7 +22,7 @@
       "uuid": "a1b2c3d4-2222-4444-8888-123456789abc",
       "version": [
         1,
-        2,
+        3,
         0
       ]
     },
@@ -33,7 +33,7 @@
       "uuid": "a1b2c3d4-3333-4444-8888-123456789abc",
       "version": [
         1,
-        2,
+        3,
         0
       ],
       "entry": "scripts/angel_wings.js"
@@ -44,7 +44,7 @@
       "uuid": "a1b2c3d4-4444-4444-8888-123456789abc",
       "version": [
         1,
-        2,
+        3,
         0
       ]
     },

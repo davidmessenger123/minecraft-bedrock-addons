@@ -4,21 +4,22 @@ A pair of elytra-style Angel Wings that let the player glide. The wing mesh is
 modelled in Blockbench, exported as Bedrock geometry, rendered on the player's
 back through an attachable, and driven by a Script API glide controller.
 
-Version **1.2.0** adds a new 46-unit layered feather model, a 128×128 cut-out
-texture, a grounded / airborne / flap animation controller, and
-momentum-preserving flight. The wings no longer push you forward every tick:
-you keep the speed you build up, and pressing jump flaps the wings for lift and
-a small forward boost.
+Version **1.3.0** rebuilds the wing mesh as a **95-cube, 7-bone layered feather
+model**: broad coverts, scapulars, long secondaries, staggered primaries,
+underwing layers, an alula fan, and an ivory-and-gold leading arm with visible
+joints. The wings now span 54 units and keep their transparent cut-out atlas,
+grounded / airborne / flap controller, and momentum-preserving glide.
 
 ## Folder layout
 
 ```
 angel-wings/
-├── AngelWings-1.2.0.mcaddon                  # packaged add-on
+├── AngelWings-1.3.0.mcaddon                  # packaged add-on
 ├── AngelWings.bbmodel                        # Blockbench source project
 ├── tools/
 │   ├── generate_geometry.py                  # regenerates the wing geometry
-│   └── generate_textures.py                  # regenerates the atlas, icon and pack icons
+│   ├── generate_textures.py                  # regenerates the atlas, icon and pack icons
+│   └── rebuild_bbmodel.py                    # syncs the Blockbench project to the geometry
 ├── behavior_pack/
 │   ├── manifest.json
 │   ├── pack_icon.png
@@ -43,16 +44,21 @@ angel-wings/
 
 Open `AngelWings.bbmodel` in Blockbench to edit it. The project contains:
 
-- `body` (root bone, pivot `[0, 24, 0]`, 6 cubes) — the back plate and clasp
-- `left_wing` / `right_wing` (pivots `[±1.5, 23, 2.8]`, 6 cubes each)
-- `left_wing_mid` / `right_wing_mid` (5 cubes each)
-- `left_wing_tip` / `right_wing_tip` (6 cubes each)
+- `body` (root bone, pivot `[0, 24, 0]`, 9 cubes) — the back plate, gold rim,
+  spine feather and gem clasp
+- `left_wing` / `right_wing` (pivots `[±1.5, 23, 2.8]`, 16 cubes each) —
+  shoulder caps, arm roots, scapulars, coverts and underwing coverts
+- `left_wing_mid` / `right_wing_mid` (13 cubes each) — arm segments, coverts and
+  fanned secondaries
+- `left_wing_tip` / `right_wing_tip` (14 cubes each) — wrist arm, alula coverts,
+  staggered primaries and dark under-primaries
 
-That is **40 cubes in 7 bones**. The wings span **46 units** (2.875 blocks)
-from tip to tip (`x = −23…+23`), are **11 units** tall (`y = 15…26`), and sit
-**2–4.5 units behind the torso** (`z = 2…4.5`). The feather plates use
-transparent cut-outs on the large faces and gold trim on the thin edges, so the
-attachable uses the `entity_alphatest` material.
+That is **95 cubes in 7 bones**. The wings span **54 units** (3.375 blocks)
+from tip to tip (`x = −27…+27`), are roughly **11.3 units** tall, and sit
+**2–4.8 units behind the torso**. Feather plates use transparent cut-outs on the
+broad faces and fully transparent thin edges, so no rectangular gold frame is
+drawn around each feather. The leading arm is ivory with gold ridges and joint
+caps, and the whole mesh uses the `entity_alphatest` material.
 
 The `.bbmodel` contains numeric preview animations with the same IDs as the
 shipped Molang animations. The resource-pack file
@@ -65,7 +71,7 @@ centred on it.
 
 ## How to install
 
-1. Open **`AngelWings-1.2.0.mcaddon`** to import both packs at once.
+1. Open **`AngelWings-1.3.0.mcaddon`** to import both packs at once.
    Alternatively, copy the `behavior_pack` and `resource_pack` folders into the
    world's `behavior_packs/` and `resource_packs/` folders (or zip each folder
    and import it as `.mcpack`).
@@ -134,9 +140,10 @@ render correctly, and `entity_alphatest_glint` provides the enchantment glint.
   `GLIDE_LIFT`, `FLAP_LIFT`, `FLAP_FORWARD` and the other tuning constants at
   the top of `behavior_pack/scripts/angel_wings.js`.
 - **Wing shape**: edit `tools/generate_geometry.py`, run
-  `python3 tools/generate_geometry.py`, then import the exported geometry into
-  `AngelWings.bbmodel` (or edit the cubes directly in Blockbench and
-  `File → Export → Export Bedrock Model`).
+  `python3 tools/generate_geometry.py`, then run
+  `python3 tools/rebuild_bbmodel.py` to sync the Blockbench project. You can
+  also edit the cubes directly in Blockbench and
+  `File → Export → Export Bedrock Model`.
 - **Animations**: edit `resource_pack/animations/angel_wings.animation.json`;
   the Blockbench preview animations use the same names and values.
 - **Textures**: the worn wings use
@@ -166,6 +173,10 @@ render correctly, and `entity_alphatest_glint` provides the enchantment glint.
 
 ## Changelog
 
+- **1.3.0** — rebuilt wing mesh: 95 cubes in 7 bones, 54-unit wingspan, ivory
+  leading arm with gold joints, scapulars, layered coverts, alula fan, long
+  secondaries, staggered primaries, darker underwing feathers, transparent
+  feather edge UVs, and a more detailed 128×128 cut-out atlas.
 - **1.2.0** — new 40-cube / 7-bone wing model with a 46-unit wingspan, 128×128
   cut-out feather atlas, grounded / airborne / flap animation controller,
   momentum-preserving glide with WASD air control and pitch steering, jump-edge

@@ -121,72 +121,85 @@ def _feather_pixel(px, W, H, cell_x, cell_y, local_x, local_y, direction, color)
 
 
 def draw_feather_cell(px, W, H, cell_x, cell_y, direction, tip_x, half_h, variant):
-    """Draw one transparent feather cell pointing left or right."""
+    """Draw one transparent feather cell pointing left or right.
+
+    The vane is asymmetrical: a tighter leading edge, a fuller trailing edge
+    and a tapered point.  Gold is painted onto the silhouette and shaft rather
+    than around the 32x32 cell, so it does not become a rectangular frame.
+    """
     base_x = 2
     span = max(1, tip_x - base_x)
+    top_edge = []
+    bottom_edge = []
 
-    # Body: vertical slices give a smooth ivory-to-gold gradient.
     for lx in range(base_x, tip_x + 1):
         t = (lx - base_x) / span
-        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
-        if width < 0.4:
-            width = 0.4
-        top = 16 - width * 0.92
-        bottom = 16 + width * 1.08
+        # Broad near the base, then a deliberate tapered point.
+        width = half_h * (math.sin(math.pi * min(1.0, t * 1.04)) ** 0.64)
+        if t > 0.78:
+            width *= max(0.18, 1.0 - ((t - 0.78) / 0.22) * 0.72)
+        if variant == 0:
+            width *= 0.92
+        if width < 0.45:
+            width = 0.45
+        top = 16 - width * (0.88 if variant < 2 else 0.74)
+        bottom = 16 + width * (1.10 if variant < 2 else 1.18)
+        top_edge.append((lx, top))
+        bottom_edge.append((lx, bottom))
         for ly in range(int(round(top)), int(round(bottom)) + 1):
-            tt = t
-            if tt < 0.62:
-                color = mix(CREAM_HI, CREAM, tt / 0.62)
+            if t < 0.58:
+                color = mix(CREAM_HI, CREAM, t / 0.58)
             else:
-                color = mix(CREAM, GOLD, (tt - 0.62) / 0.38)
-            # Warm rim on the outer edge of the feather.
+                color = mix(CREAM, GOLD, (t - 0.58) / 0.42)
+            # Warm rim and a cool-ish upper edge.
             if ly <= int(round(top)) + 1:
-                color = mix(color, GOLD_HI, 0.45)
+                color = mix(color, GOLD_HI, 0.55)
             elif ly >= int(round(bottom)) - 1:
-                color = mix(color, SHADE, 0.45)
+                color = mix(color, SHADE, 0.55)
             _feather_pixel(px, W, H, cell_x, cell_y, lx, ly, direction, color)
 
-    # Outline the silhouette so the cut-out edge reads at small sizes.
-    for lx in range(base_x, tip_x + 1):
-        t = (lx - base_x) / span
-        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
-        if width < 0.4:
-            width = 0.4
-        top = int(round(16 - width * 0.92))
-        bottom = int(round(16 + width * 1.08))
-        _feather_pixel(px, W, H, cell_x, cell_y, lx, top, direction, OUTLINE)
-        _feather_pixel(px, W, H, cell_x, cell_y, lx, bottom, direction, OUTLINE)
+    # Outline the silhouette, including the tapered tip.
+    for lx, top in top_edge:
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, int(round(top)),
+                       direction, OUTLINE)
+    for lx, bottom in bottom_edge:
+        _feather_pixel(px, W, H, cell_x, cell_y, lx, int(round(bottom)),
+                       direction, OUTLINE)
 
     # Shaft and a lit upper edge.
     for lx in range(base_x, tip_x + 1):
         _feather_pixel(px, W, H, cell_x, cell_y, lx, 16, direction, SHAFT)
         _feather_pixel(px, W, H, cell_x, cell_y, lx, 15, direction, CREAM_HI)
         if lx % 3 == 0:
-            _feather_pixel(px, W, H, cell_x, cell_y, lx, 17, direction, GOLD_DARK)
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, 17, direction,
+                           GOLD_DARK)
 
-    # Barbs slanting toward the tip.  Variant 0 is the soft covert, 3 the
-    # long primary with the strongest barbs.
+    # Slanted barbs, stronger on the long primaries.
     barb_count = 3 + variant
     for i in range(barb_count):
-        t = 0.22 + 0.16 * i
+        t = 0.18 + 0.15 * i
         lx = int(base_x + span * t)
-        width = half_h * (math.sin(math.pi * min(1.0, t * 1.03)) ** 0.72)
+        width = half_h * (math.sin(math.pi * min(1.0, t * 1.04)) ** 0.64)
+        if t > 0.78:
+            width *= max(0.18, 1.0 - ((t - 0.78) / 0.22) * 0.72)
+        width = max(0.45, width)
         for side in (-1, 1):
             y0 = 16
-            y1 = int(round(16 + side * width * 0.82))
-            for step in range(1, 5):
-                yy = int(round(y0 + (y1 - y0) * step / 4))
-                xx = lx + int(round(step * 1.15))
+            y1 = int(round(16 + side * width * 0.88))
+            for step in range(1, 6):
+                yy = int(round(y0 + (y1 - y0) * step / 5))
+                xx = lx + int(round(step * 1.05))
                 _feather_pixel(px, W, H, cell_x, cell_y, xx, yy,
                                direction, mix(SHADE, CREAM_MID, 0.35))
-            _feather_pixel(px, W, H, cell_x, cell_y, lx, y1, direction, OUTLINE)
+            _feather_pixel(px, W, H, cell_x, cell_y, lx, y1, direction,
+                           OUTLINE)
 
     # Gold quill at the base.
-    for ly in range(14, 19):
-        for lx in range(0, 3):
+    for ly in range(13, 20):
+        for lx in range(0, 4):
             _feather_pixel(px, W, H, cell_x, cell_y, lx, ly, direction, GOLD)
-    _feather_pixel(px, W, H, cell_x, cell_y, 1, 15, direction, GOLD_HI)
-    _feather_pixel(px, W, H, cell_x, cell_y, 1, 18, direction, GOLD_DARK)
+    _feather_pixel(px, W, H, cell_x, cell_y, 1, 14, direction, GOLD_HI)
+    _feather_pixel(px, W, H, cell_x, cell_y, 1, 19, direction, GOLD_DARK)
 
 
 def draw_swatch(px, W, H, x0, y0, base, hi, lo, kind):
@@ -218,7 +231,7 @@ def generate_entity_texture(path):
     px = [[(0, 0, 0, 0) for _ in range(W)] for _ in range(H)]
 
     # Row 0: left wing, pointing right.  Row 1: right wing, pointing left.
-    left_specs = [(28, 13.5, 0), (30, 12.5, 1), (31, 11.5, 2), (31, 10.0, 3)]
+    left_specs = [(29, 14.0, 0), (30, 14.5, 1), (31, 13.0, 2), (31, 11.5, 3)]
     for i, (tip, half_h, variant) in enumerate(left_specs):
         draw_feather_cell(px, W, H, i * 32, 0, +1, tip, half_h, variant)
         draw_feather_cell(px, W, H, i * 32, 32, -1, tip, half_h, variant)
