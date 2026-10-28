@@ -1,0 +1,53 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:glowbud_leaves",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_glowbud_leaves",
+          "render_method": "alpha_test",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "minecraft:geometry.full_block",
+        "material_instances": {
+          "*": {
+            "texture": "bl_glowbud_leaves",
+            "render_method": "alpha_test",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.2
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 3.0
+      },
+      "minecraft:destruction_particles": {
+        "texture": "bl_glowbud_leaves",
+        "particle_count": 16
+      },
+      "minecraft:light_emission": 3,
+      "minecraft:light_dampening": 3,
+      "minecraft:map_color": "#4a9b57",
+      "minecraft:display_name": "tile.bl:glowbud_leaves.name",
+      "minecraft:collision_box": true,
+      "minecraft:loot": "loot_tables/blocks/glowbud_leaves.json",
+      "minecraft:flammable": {
+        "catch_chance_modifier": 5,
+        "destroy_chance_modifier": 20
+      }
+    }
+  }
+}

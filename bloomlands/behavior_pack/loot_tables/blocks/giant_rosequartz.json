@@ -1,0 +1,14 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "bl:giant_rosequartz",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

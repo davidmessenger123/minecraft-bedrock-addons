@@ -1,0 +1,31 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "bl:bloom_portal_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "FSF",
+      "SAS",
+      "FSF"
+    ],
+    "key": {
+      "F": {
+        "item": "minecraft:poppy"
+      },
+      "S": {
+        "item": "minecraft:fern"
+      },
+      "A": {
+        "item": "minecraft:amethyst_shard"
+      }
+    },
+    "result": {
+      "item": "bl:bloom_portal",
+      "count": 1
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "bl:dewdrop_snail",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/dewdrop_snail"
+      },
+      "geometry": {
+        "default": "geometry.bl.dewdrop_snail"
+      },
+      "animations": {
+        "crawl": "animation.bl.dewdrop_snail.crawl",
+        "idle": "animation.bl.dewdrop_snail.idle",
+        "controller": "controller.animation.bl.dewdrop_snail"
+      },
+      "scripts": {
+        "animate": [
+          "controller"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.bl.bloomling"
+      ],
+      "spawn_egg": {
+        "base_color": "#5fb8b0",
+        "overlay_color": "#f5d98a"
+      },
+      "enable_attachables": false
+    }
+  }
+}

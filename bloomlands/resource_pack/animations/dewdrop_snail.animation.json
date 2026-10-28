@@ -1,0 +1,104 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.bl.dewdrop_snail.crawl": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "foot": {
+          "scale": [
+            1,
+            "1 + math.sin(query.anim_time * 180) * 0.04",
+            1
+          ],
+          "position": [
+            0,
+            "math.sin(query.anim_time * 180) * 0.1",
+            0
+          ]
+        },
+        "body": {
+          "rotation": [
+            "math.sin(query.anim_time * 180) * 3",
+            0,
+            "math.sin(query.anim_time * 180 + 90) * 2"
+          ]
+        },
+        "shell": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 180 + 45) * 0.12",
+            0
+          ],
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 180) * 1.5",
+            0
+          ]
+        },
+        "eye_stalk_left": {
+          "rotation": [
+            "-8 + math.sin(query.anim_time * 90) * 6",
+            0,
+            "10 + math.sin(query.anim_time * 70) * 5"
+          ]
+        },
+        "eye_stalk_right": {
+          "rotation": [
+            "-8 + math.sin(query.anim_time * 90 + 60) * 6",
+            0,
+            "-10 - math.sin(query.anim_time * 70 + 60) * 5"
+          ]
+        },
+        "flower": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 70) * 10",
+            "math.sin(query.anim_time * 60) * 5"
+          ]
+        },
+        "leaf": {
+          "rotation": [
+            0,
+            "28 + math.sin(query.anim_time * 45) * 5",
+            0
+          ]
+        }
+      }
+    },
+    "animation.bl.dewdrop_snail.idle": {
+      "loop": true,
+      "animation_length": 4.0,
+      "bones": {
+        "eye_stalk_left": {
+          "rotation": [
+            "-8 + math.sin(query.anim_time * 50) * 4",
+            0,
+            "10 + math.sin(query.anim_time * 40) * 4"
+          ]
+        },
+        "eye_stalk_right": {
+          "rotation": [
+            "-8 + math.sin(query.anim_time * 50 + 100) * 4",
+            0,
+            "-10 - math.sin(query.anim_time * 40 + 100) * 4"
+          ]
+        },
+        "flower": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 45) * 8",
+            "math.sin(query.anim_time * 35) * 4"
+          ]
+        },
+        "shell": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 60) * 0.08",
+            0
+          ]
+        }
+      }
+    }
+  }
+}

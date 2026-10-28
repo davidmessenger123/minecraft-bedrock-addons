@@ -1,0 +1,14 @@
+[
+  {
+    "flipbook_texture": "textures/blocks/bl_bloomheart",
+    "atlas_tile": "bl_bloomheart",
+    "ticks_per_frame": 5,
+    "blend_frames": true,
+    "frames": [
+      0,
+      1,
+      2,
+      3
+    ]
+  }
+]

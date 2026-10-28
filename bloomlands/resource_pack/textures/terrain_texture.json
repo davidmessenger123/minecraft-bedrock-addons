@@ -1,0 +1,89 @@
+{
+  "resource_pack_name": "bloomlands",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "bl_petal_grass_side": {
+      "textures": "textures/blocks/bl_petal_grass_side"
+    },
+    "bl_petal_grass_top": {
+      "textures": "textures/blocks/bl_petal_grass_top"
+    },
+    "bl_bloom_dirt": {
+      "textures": "textures/blocks/bl_bloom_dirt"
+    },
+    "bl_bloom_stone": {
+      "textures": "textures/blocks/bl_bloom_stone"
+    },
+    "bl_bloomwood_log_side": {
+      "textures": "textures/blocks/bl_bloomwood_log_side"
+    },
+    "bl_bloomwood_log_top": {
+      "textures": "textures/blocks/bl_bloomwood_log_top"
+    },
+    "bl_bloomwood_planks": {
+      "textures": "textures/blocks/bl_bloomwood_planks"
+    },
+    "bl_petal_path": {
+      "textures": "textures/blocks/bl_petal_path"
+    },
+    "bl_canopy_leaves": {
+      "textures": "textures/blocks/bl_canopy_leaves"
+    },
+    "bl_glowbud_leaves": {
+      "textures": "textures/blocks/bl_glowbud_leaves"
+    },
+    "bl_dewgrass": {
+      "textures": "textures/blocks/bl_dewgrass"
+    },
+    "bl_lily_bloom": {
+      "textures": "textures/blocks/bl_lily_bloom"
+    },
+    "bl_portal_flower": {
+      "textures": "textures/blocks/bl_portal_flower"
+    },
+    "bl_bloomheart": {
+      "textures": "textures/blocks/bl_bloomheart"
+    },
+    "bl_giant_sunflower": {
+      "textures": "textures/blocks/bl_giant_sunflower"
+    },
+    "bl_giant_rosequartz": {
+      "textures": "textures/blocks/bl_giant_rosequartz"
+    },
+    "bl_giant_skybell": {
+      "textures": "textures/blocks/bl_giant_skybell"
+    },
+    "bl_giant_amethyst": {
+      "textures": "textures/blocks/bl_giant_amethyst"
+    },
+    "bl_giant_emberbloom": {
+      "textures": "textures/blocks/bl_giant_emberbloom"
+    },
+    "bl_giant_lumen": {
+      "textures": "textures/blocks/bl_giant_lumen"
+    },
+    "bl_sunpetal": {
+      "textures": "textures/blocks/bl_sunpetal"
+    },
+    "bl_rosequartz": {
+      "textures": "textures/blocks/bl_rosequartz"
+    },
+    "bl_skybell": {
+      "textures": "textures/blocks/bl_skybell"
+    },
+    "bl_moondrop": {
+      "textures": "textures/blocks/bl_moondrop"
+    },
+    "bl_emberbloom": {
+      "textures": "textures/blocks/bl_emberbloom"
+    },
+    "bl_amethyst_bell": {
+      "textures": "textures/blocks/bl_amethyst_bell"
+    },
+    "bl_lumen_bell": {
+      "textures": "textures/blocks/bl_lumen_bell"
+    }
+  }
+}

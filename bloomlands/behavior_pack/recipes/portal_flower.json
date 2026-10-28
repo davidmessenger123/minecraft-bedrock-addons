@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "bl:portal_flower_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "bl:lumen_bell"
+      },
+      {
+        "item": "bl:rosequartz"
+      },
+      {
+        "item": "bl:sunpetal"
+      },
+      {
+        "item": "minecraft:glowstone_dust"
+      }
+    ],
+    "result": {
+      "item": "bl:portal_flower",
+      "count": 2
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "bl:petal_path_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "bl:bloom_dirt"
+      },
+      {
+        "item": "bl:sunpetal"
+      },
+      {
+        "item": "bl:rosequartz"
+      }
+    ],
+    "result": {
+      "item": "bl:petal_path",
+      "count": 2
+    }
+  }
+}

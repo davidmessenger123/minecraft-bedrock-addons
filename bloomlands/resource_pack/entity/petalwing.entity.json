@@ -1,0 +1,35 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "bl:petalwing",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/petalwing"
+      },
+      "geometry": {
+        "default": "geometry.bl.petalwing"
+      },
+      "animations": {
+        "fly": "animation.bl.petalwing.fly",
+        "idle": "animation.bl.petalwing.idle"
+      },
+      "scripts": {
+        "animate": [
+          "fly",
+          "idle"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.bl.bloomling"
+      ],
+      "spawn_egg": {
+        "base_color": "#f7a8c8",
+        "overlay_color": "#7b4b9e"
+      },
+      "enable_attachables": false
+    }
+  }
+}

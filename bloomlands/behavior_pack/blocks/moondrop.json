@@ -1,0 +1,77 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:moondrop",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.bl.small_flower",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_moondrop",
+          "render_method": "alpha_test",
+          "face_dimming": true,
+          "ambient_occlusion": false
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.bl.small_flower",
+        "material_instances": {
+          "*": {
+            "texture": "bl_moondrop",
+            "render_method": "alpha_test",
+            "face_dimming": true,
+            "ambient_occlusion": false
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.05
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:destruction_particles": {
+        "texture": "bl_moondrop",
+        "particle_count": 12
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#dbe8f3",
+      "minecraft:display_name": "tile.bl:moondrop.name",
+      "minecraft:collision_box": false,
+      "minecraft:loot": "loot_tables/blocks/moondrop.json",
+      "minecraft:selection_box": {
+        "origin": [
+          -6.0,
+          0,
+          -6.0
+        ],
+        "size": [
+          12,
+          16,
+          12
+        ]
+      },
+      "minecraft:placement_filter": {
+        "conditions": [
+          {
+            "allowed_faces": [
+              "up"
+            ],
+            "block_filter": [
+              "minecraft:grass_block",
+              "minecraft:dirt",
+              "minecraft:podzol",
+              "minecraft:mycelium",
+              "bl:petal_grass",
+              "bl:bloom_dirt",
+              "bl:petal_path"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

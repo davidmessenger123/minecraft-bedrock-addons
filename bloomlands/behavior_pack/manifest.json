@@ -1,0 +1,62 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Bloomlands Behaviour Pack",
+    "description": "The Bloomlands dimension, Bloomgate and peaceful Bloomling mobs.",
+    "uuid": "0f5382a4-3c41-59e6-90c5-62335d404872",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "description": "Bloomlands data",
+      "type": "data",
+      "uuid": "a5872a02-3791-5906-91da-cef1bd3f3c19",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "description": "Bloomlands dimension, portal and population script",
+      "type": "script",
+      "language": "javascript",
+      "entry": "scripts/main.js",
+      "uuid": "16282ad5-85ba-53ff-a7e1-e44ef299439d",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "1c0cc0a0-872d-559e-8732-b0845267f916",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

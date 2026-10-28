@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "bl:petal_grass_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "bl:bloom_dirt"
+      },
+      {
+        "item": "bl:sunpetal"
+      },
+      {
+        "item": "bl:dewgrass"
+      }
+    ],
+    "result": {
+      "item": "bl:petal_grass",
+      "count": 1
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:dewgrass",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.bl.dewgrass",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_dewgrass",
+          "render_method": "alpha_test",
+          "face_dimming": true,
+          "ambient_occlusion": false
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.bl.dewgrass",
+        "material_instances": {
+          "*": {
+            "texture": "bl_dewgrass",
+            "render_method": "alpha_test",
+            "face_dimming": true,
+            "ambient_occlusion": false
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.05
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:destruction_particles": {
+        "texture": "bl_dewgrass",
+        "particle_count": 16
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#6fbd52",
+      "minecraft:display_name": "tile.bl:dewgrass.name",
+      "minecraft:collision_box": false,
+      "minecraft:loot": "loot_tables/blocks/dewgrass.json",
+      "minecraft:selection_box": {
+        "origin": [
+          -8.0,
+          0,
+          -8.0
+        ],
+        "size": [
+          16,
+          16,
+          16
+        ]
+      },
+      "minecraft:placement_filter": {
+        "conditions": [
+          {
+            "allowed_faces": [
+              "up"
+            ],
+            "block_filter": [
+              "minecraft:grass_block",
+              "minecraft:dirt",
+              "bl:petal_grass",
+              "bl:bloom_dirt",
+              "bl:petal_path"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

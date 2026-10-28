@@ -1,0 +1,9 @@
+{
+  "resource_pack_name": "bloomlands",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "bloom_portal": {
+      "textures": "textures/items/bloom_portal"
+    }
+  }
+}

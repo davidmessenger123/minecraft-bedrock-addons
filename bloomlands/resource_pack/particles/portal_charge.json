@@ -1,0 +1,89 @@
+{
+  "format_version": "1.10.0",
+  "particle_effect": {
+    "description": {
+      "identifier": "bl:portal_charge",
+      "basic_render_parameters": {
+        "material": "particles_add",
+        "texture": "textures/particle/bloom_particles"
+      }
+    },
+    "components": {
+      "minecraft:emitter_rate_instant": {
+        "num_particles": 36
+      },
+      "minecraft:emitter_lifetime_once": {
+        "active_time": 0.1
+      },
+      "minecraft:emitter_shape_sphere": {
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "radius": 0.45,
+        "direction": "outwards"
+      },
+      "minecraft:particle_lifetime_expression": {
+        "max_lifetime": "math.random(0.8, 1.8)"
+      },
+      "minecraft:particle_initial_speed": "math.random(0.4, 1.4)",
+      "minecraft:particle_motion_dynamic": {
+        "linear_drag_coefficient": 0.9,
+        "linear_acceleration": [
+          0,
+          0.8,
+          0
+        ]
+      },
+      "minecraft:particle_appearance_billboard": {
+        "size": [
+          "math.random(0.06, 0.16)",
+          "math.random(0.06, 0.16)"
+        ],
+        "facing_camera_mode": "lookat_xyz",
+        "uv": {
+          "texture_width": 64,
+          "texture_height": 64,
+          "uv": [
+            16,
+            0
+          ],
+          "uv_size": [
+            16,
+            16
+          ]
+        }
+      },
+      "minecraft:particle_initial_spin": {
+        "rotation": "math.random(0, 360)",
+        "rotation_rate": "math.random(-90, 90)"
+      },
+      "minecraft:particle_appearance_tinting": {
+        "color": {
+          "interpolant": "variable.particle_age / variable.particle_lifetime",
+          "gradient": [
+            [
+              1.0,
+              0.95,
+              0.7,
+              1.0
+            ],
+            [
+              1.0,
+              0.75,
+              0.86,
+              0.7
+            ],
+            [
+              1.0,
+              0.8,
+              1.0,
+              0.0
+            ]
+          ]
+        }
+      }
+    }
+  }
+}

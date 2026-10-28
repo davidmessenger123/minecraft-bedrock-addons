@@ -1,0 +1,22 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:fog_settings": {
+    "description": {
+      "identifier": "bl:bloomlands_pool"
+    },
+    "distance": {
+      "air": {
+        "fog_start": 20,
+        "fog_end": 96,
+        "fog_color": "#c7f5ee",
+        "render_distance_type": "fixed"
+      },
+      "water": {
+        "fog_start": 2,
+        "fog_end": 24,
+        "fog_color": "#3aa49d",
+        "render_distance_type": "fixed"
+      }
+    }
+  }
+}

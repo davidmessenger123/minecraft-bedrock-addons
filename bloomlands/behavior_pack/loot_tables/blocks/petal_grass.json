@@ -1,0 +1,14 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "bl:petal_grass",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

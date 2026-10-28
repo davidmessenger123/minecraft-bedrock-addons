@@ -1,6 +1,6 @@
 # Minecraft Bedrock Add-ons & Texture Packs
 
-Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
+Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
@@ -12,6 +12,7 @@ Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
+| **Bloomlands** | Add-on | 1.0.0 | [Bloomlands-1.0.0.mcaddon](bloomlands/Bloomlands-1.0.0.mcaddon) |
 
 ## Install
 
@@ -22,7 +23,7 @@ Six add-ons and two texture packs for **Minecraft Bedrock Edition**:
 3. Enable the packs for your world under **Settings → World → Behavior Packs** and
    **Resource Packs** (or Global Resources). Texture packs such as Petal & Star are
    activated under **Resource Packs** or **Global Resources**.
-4. No experiments are required. The four scripted add-ons use stable Script API
+4. No experiments are required. The five scripted add-ons use stable Script API
    2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
    experiment. Texture packs and the data-only add-ons have no Script API dependency.
 5. Reload the world.
@@ -146,6 +147,30 @@ full texture counts, design notes, validation results and rebuild commands.
 The [block](candyland/previews/blocks.png) and
 [item](candyland/previews/items.png) contact sheets show the visual style.
 
+## Bloomlands
+
+A flower-ring portal into a peaceful custom flower dimension with five themed
+regions and three detailed peaceful mobs.
+
+- Portal item `bl:bloom_portal` builds a 7×7 petal plaza, eight Bloomgate flowers
+  and a central Bloomheart. Stand on the Bloomheart to travel.
+- Void dimension `bl:bloomlands`, script-built once into a 120-block floating
+  garden island with a saved return portal.
+- Regions: Sunpetal Meadow, Whispering Canopy, Giant's Garden, Petal Hills,
+  Mirror Pool and the Bloomlands Edge.
+- 25 custom blocks: seven small flowers, six giant blooms, Bloomwood, petal grass,
+  paths, canopy leaves and an animated Bloomheart.
+- Three peaceful Bloomlings: Petalwing, Mossling and Dewdrop Snail, each with a
+  128×128 atlas, detailed geometry, animations and Creative spawn eggs.
+- No hostile mobs: the biome omits the `monster` tag and a script sweep removes
+  any vanilla hostile that appears.
+- Requires Bedrock **1.26.60+** and stable Script API **2.0.0**.
+
+See [bloomlands/README.md](bloomlands/README.md) for portal recipes, region
+notes, controls, mob details and build instructions. The
+[region map](bloomlands/previews/region_map.png) and
+[portal diagram](bloomlands/previews/portal_layout.png) show the layout.
+
 ## R2-D2 Droid
 
 A detailed R2-D2 style astromech droid companion with a 106-cube Blockbench
@@ -170,13 +195,14 @@ details and the Blockbench source.
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone, Drone
   Companion and R2-D2 Droid; **1.21.130 or newer** for NZ Animals and Rainbow
-  Garden; **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland.
-- The four scripted add-ons use stable Script API **2.0.0** modules (no experiments
+  Garden; **1.21.0 or newer** for Petal & Star; **1.26.50 or newer** for Candyland;
+  **1.26.60 or newer** for Bloomlands.
+- The five scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency;
   Petal & Star is a texture-only resource pack.
-- Angel Wings uses `@minecraft/server` **2.0.0**. If your game ships a newer 2.x module,
-  update the version in `angel-wings/behavior_pack/manifest.json`.
+- Angel Wings and Bloomlands use `@minecraft/server` **2.0.0**. If your game ships a
+  newer 2.x module, update the version in the appropriate `behavior_pack/manifest.json`.
 - Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
   `@minecraft/server-ui` **2.0.0**. If your game ships newer 2.x modules, update
   the versions in their `behavior_pack/manifest.json` (or `behaviour_pack/` for the
@@ -194,6 +220,7 @@ details and the Blockbench source.
 | `petal-and-star/` | Petal & Star resource pack, `.mcpack`, texture generator, validator and preview renders |
 | `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
 | `r2-d2/` | R2-D2 droid add-on, `.mcaddon`, Blockbench model, sounds and validation tools |
+| `bloomlands/` | Bloomlands custom dimension add-on, `.mcaddon`, block/mob models, previews and build/validation tools |
 
 ## Releases
 
@@ -208,3 +235,4 @@ details and the Blockbench source.
 - [R2-D2 Droid 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.0.0)
 - [R2-D2 Droid 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.1.0)
 - [R2-D2 Droid 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.2.0)
+- [Bloomlands 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v1.0.0)

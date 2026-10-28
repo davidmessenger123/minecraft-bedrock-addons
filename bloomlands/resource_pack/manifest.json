@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Bloomlands Resource Pack",
+    "description": "Textures, models, animations and fog for the Bloomlands.",
+    "uuid": "1c0cc0a0-872d-559e-8732-b0845267f916",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "description": "Bloomlands resources",
+      "type": "resources",
+      "uuid": "1bf7a589-655c-550c-88e6-23cd53582e98",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format_version": "1.16.100",
+  "minecraft:fog_settings": {
+    "description": {
+      "identifier": "bl:bloomlands_canopy"
+    },
+    "distance": {
+      "air": {
+        "fog_start": 4,
+        "fog_end": 42,
+        "fog_color": "#183426",
+        "render_distance_type": "fixed"
+      },
+      "water": {
+        "fog_start": 2,
+        "fog_end": 24,
+        "fog_color": "#123b35",
+        "render_distance_type": "fixed"
+      }
+    }
+  }
+}

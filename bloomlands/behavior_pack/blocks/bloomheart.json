@@ -1,0 +1,77 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:bloomheart",
+      "menu_category": {
+        "category": "nature"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.bl.bloomheart",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_bloomheart",
+          "render_method": "alpha_test",
+          "face_dimming": false,
+          "ambient_occlusion": false
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.bl.bloomheart",
+        "material_instances": {
+          "*": {
+            "texture": "bl_bloomheart",
+            "render_method": "alpha_test",
+            "face_dimming": false,
+            "ambient_occlusion": false
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.2
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:destruction_particles": {
+        "texture": "bl_bloomheart",
+        "particle_count": 24
+      },
+      "minecraft:light_emission": 12,
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#f07aa8",
+      "minecraft:display_name": "tile.bl:bloomheart.name",
+      "minecraft:collision_box": true,
+      "minecraft:loot": "loot_tables/blocks/bloomheart.json",
+      "minecraft:selection_box": {
+        "origin": [
+          -8,
+          0,
+          -8
+        ],
+        "size": [
+          16,
+          16,
+          16
+        ]
+      },
+      "minecraft:placement_filter": {
+        "conditions": [
+          {
+            "allowed_faces": [
+              "up"
+            ],
+            "block_filter": [
+              "minecraft:grass_block",
+              "minecraft:dirt",
+              "bl:petal_grass",
+              "bl:bloom_dirt",
+              "bl:bloom_stone",
+              "bl:bloomwood_planks",
+              "bl:petal_path"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

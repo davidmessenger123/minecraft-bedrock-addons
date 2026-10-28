@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.bl.dewdrop_snail": {
+      "initial_state": "idle",
+      "states": {
+        "idle": {
+          "animations": [
+            "idle"
+          ],
+          "transitions": [
+            {
+              "crawl": "query.modified_move_speed > 0.01"
+            }
+          ],
+          "blend_transition": 0.4
+        },
+        "crawl": {
+          "animations": [
+            "crawl"
+          ],
+          "transitions": [
+            {
+              "idle": "query.modified_move_speed <= 0.01"
+            }
+          ],
+          "blend_transition": 0.4
+        }
+      }
+    }
+  }
+}

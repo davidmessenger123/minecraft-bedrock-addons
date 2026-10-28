@@ -1,0 +1,53 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:bloomwood_planks",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_bloomwood_planks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "minecraft:geometry.full_block",
+        "material_instances": {
+          "*": {
+            "texture": "bl_bloomwood_planks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 3.0
+      },
+      "minecraft:destruction_particles": {
+        "texture": "bl_bloomwood_planks",
+        "particle_count": 16
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#b98a50",
+      "minecraft:display_name": "tile.bl:bloomwood_planks.name",
+      "minecraft:collision_box": true,
+      "minecraft:loot": "loot_tables/blocks/bloomwood_planks.json",
+      "minecraft:flammable": {
+        "catch_chance_modifier": 5,
+        "destroy_chance_modifier": 20
+      }
+    }
+  }
+}

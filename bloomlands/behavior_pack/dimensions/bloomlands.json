@@ -1,0 +1,20 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:dimension": {
+    "description": {
+      "identifier": "bl:bloomlands"
+    },
+    "components": {
+      "minecraft:generation": {
+        "generator_type": "void"
+      },
+      "minecraft:dimension_height": {
+        "min_y": 0,
+        "height_range": 256
+      },
+      "minecraft:default_biome": {
+        "biome": "bl:bloomlands"
+      }
+    }
+  }
+}

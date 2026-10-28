@@ -1,0 +1,14 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "bl:bloom_dirt",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

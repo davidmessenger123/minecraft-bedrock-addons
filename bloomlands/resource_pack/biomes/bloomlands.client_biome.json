@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.130",
+  "minecraft:client_biome": {
+    "description": {
+      "identifier": "bl:bloomlands"
+    },
+    "components": {
+      "minecraft:sky_color": {
+        "sky_color": "#a8d8ff"
+      },
+      "minecraft:fog_appearance": {
+        "fog_identifier": "bl:bloomlands_air"
+      },
+      "minecraft:water_appearance": {
+        "surface_color": "#5fc7c0",
+        "surface_opacity": 0.72
+      },
+      "minecraft:grass_appearance": {
+        "color": "#8fd36f"
+      },
+      "minecraft:foliage_appearance": {
+        "color": "#75c45f"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "bl:petal_grass": {
+    "sound": "grass"
+  },
+  "bl:bloom_dirt": {
+    "sound": "grass"
+  },
+  "bl:bloom_stone": {
+    "sound": "stone"
+  },
+  "bl:bloomwood_log": {
+    "sound": "wood"
+  },
+  "bl:bloomwood_planks": {
+    "sound": "wood"
+  },
+  "bl:petal_path": {
+    "sound": "grass"
+  },
+  "bl:canopy_leaves": {
+    "sound": "grass"
+  },
+  "bl:glowbud_leaves": {
+    "sound": "grass"
+  },
+  "bl:dewgrass": {
+    "sound": "grass"
+  },
+  "bl:lily_bloom": {
+    "sound": "grass"
+  },
+  "bl:portal_flower": {
+    "sound": "grass"
+  },
+  "bl:bloomheart": {
+    "sound": "glass"
+  },
+  "bl:giant_sunflower": {
+    "sound": "grass"
+  },
+  "bl:giant_rosequartz": {
+    "sound": "grass"
+  },
+  "bl:giant_skybell": {
+    "sound": "grass"
+  },
+  "bl:giant_amethyst": {
+    "sound": "grass"
+  },
+  "bl:giant_emberbloom": {
+    "sound": "grass"
+  },
+  "bl:giant_lumen": {
+    "sound": "grass"
+  },
+  "bl:sunpetal": {
+    "sound": "grass"
+  },
+  "bl:rosequartz": {
+    "sound": "grass"
+  },
+  "bl:skybell": {
+    "sound": "grass"
+  },
+  "bl:moondrop": {
+    "sound": "grass"
+  },
+  "bl:emberbloom": {
+    "sound": "grass"
+  },
+  "bl:amethyst_bell": {
+    "sound": "grass"
+  },
+  "bl:lumen_bell": {
+    "sound": "grass"
+  }
+}

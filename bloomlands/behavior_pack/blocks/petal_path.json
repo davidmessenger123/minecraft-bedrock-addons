@@ -1,0 +1,49 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:petal_path",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "minecraft:geometry.full_block",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_petal_path",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "minecraft:geometry.full_block",
+        "material_instances": {
+          "*": {
+            "texture": "bl_petal_path",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.4
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 3.0
+      },
+      "minecraft:destruction_particles": {
+        "texture": "bl_petal_path",
+        "particle_count": 16
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#b56c85",
+      "minecraft:display_name": "tile.bl:petal_path.name",
+      "minecraft:collision_box": true,
+      "minecraft:loot": "loot_tables/blocks/petal_path.json"
+    }
+  }
+}

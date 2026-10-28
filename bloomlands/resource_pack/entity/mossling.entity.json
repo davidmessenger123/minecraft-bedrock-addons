@@ -1,0 +1,35 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "bl:mossling",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/mossling"
+      },
+      "geometry": {
+        "default": "geometry.bl.mossling"
+      },
+      "animations": {
+        "walk": "animation.bl.mossling.walk",
+        "idle": "animation.bl.mossling.idle",
+        "controller": "controller.animation.bl.mossling"
+      },
+      "scripts": {
+        "animate": [
+          "controller"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.bl.bloomling"
+      ],
+      "spawn_egg": {
+        "base_color": "#6a9b4a",
+        "overlay_color": "#f7a8c8"
+      },
+      "enable_attachables": false
+    }
+  }
+}

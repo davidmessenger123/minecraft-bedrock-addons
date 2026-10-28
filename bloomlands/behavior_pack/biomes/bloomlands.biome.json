@@ -1,0 +1,27 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:biome": {
+    "description": {
+      "identifier": "bl:bloomlands"
+    },
+    "components": {
+      "minecraft:climate": {
+        "temperature": 0.8,
+        "downfall": 0.7
+      },
+      "minecraft:creature_spawn_probability": {
+        "probability": 0.03
+      },
+      "minecraft:humidity": {
+        "is_humid": true
+      },
+      "minecraft:tags": {
+        "tags": [
+          "animal",
+          "bloomlands",
+          "bl:bloomlands"
+        ]
+      }
+    }
+  }
+}
