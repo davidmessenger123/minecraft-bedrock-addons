@@ -1,0 +1,47 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "cw:storage_extension",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.cw.storage_extension",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "cw_blocks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.cw.storage_extension",
+        "material_instances": {
+          "*": {
+            "texture": "cw_blocks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 4
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#59616d",
+      "minecraft:display_name": "tile.cw:storage_extension.name",
+      "minecraft:loot": "loot_tables/blocks/storage_extension.json",
+      "minecraft:block_entity": {
+        "dynamic_properties": true
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "cw:generator": {
+    "sound": "metal"
+  },
+  "cw:cable": {
+    "sound": "metal"
+  },
+  "cw:battery": {
+    "sound": "metal"
+  },
+  "cw:conveyor": {
+    "sound": "metal"
+  },
+  "cw:assembler": {
+    "sound": "metal"
+  },
+  "cw:storage_core": {
+    "sound": "wood"
+  },
+  "cw:storage_extension": {
+    "sound": "wood"
+  },
+  "cw:quarry": {
+    "sound": "metal"
+  }
+}

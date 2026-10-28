@@ -1,0 +1,31 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:drill_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " I ",
+      "IGI",
+      " M "
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "G": {
+        "item": "cw:gear"
+      },
+      "M": {
+        "item": "cw:motor"
+      }
+    },
+    "result": {
+      "item": "cw:drill",
+      "count": 1
+    }
+  }
+}

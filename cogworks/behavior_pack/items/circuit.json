@@ -1,0 +1,22 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:item": {
+    "description": {
+      "identifier": "cw:circuit",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "cw_circuit"
+        }
+      },
+      "minecraft:display_name": {
+        "value": "item.cw:circuit.name"
+      },
+      "minecraft:max_stack_size": 64
+    }
+  }
+}

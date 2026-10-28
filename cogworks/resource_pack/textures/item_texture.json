@@ -1,0 +1,27 @@
+{
+  "resource_pack_name": "cogworks",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "cw_gear": {
+      "textures": "textures/items/cw_gear"
+    },
+    "cw_circuit": {
+      "textures": "textures/items/cw_circuit"
+    },
+    "cw_motor": {
+      "textures": "textures/items/cw_motor"
+    },
+    "cw_drill": {
+      "textures": "textures/items/cw_drill"
+    },
+    "cw_chainsaw": {
+      "textures": "textures/items/cw_chainsaw"
+    },
+    "cw_wrench": {
+      "textures": "textures/items/cw_wrench"
+    },
+    "cw_surveyor": {
+      "textures": "textures/items/cw_surveyor"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Cogworks Behaviour Pack",
+    "description": "Automated crafting, power, conveyors, storage and quarrying.",
+    "uuid": "f5a4ed5a-1af3-40ea-8a96-ef7b8c0a4d10",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "description": "Cogworks data",
+      "type": "data",
+      "uuid": "7b1b4f4d-5c3f-49d5-b356-1f9b2c7a10a2",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "description": "Cogworks machines",
+      "type": "script",
+      "language": "javascript",
+      "uuid": "d9a5de35-bbfa-4c58-9d93-2c8c0c4f7a13",
+      "entry": "scripts/main.js",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "2.0.0"
+    }
+  ],
+  "metadata": {
+    "authors": [
+      "OpenCode"
+    ],
+    "license": "MIT"
+  }
+}

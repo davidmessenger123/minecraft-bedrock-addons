@@ -1,0 +1,34 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:quarry_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "IMI",
+      "GQG",
+      "IMI"
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:iron_block"
+      },
+      "M": {
+        "item": "cw:motor"
+      },
+      "G": {
+        "item": "cw:gear"
+      },
+      "Q": {
+        "item": "cw:circuit"
+      }
+    },
+    "result": {
+      "item": "cw:quarry",
+      "count": 1
+    }
+  }
+}

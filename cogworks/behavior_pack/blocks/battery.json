@@ -1,0 +1,59 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "cw:battery",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.cw.battery",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "cw_blocks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.cw.battery",
+        "material_instances": {
+          "*": {
+            "texture": "cw_blocks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 4
+      },
+      "minecraft:light_emission": 4,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#59616d",
+      "minecraft:display_name": "tile.cw:battery.name",
+      "minecraft:loot": "loot_tables/blocks/battery.json",
+      "minecraft:collision_box": {
+        "origin": [
+          -8,
+          0,
+          -8
+        ],
+        "size": [
+          16,
+          12,
+          16
+        ]
+      },
+      "minecraft:block_entity": {
+        "dynamic_properties": true
+      }
+    }
+  }
+}

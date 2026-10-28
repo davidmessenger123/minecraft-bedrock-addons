@@ -1,10 +1,10 @@
 # Minecraft Bedrock Add-ons & Texture Packs
 
 <p align="center">
-  <a href="banner.png"><img src="banner.png" alt="The Model Collection — all Minecraft Bedrock add-on models" width="100%"></a>
+  <a href="banner.png"><img src="banner.png" alt="The Model Collection — selected Minecraft Bedrock add-on models" width="100%"></a>
 </p>
 
-Seven add-ons and one texture pack for **Minecraft Bedrock Edition**:
+Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
 | --- | --- | --- | --- |
@@ -16,6 +16,7 @@ Seven add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
+| **Cogworks** | Add-on | 1.0.0 | [Cogworks-1.0.0.mcaddon](cogworks/Cogworks-1.0.0.mcaddon) |
 
 ## Install
 
@@ -26,7 +27,7 @@ Seven add-ons and one texture pack for **Minecraft Bedrock Edition**:
 3. Enable the packs for your world under **Settings → World → Behavior Packs** and
    **Resource Packs** (or Global Resources). The Candyland texture pack is
    activated under **Resource Packs** or **Global Resources**.
-4. No experiments are required. The five scripted add-ons use stable Script API
+4. No experiments are required. The scripted add-ons use stable Script API
    2.0.0 modules; if your build only exposes them behind **Beta APIs**, enable that
    experiment. Texture packs and the data-only add-ons have no Script API dependency.
 5. Reload the world.
@@ -157,6 +158,33 @@ notes, controls, mob details and build instructions. The
 [region map](bloomlands/previews/region_map.png) and
 [portal diagram](bloomlands/previews/portal_layout.png) show the layout.
 
+## Cogworks
+
+A powered automation add-on: coal generators and batteries energise a cable
+network, conveyors route virtual stacks, an automated assembler crafts, and a
+surveyor-defined quarry excavates a volume into expandable storage.
+
+- 8 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
+  Crafting Assembler, Storage Core, Storage Extension and Quarry Controller.
+- 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
+  Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
+- Generator burns coal, charcoal or coal blocks; batteries store 5,000 E;
+  machines draw from the connected cable network.
+- Crafting Assembler processes planks, sticks, iron, gold, copper, gears,
+  circuits and motors when its input and the network have enough energy.
+- Storage Core holds 8 item stacks; each connected Storage Extension adds 8
+  more. Deposit with a held item or open the storage form empty-handed.
+- Quarry Surveyor sets two corners; use it on the Quarry Controller to install
+  an area up to 32×32×32. The quarry sends drops to adjacent storage or belts.
+- Powered Drill cuts a 3×3 face of stone/ore; Powered Chainsaw fells a vertical
+  run of logs; Cogworks Wrench rotates conveyors.
+- Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
+  `@minecraft/server-ui` **2.0.0**.
+
+See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, quarry
+controls and build instructions. The [model sheet](cogworks/previews/models.png)
+shows all eight Blockbench block models.
+
 ## R2-D2 Droid
 
 A detailed R2-D2 style astromech droid companion with a 106-cube Blockbench
@@ -181,14 +209,14 @@ details and the Blockbench source.
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone, Drone
   Companion and R2-D2 Droid; **1.21.130 or newer** for NZ Animals and Rainbow
-  Garden; **1.26.60 or newer** for Candyland and Bloomlands.
-- The five scripted add-ons use stable Script API **2.0.0** modules (no experiments
+  Garden; **1.26.60 or newer** for Candyland, Bloomlands and Cogworks.
+- The scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency.
 - Angel Wings and Bloomlands use `@minecraft/server` **2.0.0**. If your game ships a
   newer 2.x module, update the version in the appropriate `behavior_pack/manifest.json`.
-- Mobile Phone and Drone Companion declare `@minecraft/server` **2.0.0** and
-  `@minecraft/server-ui` **2.0.0**. If your game ships newer 2.x modules, update
+- Mobile Phone, Drone Companion and Cogworks declare `@minecraft/server` **2.0.0**
+  and `@minecraft/server-ui` **2.0.0**. If your game ships newer 2.x modules, update
   the versions in their `behavior_pack/manifest.json` (or `behaviour_pack/` for the
   phone).
 
@@ -204,6 +232,7 @@ details and the Blockbench source.
 | `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
 | `r2-d2/` | R2-D2 droid add-on, `.mcaddon`, Blockbench model, sounds and validation tools |
 | `bloomlands/` | Bloomlands custom dimension add-on, `.mcaddon`, block/mob models, previews and build/validation tools |
+| `cogworks/` | Cogworks automation add-on, `.mcaddon`, Blockbench block sources, model sheet and build/validation tools |
 
 ## Releases
 
@@ -229,3 +258,4 @@ details and the Blockbench source.
 - [Bloomlands 2.2.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.1)
 - [Bloomlands 2.2.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.2)
 - [Bloomlands 2.2.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.3)
+- [Cogworks 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.0.0)
