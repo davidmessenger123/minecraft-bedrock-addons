@@ -191,7 +191,14 @@ def build_atlases() -> None:
                 "ticks_per_frame": 5,
                 "blend_frames": True,
                 "frames": [0, 1, 2, 3],
-            }
+            },
+            {
+                "flipbook_texture": "textures/blocks/bl_rainbow_portal",
+                "atlas_tile": "bl_rainbow_portal",
+                "ticks_per_frame": 3,
+                "blend_frames": True,
+                "frames": list(range(32)),
+            },
         ],
     )
 
@@ -245,13 +252,15 @@ def block_json(spec: content.BlockSpec) -> dict:
                 }
             ]
         }
+    if not spec.drop_item:
+        components.pop("minecraft:loot", None)
+    description: dict = {"identifier": f"bl:{spec.key}"}
+    if spec.menu is not None:
+        description["menu_category"] = {"category": spec.menu}
     return {
         "format_version": "1.21.90",
         "minecraft:block": {
-            "description": {
-                "identifier": f"bl:{spec.key}",
-                "menu_category": {"category": spec.menu},
-            },
+            "description": description,
             "components": components,
         },
     }
@@ -260,6 +269,8 @@ def block_json(spec: content.BlockSpec) -> dict:
 def build_blocks() -> None:
     for spec in content.BLOCK_SPECS:
         write_json(BP / "blocks" / f"{spec.key}.json", block_json(spec))
+        if not spec.drop_item:
+            continue
         write_json(
             BP / "loot_tables" / "blocks" / f"{spec.key}.json",
             {
@@ -340,11 +351,6 @@ def build_recipes() -> None:
             ["bl:lumen_bell", "bl:rosequartz", "bl:sunpetal", "minecraft:glowstone_dust"],
             "bl:portal_flower",
             2,
-        ),
-        "bloomheart": recipe_shapeless(
-            "bl:bloomheart_recipe",
-            ["bl:portal_flower", "bl:portal_flower", "bl:portal_flower", "bl:portal_flower", "minecraft:glowstone"],
-            "bl:bloomheart",
         ),
         "bloomwood_planks": recipe_shapeless(
             "bl:bloomwood_planks_recipe", ["bl:bloomwood_log"], "bl:bloomwood_planks", 4
@@ -773,9 +779,10 @@ def build_particles() -> None:
             speed=0.25,
             size="math.random(0.05, 0.11)",
             gradient=[
-                [1.0, 0.72, 0.86, 0.95],
-                [1.0, 0.9, 0.55, 0.55],
-                [1.0, 0.85, 0.95, 0.0],
+                [1.0, 0.55, 0.62, 0.95],
+                [1.0, 0.88, 0.42, 0.78],
+                [0.52, 0.95, 0.72, 0.58],
+                [0.52, 0.78, 1.0, 0.0],
             ],
             emitter={
                 "minecraft:emitter_rate_steady": {"spawn_rate": 5, "max_particles": 28},
@@ -952,7 +959,7 @@ def build_particles() -> None:
 
 LANG = {
     "pack.name": "Bloomlands",
-    "pack.description": "A flower-filled custom dimension, a circle-of-flowers Bloomgate and three peaceful Bloomlings.",
+    "pack.description": "A flower-filled custom dimension, a 4x4 flower Bloomgate and three peaceful Bloomlings.",
     "dimension.bl:bloomlands": "The Bloomlands",
     "biome.bl:bloomlands": "Bloomlands",
     "bl.title.bloomlands": "The Bloomlands",
@@ -963,22 +970,24 @@ LANG = {
     "bl.region.hills": "Petal Hills",
     "bl.region.pool": "Mirror Pool",
     "bl.region.edge": "Bloomlands Edge",
-    "bl.portal.ready": "The Bloomgate settles into the earth. Step onto the Bloomheart.",
-    "bl.portal.ground": "Use the Bloomgate on the top of a ground block.",
-    "bl.portal.no_room": "There is not enough clear ground for the Bloomgate here.",
+    "bl.portal.ready": "The flower square opens into a rainbow Bloomgate. Step onto its centre.",
+    "bl.portal.ground": "Use the Bloomgate on a flower in a 4x4 flower square.",
+    "bl.portal.flower_use": "Use the Bloomgate on one of the flowers in a 4x4 flower square.",
+    "bl.portal.flower_square": "Place a complete 4x4 square of flowers on the ground first.",
+    "bl.portal.no_room": "The 4x4 flower square is incomplete or has no clear ground beneath it.",
     "bl.portal.building": "The Bloomgate is waking...",
     "bl.portal.waking": "The Bloomlands are still waking. Please wait a moment.",
     "bl.portal.failed": "The Bloomgate could not open. Try again in a moment.",
     "bl.portal.cooldown": "The Bloomgate is still humming from your last journey.",
-    "bl.portal.rearm": "Step off the Bloomheart to wake the Bloomgate again.",
-    "bl.portal.rooted": "The return Bloomheart is rooted in the island.",
+    "bl.portal.rearm": "Step off the rainbow portal to wake the Bloomgate again.",
+    "bl.portal.rooted": "The return rainbow portal is rooted in the island.",
     "bl.portal.enter": "The Bloomlands open around you.",
     "bl.portal.return": "You step back through the flowers.",
     "bl.portal.leave": "The Bloomgate carries you home.",
     "bl.portal.no_return": "The way home is missing; the Bloomgate returns you to the world spawn.",
     "bl.voidrescue": "The flowers catch you and set you down gently.",
     "bl.region.enter": "Entering the Bloomlands",
-    "bl.item.bloom_portal.desc": "Plant a ring of flowers and a Bloomheart.",
+    "bl.item.bloom_portal.desc": "Place a 4x4 square of flowers, then use the Bloomgate on one flower.",
 }
 
 BLOCK_LANG = {
@@ -993,6 +1002,7 @@ BLOCK_LANG = {
     "dewgrass": "Dewgrass",
     "lily_bloom": "Lily Bloom",
     "portal_flower": "Bloomgate Flower",
+    "rainbow_portal": "Rainbow Bloomgate",
     "bloomheart": "Bloomheart",
     "giant_sunflower": "Giant Sunflower",
     "giant_rosequartz": "Giant Rosequartz",
@@ -1020,7 +1030,8 @@ def build_language() -> None:
                 "bl.title.bloomlands", "bl.subtitle.bloomlands",
                 "bl.region.meadow", "bl.region.canopy", "bl.region.garden",
                 "bl.region.hills", "bl.region.pool", "bl.region.edge",
-                "bl.portal.ready", "bl.portal.ground", "bl.portal.no_room",
+                "bl.portal.ready", "bl.portal.ground", "bl.portal.flower_use",
+                "bl.portal.flower_square", "bl.portal.no_room",
                 "bl.portal.building", "bl.portal.waking", "bl.portal.failed",
                 "bl.portal.cooldown", "bl.portal.rearm", "bl.portal.rooted",
                 "bl.portal.enter", "bl.portal.return",
@@ -1059,7 +1070,6 @@ def build_functions() -> None:
             [
                 "# Bloomlands starter kit",
                 "give @s bl:bloom_portal 2",
-                "give @s bl:bloomheart 4",
                 "give @s bl:sunpetal 16",
                 "give @s bl:rosequartz 16",
                 "give @s bl:skybell 16",

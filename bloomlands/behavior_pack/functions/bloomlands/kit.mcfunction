@@ -1,6 +1,5 @@
 # Bloomlands starter kit
 give @s bl:bloom_portal 2
-give @s bl:bloomheart 4
 give @s bl:sunpetal 16
 give @s bl:rosequartz 16
 give @s bl:skybell 16

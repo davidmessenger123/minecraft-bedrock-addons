@@ -12,7 +12,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
-| **Bloomlands** | Add-on | 2.1.0 | [Bloomlands-2.1.0.mcaddon](bloomlands/Bloomlands-2.1.0.mcaddon) |
+| **Bloomlands** | Add-on | 2.2.0 | [Bloomlands-2.2.0.mcaddon](bloomlands/Bloomlands-2.2.0.mcaddon) |
 
 ## Install
 
@@ -150,11 +150,11 @@ The [block](candyland/previews/blocks.png) and
 
 ## Bloomlands
 
-A flower-ring portal into a peaceful custom flower dimension with five themed
+A 4×4 flower-bed portal into a peaceful custom flower dimension with five themed
 regions plus the Bloomlands Edge and three detailed peaceful mobs.
 
-- Portal item `bl:bloom_portal` builds a 7×7 petal plaza, eight Bloomgate flowers
-  and a central Bloomheart. Stand on the Bloomheart to travel.
+- Use Bloomgate `bl:bloom_portal` on any flower in a 4×4 flower square. The
+  central 2×2 becomes a flat rainbow portal in the style of the Nether portal.
 - Void dimension `bl:bloomlands`, script-built once into a 480-block floating
   garden island with rolling meadow, forest and garden ground and a saved return
   portal.
@@ -162,8 +162,8 @@ regions plus the Bloomlands Edge and three detailed peaceful mobs.
   Mirror Pool and the Bloomlands Edge.
 - Old-growth Whispering Canopy trees with thick 3×3/5×5 trunks, branch arms and
   overlapping crowns that close the sky over the forest floor.
-- 25 custom blocks: seven small flowers, six giant blooms, Bloomwood, petal grass,
-  paths, canopy leaves and an animated Bloomheart.
+- 26 custom blocks: seven small flowers, six giant blooms, Bloomwood, petal grass,
+  paths, canopy leaves and the animated rainbow portal surface.
 - Three peaceful Bloomlings: Petalwing, Mossling and Dewdrop Snail, each with a
   128×128 atlas, detailed geometry, animations and Creative spawn eggs.
 - No hostile mobs: the biome omits the `monster` tag and a script sweep removes
@@ -247,3 +247,4 @@ details and the Blockbench source.
 - [Bloomlands 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v1.0.0)
 - [Bloomlands 2.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.0.0)
 - [Bloomlands 2.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.1.0)
+- [Bloomlands 2.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.0)

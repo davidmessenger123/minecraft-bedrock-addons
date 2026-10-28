@@ -32,6 +32,9 @@
   "bl:portal_flower": {
     "sound": "grass"
   },
+  "bl:rainbow_portal": {
+    "sound": "glass"
+  },
   "bl:bloomheart": {
     "sound": "glass"
   },

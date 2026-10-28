@@ -43,6 +43,9 @@
     "bl_portal_flower": {
       "textures": "textures/blocks/bl_portal_flower"
     },
+    "bl_rainbow_portal": {
+      "textures": "textures/blocks/bl_rainbow_portal"
+    },
     "bl_bloomheart": {
       "textures": "textures/blocks/bl_bloomheart"
     },

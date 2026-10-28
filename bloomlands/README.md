@@ -1,26 +1,38 @@
 # Bloomlands
 
 A flower-filled custom dimension for **Minecraft Bedrock Edition**, entered through a
-ring of flowers on the ground. The island is a gentle garden of five themed regions
-plus the Bloomlands Edge, giant tree-sized blooms, a dense glowing canopy, terraced
-petal hills, a mirror lake and three hand-modelled peaceful Bloomling mobs.
+4×4 flower bed and a rainbow portal on the ground. The island is a gentle garden of
+five themed regions plus the Bloomlands Edge, giant tree-sized blooms, a dense
+glowing canopy, terraced petal hills, a mirror lake and three hand-modelled peaceful
+Bloomling mobs.
 
 - **Dimension:** `bl:bloomlands` — a void dimension with a script-built floating island.
-- **Portal:** a 7×7 petal-path plaza, eight Bloomgate flowers and one Bloomheart.
+- **Portal:** a 4×4 flower bed surrounding a 2×2 End-portal-style rainbow surface.
 - **Regions:** Sunpetal Meadow, Whispering Canopy, Giant's Garden, Petal Hills,
   Mirror Pool and the Bloomlands Edge.
 - **Mobs:** Petalwing, Mossling and Dewdrop Snail, each with a 128×128 atlas,
   detailed geometry, idle/move animations and a Creative spawn egg.
-- **Blocks:** 25 custom blocks, including seven small flowers, six giant blooms,
-  Bloomwood, petal grass, paths, canopy leaves and the animated Bloomheart.
+- **Blocks:** 26 custom blocks, including seven small flowers, six giant blooms,
+  Bloomwood, petal grass, paths, canopy leaves and the rainbow portal surface.
 - **No hostile mobs.** The biome omits the `monster` tag and a runtime sweep removes
   any vanilla hostile that somehow appears.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.0
+
+- Replaced the old 7×7 plaza/Bloomheart entrance with a **4×4 flower ritual**:
+  place any 16 flowers in a square, use Bloomgate on one flower, and step onto
+  the central **2×2 rainbow portal**.
+- The portal uses a **recoloured vanilla Nether-portal animation sheet**, so it
+  keeps the original portal motion with a full rainbow palette.
+- Cleaned up the custom flower silhouettes: five outer petals instead of six,
+  simpler giant-bloom crowns, softer grass and path colours, and a new
+  flower-bed portal icon.
+
 ## Install
 
-1. Open `Bloomlands-2.1.0.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -49,9 +61,10 @@ S = minecraft:fern
 A = minecraft:amethyst_shard
 ```
 
-Use the Bloomgate on the **top face of a ground block** in the Overworld, Nether or
-End. It builds a 7×7 petal-path plaza, places eight Bloomgate flowers in a ring and
-sets a Bloomheart in the centre. The area must be clear enough for the 7×7 plaza.
+Place **any 16 flowers in a 4×4 square** on solid ground in the Overworld, Nether
+or End. The flowers can be vanilla flowers or Bloomlands flowers. Use the Bloomgate
+on **any one of those flowers**; the central 2×2 flowers are replaced by a flat,
+animated rainbow portal surface. The 2×2 area above the bed must be clear.
 
 A starter kit is also available:
 
@@ -61,23 +74,23 @@ A starter kit is also available:
 
 ### Travel and return
 
-Stand on the central **Bloomheart** to open the way. The first visit generates the
-island and then teleports you to the arrival platform south of the return Bloomgate.
+Step onto the **rainbow surface** in the centre of the flower bed to open the way.
+The first visit generates the island and teleports you to the arrival platform
+south of the return portal.
 
-To go home, stand on the Bloomgate at the island's spawn, or on any other
-Bloomheart. Your exact return position and dimension are saved. The Bloomheart is
-disarmed after a journey until you step off it, so returning onto the same spot does
-not immediately send you back.
+To go home, step onto the return portal at the island spawn. Your exact return
+position and dimension are saved. The portal is disarmed after a journey until you
+step off it, so returning onto the same spot does not immediately send you back.
 
-The return Bloomheart at the island spawn is rooted: it cannot be broken, so a
-curious explorer cannot strand themselves.
+The return rainbow portal at the island spawn is rooted: its portal blocks cannot
+be broken, so a curious explorer cannot strand themselves.
 
 ## The island
 
 The island is roughly 480 blocks across (a 240-block radius), with its base surface
 at **Y = 64**. Broad grass swells and smaller knolls raise much of the meadow,
 forest and garden by one to four blocks, while paths cut level benches through
-them. The arrival platform sits south of the return Bloomgate: the southern rim
+them. The arrival platform sits south of the return portal: the southern rim
 is about 114 blocks away, the centre about 126 blocks, and the northern rim about
 366 blocks. Terrain, flowers, trees, paths, water and the return gate are all
 placed once and then saved with the world.
@@ -89,7 +102,7 @@ return areas can be probed before the island is marked complete.
 
 | Region | Direction | Character |
 | --- | --- | --- |
-| **Sunpetal Meadow** | South / spawn | Open flower fields, the arrival path and the return Bloomgate |
+| **Sunpetal Meadow** | South / spawn | Open flower fields, the arrival path and the return portal |
 | **Whispering Canopy** | North | Dense Bloomwood forest with a closed leaf ceiling, glowbud patches, fireflies and dim green fog |
 | **Giant's Garden** | East | Giant flower trees, broad petals, warm pink fog and drifting pollen |
 | **Petal Hills** | North-west | Six walkable terraces with a spiral path, overlooks and giant crown blooms |
@@ -112,15 +125,14 @@ be placed as tree-sized centrepieces.
 Useful recipes:
 
 - **Bloomgate:** poppy / fern / amethyst shard pattern above.
-- **Bloomheart:** four Bloomgate Flowers + one glowstone.
 - **Bloomgate Flower:** Lumen Bell + Rosequartz + Sunpetal + glowstone dust → 2.
 - **Petal Grass:** Bloom Dirt + Sunpetal + Dewgrass.
 - **Petal Path:** Bloom Dirt + Sunpetal + Rosequartz → 2.
 - **Bloomwood Planks:** one Bloomwood Log → 4.
 
-The animated Bloomheart uses a four-frame flipbook. Giant blooms and the Bloomgate
-flower have custom geometry and glow; the small flowers share one detailed model
-with per-colour textures.
+The rainbow portal uses the Nether portal's animated surface treatment with
+rainbow colour bands. Giant blooms and the Bloomgate flower have custom geometry
+and glow; the small flowers share one detailed model with per-colour textures.
 
 ## Bloomlings
 
@@ -162,7 +174,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.1.0.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.0.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

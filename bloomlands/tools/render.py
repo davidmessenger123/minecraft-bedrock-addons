@@ -293,50 +293,63 @@ def portal_diagram(path: Path) -> None:
     image = Image.new("RGBA", (width, height), BG)
     draw = ImageDraw.Draw(image)
     draw.text((28, 22), "Bloomgate construction", font=font(30, True), fill=INK)
-    draw.text((28, 60), "A 7 x 7 petal-path plaza, eight Bloomgate flowers, and one Bloomheart.", font=font(14), fill=MUTED)
+    draw.text((28, 60), "A 4 x 4 flower bed with a 2 x 2 rainbow portal at its centre.", font=font(14), fill=MUTED)
 
-    cell = 64
-    origin_x, origin_y = 70, 128
-    ring = {(0, -3), (-2, -2), (-3, 0), (-2, 2), (0, 3), (2, 2), (3, 0), (2, -2)}
-    for dz in range(-3, 4):
-        for dx in range(-3, 4):
-            x = origin_x + (dx + 3) * cell
-            y = origin_y + (dz + 3) * cell
-            draw.rectangle((x, y, x + cell - 2, y + cell - 2), fill=(181, 108, 133, 255),
-                           outline=(226, 164, 186, 255), width=2)
-            if (dx, dz) in ring:
-                draw_flower(draw, (x + cell / 2, y + cell / 2), cell * 0.34, "#f27bc0", "#ffe6a8")
-    center_x = origin_x + 3 * cell + cell / 2
-    center_y = origin_y + 3 * cell + cell / 2
-    draw.ellipse((center_x - 21, center_y - 21, center_x + 21, center_y + 21),
-                 fill=(240, 122, 168, 255), outline="#fff0a8", width=3)
-    draw.ellipse((center_x - 9, center_y - 9, center_x + 9, center_y + 9), fill="#fff7d6")
-    draw.text((center_x + 22, center_y - 7), "Bloomheart", font=font(13, True), fill=INK)
+    cell = 78
+    origin_x, origin_y = 96, 128
+    rainbow = ["#ff5b6e", "#ff9b4a", "#ffe35a", "#8dde63",
+               "#55dfd4", "#5b9cff", "#a873ff", "#ff70d4"]
+    for dz in range(4):
+        for dx in range(4):
+            x = origin_x + dx * cell
+            y = origin_y + dz * cell
+            draw.rectangle((x, y, x + cell - 3, y + cell - 3),
+                           fill=(63, 82, 58, 255), outline=(112, 142, 98, 255), width=2)
+            if 1 <= dx <= 2 and 1 <= dz <= 2:
+                # 2x2 portal surface.
+                for sy in range(3):
+                    for sx in range(3):
+                        pad = 7
+                        col = rainbow[(dx * 2 + dz + sx + sy) % len(rainbow)]
+                        draw.rectangle(
+                            (x + pad + sx * 20, y + pad + sy * 20,
+                             x + pad + sx * 20 + 19, y + pad + sy * 20 + 19),
+                            fill=col,
+                        )
+                draw.rectangle((x + 3, y + 3, x + cell - 6, y + cell - 6),
+                               outline=(255, 255, 255, 150), width=2)
+            else:
+                draw_flower(draw, (x + cell / 2, y + cell / 2), cell * 0.27,
+                            "#f27bc0" if (dx + dz) % 2 else "#ffd15a",
+                            "#fff2b0")
+
+    center_x = origin_x + 2 * cell
+    center_y = origin_y + 2 * cell
+    draw.text((center_x + 22, center_y - 8), "Rainbow portal", font=font(13, True), fill=INK)
 
     # Legend.
-    legend_x, legend_y = 580, 142
+    legend_x, legend_y = 520, 142
     draw.text((legend_x, legend_y), "Legend", font=font(20, True), fill=INK)
-    draw.rectangle((legend_x, legend_y + 38, legend_x + 28, legend_y + 66), fill=(181, 108, 133, 255))
-    draw.text((legend_x + 38, legend_y + 41), "Petal path floor", font=font(13), fill=MUTED)
-    draw_flower(draw, (legend_x + 14, legend_y + 96), 10, "#f27bc0", "#ffe6a8")
-    draw.text((legend_x + 38, legend_y + 87), "Bloomgate flower (8)", font=font(13), fill=MUTED)
-    draw.ellipse((legend_x + 2, legend_y + 122, legend_x + 26, legend_y + 146), fill="#fff7d6")
-    draw.text((legend_x + 38, legend_y + 123), "Bloomheart", font=font(13), fill=MUTED)
+    draw.rectangle((legend_x, legend_y + 38, legend_x + 28, legend_y + 66), fill=(63, 82, 58, 255))
+    draw.text((legend_x + 38, legend_y + 41), "Ground / grass", font=font(13), fill=MUTED)
+    draw_flower(draw, (legend_x + 14, legend_y + 96), 10, "#f27bc0", "#fff2b0")
+    draw.text((legend_x + 38, legend_y + 87), "Flower border (12)", font=font(13), fill=MUTED)
+    draw.rectangle((legend_x, legend_y + 120, legend_x + 28, legend_y + 148),
+                   fill="#5b9cff", outline="#ffffff", width=2)
+    draw.text((legend_x + 38, legend_y + 123), "Rainbow portal (2 x 2)", font=font(13), fill=MUTED)
 
-    # Arrival walkway and arrow.
+    # Ritual arrow and item label.
     spawn_x = center_x
-    plaza_bottom = origin_y + 7 * cell
-    spawn_y = plaza_bottom + 48
-    draw.rectangle((spawn_x - 10, plaza_bottom - 4, spawn_x + 10, spawn_y - 30), fill=(181, 108, 133, 255))
-    draw.line((spawn_x, spawn_y - 28, spawn_x, spawn_y - 4), fill=ACCENT, width=4)
+    spawn_y = origin_y + 4 * cell + 44
+    draw.line((spawn_x, origin_y + 4 * cell + 8, spawn_x, spawn_y - 8), fill=ACCENT, width=4)
     draw.polygon([(spawn_x, spawn_y), (spawn_x - 8, spawn_y - 16), (spawn_x + 8, spawn_y - 16)], fill=ACCENT)
-    draw.text((spawn_x + 18, spawn_y - 30), "Arrival platform", font=font(13, True), fill=ACCENT)
+    draw.text((spawn_x + 18, spawn_y - 30), "Use Bloomgate on a flower", font=font(13, True), fill=ACCENT)
 
     # Side note.
     draw.rounded_rectangle((52, 672, 760, 780), radius=16, fill=CARD, outline=(92, 79, 108, 255), width=2)
     draw.text((74, 690), "Build it with the Bloomgate item", font=font(18, True), fill=INK)
-    draw.text((74, 718), "Use the item on the top face of a ground block. The 7 x 7 area must be clear", font=font(13), fill=MUTED)
-    draw.text((74, 738), "of solid blocks. Stand on the Bloomheart to travel between worlds.", font=font(13), fill=MUTED)
+    draw.text((74, 718), "Place 4 x 4 flowers on solid ground. Use the Bloomgate on any flower", font=font(13), fill=MUTED)
+    draw.text((74, 738), "in the square. The central 2 x 2 flowers become the rainbow portal.", font=font(13), fill=MUTED)
 
     path.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(path, "PNG")
@@ -606,6 +619,7 @@ def write_bbmodels(
 
     extras = [
         ("portal_flower", "Bloomgate Flower", "portal_flower", "bl_portal_flower"),
+        ("rainbow_portal", "Rainbow Bloomgate", "rainbow_portal", "bl_rainbow_portal"),
         ("bloomheart", "Bloomheart", "bloomheart", "bl_bloomheart"),
         ("dewgrass", "Dewgrass", "dewgrass", "bl_dewgrass"),
         ("lily_bloom", "Lily Bloom", "lily_bloom", "bl_lily_bloom"),
@@ -655,7 +669,7 @@ def build_all(
         tiles.append((
             "Small flower",
             "geometry.bl.small_flower - sunpetal",
-            model_image(block_geometries["small_flower"], block_textures["bl_sunpetal"], "Small flower", "six petals + two leaves"),
+            model_image(block_geometries["small_flower"], block_textures["bl_sunpetal"], "Small flower", "five petals + two leaves"),
         ))
     tiles.append((
         "Bloomgate flower",
@@ -673,6 +687,21 @@ def build_all(
             "geometry.bl.giant_bloom",
             model_image(block_geometries["giant_bloom"], block_textures[f"bl_{spec.key}"], spec.label, "tree-sized bloom"),
         ))
+    # The portal is a flat surface, so show its actual animated first frame
+    # instead of the renderer's averaged face colour (which washes it grey).
+    portal_tile = checker(210, 210, 12)
+    portal_frame = block_textures["bl_rainbow_portal"].crop((0, 0, 32, 32))
+    portal_frame = portal_frame.resize((174, 174), Image.Resampling.NEAREST)
+    portal_tile.alpha_composite(portal_frame, (18, 18))
+    portal_draw = ImageDraw.Draw(portal_tile)
+    portal_draw.text((8, 7), "Rainbow portal", font=font(13, True), fill=INK)
+    portal_draw.text((8, 191), "animated 2x2 surface", font=font(10), fill=MUTED)
+    portal_draw.rectangle((0, 0, 209, 209), outline=(92, 79, 108, 255))
+    tiles.append((
+        "Rainbow portal",
+        "geometry.bl.rainbow_portal",
+        portal_tile,
+    ))
     tiles.append((
         "Dewgrass",
         "geometry.bl.dewgrass",

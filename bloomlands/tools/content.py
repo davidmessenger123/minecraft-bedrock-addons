@@ -15,6 +15,7 @@ sits naturally beside it.
 from __future__ import annotations
 
 import base64
+import colorsys
 import io
 import json
 import math
@@ -27,7 +28,7 @@ from typing import Callable, Iterable, Sequence
 from PIL import Image, ImageDraw, ImageFilter
 
 NS = "bl"
-VERSION = "2.1.0"
+VERSION = "2.2.0"
 PACK_NAME = "Bloomlands"
 BP_NAME = "Bloomlands Behaviour Pack"
 RP_NAME = "Bloomlands Resource Pack"
@@ -151,7 +152,7 @@ def data_uri(img: Image.Image) -> str:
 # Palettes
 # ---------------------------------------------------------------------------
 
-GRASS = ["#3f7d34", "#4f9440", "#5fa84a", "#70ba55", "#83c961", "#94d36e"]
+GRASS = ["#4f7d3a", "#5b8e43", "#689f4c", "#76b157", "#86c263", "#96d16f"]
 DIRT = ["#5d3f2c", "#6b4a33", "#7a553b", "#876144", "#966d4c", "#a47a55"]
 STONE = ["#55585e", "#60636a", "#6c7077", "#777b83", "#83878f", "#90949c"]
 BARK = ["#4b3020", "#5d3c27", "#6d4a30", "#7d5838", "#8c6642", "#9c754d"]
@@ -190,14 +191,10 @@ def petal_grass_top() -> Image.Image:
         put(img, x, y, GRASS[5] if i % 3 else GRASS[4])
     # Tiny meadow flowers: a 2x2 centre with a one-pixel halo.
     flowers = [
-        (2, 3, PETAL_PINK[4]),
-        (6, 10, PETAL_GOLD[4]),
-        (12, 4, PETAL_WHITE[4]),
-        (9, 2, PETAL_BLUE[4]),
-        (14, 12, PETAL_PINK[3]),
-        (4, 14, PETAL_WHITE[3]),
-        (10, 14, PETAL_PURPLE[4]),
-        (1, 8, PETAL_GOLD[3]),
+        (3, 4, PETAL_PINK[4]),
+        (10, 9, PETAL_GOLD[4]),
+        (13, 3, PETAL_WHITE[4]),
+        (6, 13, PETAL_BLUE[3]),
     ]
     for x, y, color in flowers:
         put(img, x, y, shade(color, -0.35))
@@ -384,12 +381,13 @@ def petal_path() -> Image.Image:
     img = new_tex()
     d = ImageDraw.Draw(img)
     noise_rect(d, (0, 0, 15, 15), ["#4b3327", "#563b2c", "#624532"], 81)
-    # Packed petals in loose overlapping clusters.
+    # Sparse, softly coloured petals set into packed earth.  The earlier
+    # twelve-petal scatter read as confetti rather than a path.
     petals = [
-        (3, 3, PETAL_PINK[4]), (6, 2, PETAL_PINK[5]), (10, 4, PETAL_WHITE[4]),
-        (13, 2, PETAL_GOLD[4]), (2, 8, PETAL_PURPLE[4]), (6, 7, PETAL_PINK[3]),
-        (9, 9, PETAL_WHITE[3]), (13, 8, PETAL_PINK[4]), (4, 13, PETAL_GOLD[3]),
-        (8, 13, PETAL_BLUE[4]), (12, 13, PETAL_PINK[5]), (15, 11, PETAL_WHITE[3]),
+        (3, 4, PETAL_PINK[3]), (8, 3, PETAL_WHITE[3]),
+        (12, 5, PETAL_GOLD[3]), (4, 9, PETAL_PURPLE[3]),
+        (10, 10, PETAL_PINK[2]), (7, 13, PETAL_WHITE[3]),
+        (13, 12, PETAL_PINK[3]), (1, 8, PETAL_BLUE[3]),
     ]
     for x, y, color in petals:
         put(img, x, y, color)
@@ -653,6 +651,37 @@ PORTAL_FLOWER_REGIONS = {
 }
 
 
+def rainbow_portal_texture() -> Image.Image:
+    """
+    Recolour the vanilla Nether-portal frame sheet.
+
+    The source is the 32x1024 sheet (32 frames of 32x32).  Hue is shifted by
+    the pixel position and frame while the original brightness and alpha
+    pattern are retained, so the surface keeps the familiar portal motion.
+    """
+    source = Path(__file__).with_name("nether_portal.png")
+    base = Image.open(source).convert("RGBA")
+    frame_size = base.width
+    out = new_tex(base.width, base.height)
+    for y in range(base.height):
+        frame = y // frame_size
+        for x in range(base.width):
+            r, g, b, a = base.getpixel((x, y))
+            if a <= 8:
+                out.putpixel((x, y), (r, g, b, a))
+                continue
+            _, saturation, value = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+            hue = ((x / base.width) + (y % frame_size) / frame_size * 0.42
+                   + frame * 0.13) % 1.0
+            # Keep the sheet's smoky contrast rather than flattening it into
+            # a pure rainbow.  The old portal purples become a full spectrum.
+            saturation = max(0.62, min(1.0, saturation * 1.25))
+            value = min(1.0, value * 1.18)
+            rr, gg, bb = colorsys.hsv_to_rgb(hue, saturation, value)
+            out.putpixel((x, y), (round(rr * 255), round(gg * 255), round(bb * 255), a))
+    return out
+
+
 def bloomheart_texture() -> Image.Image:
     """Four 64x64 frames stacked vertically for an animated portal heart."""
     img = new_tex(64, 256)
@@ -844,13 +873,21 @@ def portal_item_icon() -> Image.Image:
         y = round(16 + math.sin(angle) * 11)
         if i % 3:
             put(img, x, y, MOSS[2] if i % 2 else MOSS[3])
-    # Heart centre.
-    heart = [(10, 16), (10, 13), (12, 11), (15, 12), (16, 14), (17, 12), (20, 11), (22, 13), (22, 16), (16, 23), (10, 16)]
-    d.polygon(heart, fill=rgba(PETAL_PINK[3]))
-    d.line(heart, fill=rgba(PETAL_PINK[0]), width=1)
-    d.ellipse((13, 13, 19, 19), fill=rgba(PETAL_PINK[5]))
-    put(img, 15, 14, "#ffffff")
-    put(img, 16, 14, "#ffd6e2")
+    # A square rainbow portal set into the flower ring.  This reads as a
+    # Bloomgate rather than the old heart-shaped activation sigil.
+    rainbow = ["#ff5b6e", "#ff9b4a", "#ffe35a", "#8dde63",
+               "#55dfd4", "#5b9cff", "#a873ff", "#ff70d4"]
+    for y in range(10, 23):
+        for x in range(10, 23):
+            if x in (10, 22) or y in (10, 22):
+                pixel = (32, 20, 45, 245)
+            else:
+                pixel = rgba(rainbow[(x + y) % len(rainbow)])
+            img.putpixel((x, y), pixel)
+    # A bright centre and two flower pixels at the cardinal points.
+    d.rectangle((14, 14, 18, 18), fill=rgba("#fff8df", 235))
+    for x, y in [(15, 16), (16, 15), (17, 16), (16, 17)]:
+        put(img, x, y, "#ffffff")
     # Soft sparkles.
     for x, y in [(6, 5), (25, 7), (27, 24), (5, 26), (16, 2)]:
         put(img, x, y, "#fff6c8")
@@ -1038,37 +1075,40 @@ def entity_geometry(
 
 def small_flower_geometry() -> dict:
     t = SMALL_FLOWER_REGIONS
+    # Five broad outer petals and three shorter inner petals.  The older
+    # six-plus-six arrangement read as a lumpy rosette at Minecraft scale;
+    # this has a clear flower silhouette from above and from the side.
     petals = []
-    for i in range(6):
-        angle = i * 60
+    for i in range(5):
+        angle = i * 72
         petals.append(
             cube(
-                [2, 18, -2],
-                [5, 1, 4],
+                [2, 18, -2.2],
+                [5.2, 1, 4.4],
                 uv_faces(t["petal"], up=t["petal"], down=t["petal"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
                 rotation=[0, angle, 0],
                 pivot=[0, 18, 0],
             )
         )
     inner = []
-    for i in range(6):
-        angle = 30 + i * 60
+    for i in range(3):
+        angle = 24 + i * 120
         inner.append(
             cube(
-                [1.5, 19.2, -1.5],
-                [4, 1, 3],
+                [1.4, 19.3, -1.4],
+                [3.8, 1, 2.8],
                 uv_faces(t["petal"], up=t["petal"], down=t["petal"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
                 rotation=[0, angle, 0],
                 pivot=[0, 19.2, 0],
             )
         )
     stamens = []
-    for i in range(4):
-        angle = i * 90 + 45
+    for i in range(3):
+        angle = i * 120 + 30
         stamens.append(
             cube(
-                [math.cos(math.radians(angle)) * 1.5 - 0.5, 21, math.sin(math.radians(angle)) * 1.5 - 0.5],
-                [1, 2, 1],
+                [math.cos(math.radians(angle)) * 1.2 - 0.5, 21, math.sin(math.radians(angle)) * 1.2 - 0.5],
+                [1, 1.8, 1],
                 uv(t["center"]),
             )
         )
@@ -1133,6 +1173,21 @@ def portal_flower_geometry() -> dict:
     return geometry("geometry.bl.portal_flower", 64, 64, [bone("flower", [0, 0, 0], cubes)], 2.2, 3.4, [0, 1.3, 0])
 
 
+def rainbow_portal_geometry() -> dict:
+    """A flat End-portal-like surface, slightly above the ground plane."""
+    t = (0, 0, 32, 32)
+    cube_data = cube(
+        [-8, 0.01, -8],
+        [16, 0.06, 16],
+        uv_faces(t, up=t, down=t, north=t, south=t, east=t, west=t),
+    )
+    return geometry(
+        "geometry.bl.rainbow_portal", 32, 1024,
+        [bone("portal", [0, 0, 0], [cube_data])],
+        1.0, 0.1, [0, 0.0, 0],
+    )
+
+
 def bloomheart_geometry() -> dict:
     t = {
         "heart": (0, 0, 32, 32),
@@ -1175,42 +1230,45 @@ def giant_bloom_geometry() -> dict:
         "leaf": (48, 10, 16, 16),
         "edge": (48, 28, 8, 8),
     }
+    # Six broad outer petals, five shorter inner ones and five sepals create
+    # a cleaner, more readable flower than the previous eight-plus-eight
+    # stack while keeping the tree-sized scale.
     outer = []
-    for i in range(8):
+    for i in range(6):
         outer.append(
             cube(
                 [6, 10, -4],
                 [9, 4, 8],
                 uv_faces(t["petal"], up=t["petal"], down=t["light"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
-                rotation=[0, i * 45, 0],
+                rotation=[0, i * 60, 0],
                 pivot=[0, 12, 0],
             )
         )
     inner = []
-    for i in range(8):
+    for i in range(5):
         inner.append(
             cube(
                 [5, 13, -3],
                 [8, 3, 6],
                 uv_faces(t["light"], up=t["light"], down=t["petal"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
-                rotation=[0, 22.5 + i * 45, 0],
+                rotation=[0, 24 + i * 72, 0],
                 pivot=[0, 14.5, 0],
             )
         )
     sepals = []
-    for i in range(8):
+    for i in range(5):
         sepals.append(
             cube(
                 [6, 3, -1.5],
                 [7, 2, 3],
                 uv_faces(t["calyx"], up=t["calyx"], down=t["calyx"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
-                rotation=[0, i * 45, 0],
+                rotation=[0, 36 + i * 72, 0],
                 pivot=[0, 4, 0],
             )
         )
     stamens = []
-    for i in range(8):
-        angle = i * 45
+    for i in range(6):
+        angle = i * 60
         stamens.append(
             cube(
                 [math.cos(math.radians(angle)) * 4 - 0.5, 15, math.sin(math.radians(angle)) * 4 - 0.5],
@@ -1219,8 +1277,8 @@ def giant_bloom_geometry() -> dict:
             )
         )
     pollen = []
-    for i in range(6):
-        angle = i * 60 + 15
+    for i in range(5):
+        angle = i * 72 + 15
         pollen.append(
             cube(
                 [math.cos(math.radians(angle)) * (4 + i % 3) - 0.5, 20 + (i % 3) * 1.5, math.sin(math.radians(angle)) * (4 + i % 3) - 0.5],
@@ -1295,11 +1353,12 @@ class BlockSpec:
     selection: tuple[tuple[float, float, float], tuple[float, float, float]] | None = None
     map_color: str = "#7fbf5f"
     sound: str = "grass"
-    menu: str = "nature"
+    menu: str | None = "nature"
     flammable: bool = False
     placement: tuple[str, ...] = ()
     particle_count: int = 16
     item_visual: bool = True
+    drop_item: bool = True
 
 
 FULL = "minecraft:geometry.full_block"
@@ -1363,11 +1422,17 @@ BLOCK_SPECS: list[BlockSpec] = [
         placement=("minecraft:grass_block", "minecraft:dirt", "bl:petal_grass", "bl:bloom_dirt", "bl:bloom_stone", "bl:petal_path"),
     ),
     BlockSpec(
+        "rainbow_portal", "Rainbow Bloomgate", "custom", "geometry.bl.rainbow_portal", "bl_rainbow_portal", {"*": "bl_rainbow_portal"},
+        render_method="blend", light=15, dampening=0, hardness=0.1, collision=False,
+        selection=((-8, 0, -8), (16, 0.2, 16)), map_color="#ff70d4", sound="glass",
+        menu=None, drop_item=False,
+    ),
+    BlockSpec(
         "bloomheart", "Bloomheart", "custom", "geometry.bl.bloomheart", "bl_bloomheart", {"*": "bl_bloomheart"},
         render_method="alpha_test", light=12, dampening=0, hardness=0.2, collision=True,
         selection=(( -8, 0, -8), (16, 16, 16)), map_color="#f07aa8", sound="glass",
         placement=("minecraft:grass_block", "minecraft:dirt", "bl:petal_grass", "bl:bloom_dirt", "bl:bloom_stone", "bl:bloomwood_planks", "bl:petal_path"),
-        particle_count=24,
+        particle_count=24, menu=None, drop_item=False,
     ),
     BlockSpec(
         "giant_sunflower", "Giant Sunflower", "custom", "geometry.bl.giant_bloom", "bl_giant_sunflower", {"*": "bl_giant_sunflower"},
@@ -1426,7 +1491,7 @@ def block_material_instances(spec: BlockSpec) -> dict:
         result[face] = {
             "texture": texture,
             "render_method": spec.render_method,
-            "face_dimming": False if spec.key == "bloomheart" else True,
+            "face_dimming": False if spec.key in {"bloomheart", "rainbow_portal"} else True,
             "ambient_occlusion": spec.kind == "full",
         }
     return result
@@ -1437,6 +1502,7 @@ def block_geometry_files() -> dict[str, dict]:
     return {
         "small_flower": small_flower_geometry(),
         "portal_flower": portal_flower_geometry(),
+        "rainbow_portal": rainbow_portal_geometry(),
         "bloomheart": bloomheart_geometry(),
         "giant_bloom": giant_bloom_geometry(),
         "dewgrass": dewgrass_geometry(),
@@ -1459,6 +1525,7 @@ def block_textures() -> dict[str, Image.Image]:
         "bl_dewgrass": None,  # filled below
         "bl_lily_bloom": lily_bloom_texture(),
         "bl_portal_flower": portal_flower_texture(),
+        "bl_rainbow_portal": rainbow_portal_texture(),
         "bl_bloomheart": bloomheart_texture(),
     }
     # Dewgrass uses the top part of a larger grass texture with dew drops.

@@ -375,7 +375,9 @@ def main() -> int:
             if not loot_path.exists():
                 fail(f"{path.relative_to(ROOT)}: loot table {loot} missing")
             block_loot[identifier] = loot_path
-        else:
+        elif identifier not in {"bl:rainbow_portal", "bl:bloomheart"}:
+            # The portal surface and the legacy decorative Bloomheart are
+            # hidden world blocks; they intentionally have no item or loot.
             fail(f"{path.relative_to(ROOT)}: missing minecraft:loot")
         for face, material in components.get("minecraft:material_instances", {}).items():
             if not isinstance(material, dict):

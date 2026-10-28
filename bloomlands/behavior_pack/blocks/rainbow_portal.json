@@ -1,0 +1,55 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:block": {
+    "description": {
+      "identifier": "bl:rainbow_portal"
+    },
+    "components": {
+      "minecraft:geometry": "geometry.bl.rainbow_portal",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "bl_rainbow_portal",
+          "render_method": "blend",
+          "face_dimming": false,
+          "ambient_occlusion": false
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.bl.rainbow_portal",
+        "material_instances": {
+          "*": {
+            "texture": "bl_rainbow_portal",
+            "render_method": "blend",
+            "face_dimming": false,
+            "ambient_occlusion": false
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.1
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:destruction_particles": {
+        "texture": "bl_rainbow_portal",
+        "particle_count": 16
+      },
+      "minecraft:light_emission": 15,
+      "minecraft:light_dampening": 0,
+      "minecraft:map_color": "#ff70d4",
+      "minecraft:display_name": "tile.bl:rainbow_portal.name",
+      "minecraft:collision_box": false,
+      "minecraft:selection_box": {
+        "origin": [
+          -8,
+          0,
+          -8
+        ],
+        "size": [
+          16,
+          0.2,
+          16
+        ]
+      }
+    }
+  }
+}
