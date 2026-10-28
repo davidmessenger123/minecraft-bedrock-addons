@@ -27,8 +27,8 @@
         "controller.render.nza"
       ],
       "spawn_egg": {
-        "base_color": "#968A76",
-        "overlay_color": "#968A76"
+        "texture": "nza:spawn_egg_powelliphanta",
+        "texture_index": 0
       }
     }
   }

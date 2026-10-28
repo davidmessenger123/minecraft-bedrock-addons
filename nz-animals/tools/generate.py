@@ -21,6 +21,7 @@ import zipfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import nzlib
+import spawn_eggs
 from nzarchetypes import BUILDERS
 from textures_recipes import PALETTE_EXTRAS, RECIPES, species_palette
 
@@ -298,18 +299,7 @@ def loot_table(spec: dict) -> dict:
 # client entity + animations
 # ---------------------------------------------------------------------------
 
-def egg_colors(spec: dict) -> tuple[str, str]:
-    """Spawn egg tint, derived from the species palette unless overridden."""
-    if spec.get("egg"):
-        return spec["egg"]
-    body = spec["pal"]["body"]
-    head = spec["pal"].get("head", body)
-    hexify = lambda c: "#%02X%02X%02X" % c
-    return hexify(body), hexify(head)
-
-
 def client_entity(spec: dict, render_scale: float) -> dict:
-    base, overlay = egg_colors(spec)
     scripts: dict = {"animate": ["movement"]}
     if abs(render_scale - 1.0) > 1e-4:
         # Constant Molang scale.  Geometry, UVs and animations stay at the
@@ -333,7 +323,12 @@ def client_entity(spec: dict, render_scale: float) -> dict:
                 },
                 "scripts": scripts,
                 "render_controllers": [f"controller.render.{NS}"],
-                "spawn_egg": {"base_color": base, "overlay_color": overlay},
+                # Modern item-atlas spawn egg (the 1.21.80+ mob-shaped
+                # 32x32 icons instead of the old two-tone fallback egg).
+                "spawn_egg": {
+                    "texture": f"{NS}:spawn_egg_{spec['id']}",
+                    "texture_index": 0,
+                },
             }
         },
     }
@@ -632,6 +627,7 @@ def main() -> int:
         shutil.rmtree(out_root)
 
     profiles = sorted({s["motion"] for s in ROSTER})
+    spawn_egg_ids: list[str] = []
 
     # ---- resource pack: animations & controllers ----
     for prof in profiles:
@@ -683,6 +679,11 @@ def main() -> int:
         model.ground()
         pixels, w, h, offsets = nzlib.render_texture(model, palette)
         nzlib.write_png(os.path.join(rp, "textures", "entity", sid, f"{sid}.png"), pixels, w, h)
+        spawn_eggs.write_icon(
+            os.path.join(rp, "textures", "items", "spawn_eggs", f"spawn_egg_{sid}.png"),
+            spec, palette, real_units,
+        )
+        spawn_egg_ids.append(sid)
 
         geo = nzlib.to_geo_json(model, offsets, f"geometry.{NS}.{sid}", (w, h))
         write_json(os.path.join(rp, "models", "entity", f"{sid}.geo.json"), geo)
@@ -696,6 +697,11 @@ def main() -> int:
         write_json(os.path.join(bp, "entities", f"{sid}.json"), behaviour_entity(spec, lo, hi))
         write_json(os.path.join(bp, "spawn_rules", f"{sid}.json"), spawn_rules(spec))
         write_json(os.path.join(bp, "loot_tables", "entities", f"{sid}.json"), loot_table(spec))
+
+    spawn_eggs.write_item_texture(
+        os.path.join(rp, "textures", "item_texture.json"),
+        spawn_egg_ids,
+    )
 
     # ---- manifests ----
     version = next_version()

@@ -26,8 +26,8 @@
         "controller.render.nza"
       ],
       "spawn_egg": {
-        "base_color": "#96704E",
-        "overlay_color": "#A27C56"
+        "texture": "nza:spawn_egg_nz_sea_lion",
+        "texture_index": 0
       }
     }
   }

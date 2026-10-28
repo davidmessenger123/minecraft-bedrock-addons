@@ -1,0 +1,93 @@
+{
+  "resource_pack_name": "nz_animals",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "nza:spawn_egg_tui": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_tui"
+    },
+    "nza:spawn_egg_kiwi": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kiwi"
+    },
+    "nza:spawn_egg_kakapo": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kakapo"
+    },
+    "nza:spawn_egg_kea": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kea"
+    },
+    "nza:spawn_egg_kaka": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kaka"
+    },
+    "nza:spawn_egg_hihi": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_hihi"
+    },
+    "nza:spawn_egg_kereru": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kereru"
+    },
+    "nza:spawn_egg_pukeko": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_pukeko"
+    },
+    "nza:spawn_egg_morepork": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_morepork"
+    },
+    "nza:spawn_egg_kotare": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_kotare"
+    },
+    "nza:spawn_egg_tieke": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_tieke"
+    },
+    "nza:spawn_egg_whio": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_whio"
+    },
+    "nza:spawn_egg_huia": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_huia"
+    },
+    "nza:spawn_egg_haasts_eagle": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_haasts_eagle"
+    },
+    "nza:spawn_egg_rockhopper_penguin": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_rockhopper_penguin"
+    },
+    "nza:spawn_egg_yellow_eyed_penguin": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_yellow_eyed_penguin"
+    },
+    "nza:spawn_egg_little_penguin": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_little_penguin"
+    },
+    "nza:spawn_egg_tuatara": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_tuatara"
+    },
+    "nza:spawn_egg_powelliphanta": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_powelliphanta"
+    },
+    "nza:spawn_egg_weta": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_weta"
+    },
+    "nza:spawn_egg_huhu": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_huhu"
+    },
+    "nza:spawn_egg_nz_sea_lion": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_nz_sea_lion"
+    },
+    "nza:spawn_egg_nz_fur_seal": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_nz_fur_seal"
+    },
+    "nza:spawn_egg_hectors_dolphin": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_hectors_dolphin"
+    },
+    "nza:spawn_egg_dusky_dolphin": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_dusky_dolphin"
+    },
+    "nza:spawn_egg_orca": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_orca"
+    },
+    "nza:spawn_egg_sperm_whale": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_sperm_whale"
+    },
+    "nza:spawn_egg_blue_shark": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_blue_shark"
+    },
+    "nza:spawn_egg_moa": {
+      "textures": "textures/items/spawn_eggs/spawn_egg_moa"
+    }
+  }
+}

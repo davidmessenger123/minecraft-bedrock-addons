@@ -4,6 +4,14 @@ Adds New Zealand native animals that have **no equivalent mob in vanilla
 Minecraft Bedrock**: 29 new species, each with its own model, texture, AI
 profile, spawn rules and Creative-mode spawn egg.
 
+## What changed in 1.1.9
+
+- **Modern spawn eggs.** Every species now has a 32x32 item-atlas icon with
+  a mob-readable face and pattern, matching the look of the vanilla 1.21.80+
+  spawn eggs. The old `base_color`/`overlay_color` two-tone eggs are gone.
+- Added the generated spawn-egg atlas entries under
+  `textures/item_texture.json`.
+
 ## What changed in 1.1.8
 
 - **Fixed the in-game animation failure.** Eight idle clips contained a
@@ -157,19 +165,24 @@ species several valid biomes:
 
 ## Creative-mode spawn eggs
 
-Every one of the 29 species gets a spawn egg automatically. Bedrock
-auto-generates the item; three pieces are required:
+Every one of the 29 species gets a spawn egg automatically. The item itself
+is still supplied by Bedrock, but its icon is now a generated 32x32 item-atlas
+texture in the style of the 1.21.80+ vanilla eggs:
 
 1. **Behaviour pack** `entities/<name>.json` — `"is_spawnable": true` (plus
    `is_summonable` and `is_experimental`).
-2. **Resource pack** `entity/<name>.entity.json` — a `spawn_egg` block. The
-   colours are derived from each species' own palette, so the egg matches the
-   animal:
+2. **Resource pack** `entity/<name>.entity.json` — a `spawn_egg` block that
+   points at the icon's atlas short-name:
    ```json
-   "spawn_egg": { "base_color": "#685A2F", "overlay_color": "#7A6438" }
+   "spawn_egg": {
+     "texture": "nza:spawn_egg_kiwi",
+     "texture_index": 0
+   }
    ```
-   This produces the familiar speckled vanilla-style egg, tinted.
-3. **Language file** — the egg's display name. Bedrock resolves entity names
+3. **Item atlas** `textures/item_texture.json` — maps each
+   `nza:spawn_egg_<id>` short-name to
+   `textures/items/spawn_eggs/spawn_egg_<id>`.
+4. **Language file** — the egg's display name. Bedrock resolves entity names
    differently depending on the pack, so both the flattened and the namespaced
    key are written:
    ```
@@ -179,8 +192,9 @@ auto-generates the item; three pieces are required:
    item.spawn_egg.entity.nza:kiwi.name=Kiwi Spawn Egg
    ```
 
-No `items/` folder, no `item_texture.json` entry and no egg PNG are needed —
-Bedrock creates the item itself. `/give @s nza:kiwi_spawn_egg 1` also works.
+`python3 tools/generate.py` derives each icon from the species' own palette
+and model archetype, so the egg's colours, face, crest, fins or legs match the
+animal. `/give @s nza:kiwi_spawn_egg 1` still works.
 
 ## How it is built
 

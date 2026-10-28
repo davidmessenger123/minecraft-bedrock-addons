@@ -26,8 +26,8 @@
         "controller.render.nza"
       ],
       "spawn_egg": {
-        "base_color": "#5E5A56",
-        "overlay_color": "#66625E"
+        "texture": "nza:spawn_egg_sperm_whale",
+        "texture_index": 0
       }
     }
   }

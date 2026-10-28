@@ -27,8 +27,8 @@
         "controller.render.nza"
       ],
       "spawn_egg": {
-        "base_color": "#26262A",
-        "overlay_color": "#222226"
+        "texture": "nza:spawn_egg_rockhopper_penguin",
+        "texture_index": 0
       }
     }
   }

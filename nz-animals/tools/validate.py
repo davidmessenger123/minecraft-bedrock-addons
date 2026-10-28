@@ -117,6 +117,11 @@ def main() -> int:
         d = load(os.path.join(rp, "render_controllers", f))
         render_controllers |= set(d["render_controllers"].keys())
 
+    item_atlas: dict = {}
+    atlas_path = os.path.join(rp, "textures", "item_texture.json")
+    if os.path.isfile(atlas_path):
+        item_atlas = load(atlas_path).get("texture_data", {})
+
     for f in sorted(os.listdir(os.path.join(rp, "entity"))):
         d = load(os.path.join(rp, "entity", f))
         desc = d["minecraft:client_entity"]["description"]
@@ -144,6 +149,22 @@ def main() -> int:
             target = desc["animations"].get(ac)
             if target is None:
                 problems.append(f"{sid}: script animates unknown '{ac}'")
+
+        egg = desc.get("spawn_egg", {})
+        atlas_key = egg.get("texture")
+        if atlas_key is None:
+            problems.append(f"{sid}: spawn_egg has no item-atlas texture")
+        elif atlas_key not in item_atlas:
+            problems.append(f"{sid}: spawn_egg texture '{atlas_key}' missing from item_texture.json")
+        else:
+            paths = item_atlas[atlas_key].get("textures")
+            if isinstance(paths, str):
+                paths = [paths]
+            if not paths:
+                problems.append(f"{sid}: spawn_egg texture '{atlas_key}' has no path")
+            for path in paths or []:
+                if not os.path.isfile(os.path.join(rp, path + ".png")):
+                    problems.append(f"{sid}: spawn_egg image missing: {path}.png")
 
     # --- Molang queries used in animation controllers ---
     # `query.is_moving` is used by no vanilla Bedrock controller and never

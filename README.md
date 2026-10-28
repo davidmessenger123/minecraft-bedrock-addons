@@ -7,7 +7,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Angel Wings** | Add-on | 1.3.1 | [AngelWings-1.3.1.mcaddon](angel-wings/AngelWings-1.3.1.mcaddon) |
 | **Mobile Phone** | Add-on | 1.1.0 | [MobilePhone-1.1.0.mcaddon](mobile-phone/MobilePhone-1.1.0.mcaddon) |
 | **Drone Companion** | Add-on | 1.0.1 | [DroneCompanion-1.0.1.mcaddon](drone-companion/DroneCompanion-1.0.1.mcaddon) |
-| **NZ Animals** | Add-on | 1.1.8 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
+| **NZ Animals** | Add-on | 1.1.9 | [NZ_Animals.mcaddon](nz-animals/NZ_Animals.mcaddon) |
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
@@ -235,6 +235,7 @@ details and the Blockbench source.
 - [Drone Companion 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/drone-companion-v1.0.1)
 - [NZ Animals 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.0)
 - [NZ Animals 1.1.8](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.8)
+- [NZ Animals 1.1.9](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/nz-animals-v1.1.9)
 - [Rainbow Garden 1.0.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/rainbow-garden-v1.0.1)
 - [Petal & Star 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/petal-and-star-v1.0.0)
 - [Candyland 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/candyland-v1.0.0)
