@@ -231,7 +231,7 @@ def generate_entity_texture(path):
     px = [[(0, 0, 0, 0) for _ in range(W)] for _ in range(H)]
 
     # Row 0: left wing, pointing right.  Row 1: right wing, pointing left.
-    left_specs = [(29, 14.0, 0), (30, 14.5, 1), (31, 13.0, 2), (31, 11.5, 3)]
+    left_specs = [(29, 14.0, 0), (30, 14.5, 1), (31, 10.5, 2), (31, 8.0, 3)]
     for i, (tip, half_h, variant) in enumerate(left_specs):
         draw_feather_cell(px, W, H, i * 32, 0, +1, tip, half_h, variant)
         draw_feather_cell(px, W, H, i * 32, 32, -1, tip, half_h, variant)

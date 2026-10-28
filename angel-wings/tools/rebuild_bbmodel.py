@@ -24,11 +24,75 @@ GEO = os.path.join(ROOT, "resource_pack", "models", "entity",
                    "angel_wings.geo.json")
 TEXTURE = os.path.join(ROOT, "resource_pack", "textures", "entity",
                        "angel_wings.png")
+ANIMATIONS = os.path.join(ROOT, "resource_pack", "animations",
+                          "angel_wings.animation.json")
 NS = uuid.UUID("7c1e4d18-7b0e-4d71-9d97-6f6b1e8caf10")
 
 
 def stable(prefix, name):
     return str(uuid.uuid5(NS, prefix + "/" + name))
+
+
+def build_animations(group_uuids):
+    """Create Blockbench preview animators from the shipped Molang clips.
+
+    Blockbench animations target group UUIDs, not bone names.  Rebuilding the
+    groups without refreshing these keys is why the previous project appeared
+    to lose its animations.
+    """
+    data = json.load(open(ANIMATIONS, encoding="utf-8"))["animations"]
+    out = []
+    for name, clip in data.items():
+        bones = clip.get("bones", {})
+        animators = {}
+        for bone_name, channels in bones.items():
+            group_uuid = group_uuids.get(bone_name)
+            if not group_uuid:
+                continue
+            keyframes = []
+            for channel, times in channels.items():
+                if channel != "rotation":
+                    continue
+                for time_text, values in times.items():
+                    keyframes.append({
+                        "channel": "rotation",
+                        "data_points": [{
+                            "x": str(values[0]),
+                            "y": str(values[1]),
+                            "z": str(values[2]),
+                        }],
+                        "uuid": stable("key", name + "/" + bone_name + "/" + time_text),
+                        "time": float(time_text),
+                        "color": -1,
+                        "interpolation": "linear",
+                    })
+            keyframes.sort(key=lambda key: key["time"])
+            if keyframes:
+                animators[group_uuid] = {
+                    "name": bone_name,
+                    "type": "bone",
+                    "rotation_global": False,
+                    "quaternion_interpolation": False,
+                    "keyframes": keyframes,
+                }
+        out.append({
+            "uuid": stable("animation", name),
+            "name": name,
+            "loop": "loop" if clip.get("loop", True) else "once",
+            "override": False,
+            "length": clip.get("animation_length", 4.0),
+            "snapping": 10,
+            "selected": False,
+            "saved": False,
+            "path": "",
+            "scope": 0,
+            "anim_time_update": "",
+            "blend_weight": "",
+            "start_delay": "",
+            "loop_delay": "",
+            "animators": animators,
+        })
+    return out
 
 
 def face_entry(face, texture_id=0):
@@ -76,7 +140,6 @@ def main():
         texture_b64 = base64.b64encode(fh.read()).decode("ascii")
 
     bones = geo["bones"]
-    bone_by_name = {bone["name"]: bone for bone in bones}
     groups = {}
     elements = []
     cube_ids_by_bone = {}
@@ -154,6 +217,9 @@ def main():
         "body", "left_wing", "left_wing_mid", "left_wing_tip",
         "right_wing", "right_wing_mid", "right_wing_tip")]
     doc["outliner"] = [body_node]
+    doc["animations"] = build_animations({
+        group["name"]: group["uuid"] for group in doc["groups"]
+    })
 
     texture = doc["textures"][0]
     texture["name"] = "angel_wings"

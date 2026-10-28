@@ -4,17 +4,16 @@ A pair of elytra-style Angel Wings that let the player glide. The wing mesh is
 modelled in Blockbench, exported as Bedrock geometry, rendered on the player's
 back through an attachable, and driven by a Script API glide controller.
 
-Version **1.3.0** rebuilds the wing mesh as a **95-cube, 7-bone layered feather
-model**: broad coverts, scapulars, long secondaries, staggered primaries,
-underwing layers, an alula fan, and an ivory-and-gold leading arm with visible
-joints. The wings now span 54 units and keep their transparent cut-out atlas,
-grounded / airborne / flap controller, and momentum-preserving glide.
+Version **1.3.1** refines the 95-cube, 7-bone layered feather model with a more
+swept, pointed primary fan and a compact idle fold. The wings span 55 units and
+keep their transparent cut-out atlas, grounded / airborne / flap controller,
+and momentum-preserving glide.
 
 ## Folder layout
 
 ```
 angel-wings/
-├── AngelWings-1.3.0.mcaddon                  # packaged add-on
+├── AngelWings-1.3.1.mcaddon                  # packaged add-on
 ├── AngelWings.bbmodel                        # Blockbench source project
 ├── tools/
 │   ├── generate_geometry.py                  # regenerates the wing geometry
@@ -53,8 +52,8 @@ Open `AngelWings.bbmodel` in Blockbench to edit it. The project contains:
 - `left_wing_tip` / `right_wing_tip` (14 cubes each) — wrist arm, alula coverts,
   staggered primaries and dark under-primaries
 
-That is **95 cubes in 7 bones**. The wings span **54 units** (3.375 blocks)
-from tip to tip (`x = −27…+27`), are roughly **11.3 units** tall, and sit
+That is **95 cubes in 7 bones**. The wings span **55 units** (3.44 blocks)
+from tip to tip (`x = −27.7…+27.7`), are roughly **11.8 units** tall, and sit
 **2–4.8 units behind the torso**. Feather plates use transparent cut-outs on the
 broad faces and fully transparent thin edges, so no rectangular gold frame is
 drawn around each feather. The leading arm is ivory with gold ridges and joint
@@ -67,11 +66,12 @@ the add-on; the previews are only for checking timing in Blockbench.
 
 In Blockbench's viewport the model is at the back of the player, not at ground
 level, so frame it with **F** (Frame Selection) if the camera is not already
-centred on it.
+centred on it. In **Animate**, the idle clip folds the wings down and behind the
+back; glide spreads the swept primary fan.
 
 ## How to install
 
-1. Open **`AngelWings-1.3.0.mcaddon`** to import both packs at once.
+1. Open **`AngelWings-1.3.1.mcaddon`** to import both packs at once.
    Alternatively, copy the `behavior_pack` and `resource_pack` folders into the
    world's `behavior_packs/` and `resource_packs/` folders (or zip each folder
    and import it as `.mcpack`).
@@ -173,6 +173,10 @@ render correctly, and `entity_alphatest_glint` provides the enchantment glint.
 
 ## Changelog
 
+- **1.3.1** — swept the outer primaries into a longer pointed fan, changed the
+  idle clip so the wings fold down and behind the back instead of rising over
+  the head, and rebuilt the Blockbench preview animators against the new bone
+  UUIDs.
 - **1.3.0** — rebuilt wing mesh: 95 cubes in 7 bones, 54-unit wingspan, ivory
   leading arm with gold joints, scapulars, layered coverts, alula fan, long
   secondaries, staggered primaries, darker underwing feathers, transparent
