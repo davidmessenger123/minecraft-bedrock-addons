@@ -150,7 +150,7 @@ The [block](candyland/previews/blocks.png) and
 ## Bloomlands
 
 A flower-ring portal into a peaceful custom flower dimension with five themed
-regions and three detailed peaceful mobs.
+regions plus the Bloomlands Edge and three detailed peaceful mobs.
 
 - Portal item `bl:bloom_portal` builds a 7×7 petal plaza, eight Bloomgate flowers
   and a central Bloomheart. Stand on the Bloomheart to travel.

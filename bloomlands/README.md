@@ -1,9 +1,9 @@
 # Bloomlands
 
 A flower-filled custom dimension for **Minecraft Bedrock Edition**, entered through a
-ring of flowers on the ground. The island is a gentle garden of five regions, giant
-tree-sized blooms, a dense glowing canopy, terraced petal hills, a mirror lake and
-three hand-modelled peaceful Bloomling mobs.
+ring of flowers on the ground. The island is a gentle garden of five themed regions
+plus the Bloomlands Edge, giant tree-sized blooms, a dense glowing canopy, terraced
+petal hills, a mirror lake and three hand-modelled peaceful Bloomling mobs.
 
 - **Dimension:** `bl:bloomlands` — a void dimension with a script-built floating island.
 - **Portal:** a 7×7 petal-path plaza, eight Bloomgate flowers and one Bloomheart.
