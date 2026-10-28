@@ -1,5 +1,9 @@
 # Minecraft Bedrock Add-ons & Texture Packs
 
+<p align="center">
+  <a href="banner.png"><img src="banner.png" alt="The Model Collection — all Minecraft Bedrock add-on models" width="100%"></a>
+</p>
+
 Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 
 | Project | Type | Version | Download |
