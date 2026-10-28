@@ -805,6 +805,7 @@ class BlockSpec:
     tick_range: tuple[int, int] = (10, 20)
     status_state: bool = False
     curve_state: bool = False
+    channel_state: bool = False
 
 
 BLOCKS: list[BlockSpec] = [
@@ -817,10 +818,10 @@ BLOCKS: list[BlockSpec] = [
     BlockSpec("merger", "Belt Merger", "geometry.cw.merger", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("extractor", "Storage Extractor", "geometry.cw.extractor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("assembler", "Crafting Assembler", "geometry.cw.assembler", 3.0, light=3, machine=True, sound="metal", status_state=True),
-    BlockSpec("storage_core", "Storage Core", "geometry.cw.storage_core", 2.0, sound="wood"),
-    BlockSpec("storage_extension", "Storage Extension", "geometry.cw.storage_extension", 2.0, sound="wood"),
+    BlockSpec("storage_core", "Storage Core", "geometry.cw.storage_core", 2.0, sound="wood", channel_state=True),
+    BlockSpec("storage_extension", "Storage Extension", "geometry.cw.storage_extension", 2.0, sound="wood", channel_state=True),
     BlockSpec("storage_terminal", "Storage Terminal", "geometry.cw.storage_terminal", 2.5, light=4, machine=True, sound="metal", tick_range=(20, 20)),
-    BlockSpec("storage_port", "Storage Port", "geometry.cw.storage_port", 2.5, light=3, machine=True, sound="metal", tick_range=(8, 12)),
+    BlockSpec("storage_port", "Storage Port", "geometry.cw.storage_port", 2.5, light=3, machine=True, sound="metal", tick_range=(8, 12), channel_state=True),
     BlockSpec("electric_furnace", "Electric Furnace", "geometry.cw.electric_furnace", 3.0, light=4, machine=True, sound="metal", status_state=True),
     BlockSpec("crusher", "Crusher", "geometry.cw.crusher", 3.0, light=3, machine=True, sound="metal", status_state=True),
     BlockSpec("sawmill", "Sawmill", "geometry.cw.sawmill", 3.0, light=3, machine=True, sound="metal", status_state=True),

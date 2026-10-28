@@ -5,6 +5,14 @@
       "identifier": "cw:storage_port",
       "menu_category": {
         "category": "construction"
+      },
+      "states": {
+        "cw:channel": [
+          "copper",
+          "iron",
+          "gold",
+          "amethyst"
+        ]
       }
     },
     "components": {

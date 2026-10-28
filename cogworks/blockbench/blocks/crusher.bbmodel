@@ -84,7 +84,7 @@
         }
       },
       "type": "cube",
-      "uuid": "0d7869de-f38f-4b63-9a09-0187fd3d55ce"
+      "uuid": "1549fecd-23a1-4073-a6ab-f6042d380277"
     },
     {
       "name": "body_1",
@@ -160,7 +160,7 @@
         }
       },
       "type": "cube",
-      "uuid": "c101a336-5701-40e0-a7d5-ce2584ba4a9c"
+      "uuid": "c0af36e8-2bb9-457f-bb51-f246528091b0"
     },
     {
       "name": "body_2",
@@ -236,7 +236,7 @@
         }
       },
       "type": "cube",
-      "uuid": "0014c91d-abef-438e-ac6f-3ff6994218cc"
+      "uuid": "763e56a3-bca1-43a3-be93-adbeb09cbae1"
     },
     {
       "name": "body_3",
@@ -312,7 +312,7 @@
         }
       },
       "type": "cube",
-      "uuid": "b6c6ac86-c148-4b64-8346-2d20ba6fd6e3"
+      "uuid": "4000e7b2-797a-4bfa-98ba-73f2b59d3f41"
     },
     {
       "name": "body_4",
@@ -388,7 +388,7 @@
         }
       },
       "type": "cube",
-      "uuid": "9fdfa477-af45-4b39-a861-04f06cd7f0c8"
+      "uuid": "f92772d3-19f1-4e40-aaa6-9068e27342d9"
     },
     {
       "name": "body_5",
@@ -464,7 +464,7 @@
         }
       },
       "type": "cube",
-      "uuid": "c22e3674-35d5-4f32-8858-10f7c2f7a51a"
+      "uuid": "5867ec38-4065-4948-ae47-e800f4bfefdc"
     },
     {
       "name": "body_6",
@@ -540,7 +540,7 @@
         }
       },
       "type": "cube",
-      "uuid": "a61a2b3f-92d9-48ae-a34f-78ffad0a4061"
+      "uuid": "9c75df0e-85fa-4a3d-b3bd-a6b873a1a2c0"
     },
     {
       "name": "body_7",
@@ -616,7 +616,7 @@
         }
       },
       "type": "cube",
-      "uuid": "91a60913-3a8f-490a-84da-7d8b1d2ddef0"
+      "uuid": "e0c1d395-f7e9-4ee3-993c-d42e73ef6921"
     },
     {
       "name": "body_8",
@@ -692,7 +692,7 @@
         }
       },
       "type": "cube",
-      "uuid": "98f9abbf-6fea-408b-99f2-c369aa6457c5"
+      "uuid": "357388bc-c71e-4829-83d0-4af3db4f367d"
     }
   ],
   "outliner": [
@@ -703,17 +703,17 @@
         0,
         0
       ],
-      "uuid": "4272fed1-9ce0-4adc-a4f7-f255e4e88a7c",
+      "uuid": "c8044808-a652-4239-8d5f-6d6526a608ca",
       "children": [
-        "0d7869de-f38f-4b63-9a09-0187fd3d55ce",
-        "c101a336-5701-40e0-a7d5-ce2584ba4a9c",
-        "0014c91d-abef-438e-ac6f-3ff6994218cc",
-        "b6c6ac86-c148-4b64-8346-2d20ba6fd6e3",
-        "9fdfa477-af45-4b39-a861-04f06cd7f0c8",
-        "c22e3674-35d5-4f32-8858-10f7c2f7a51a",
-        "a61a2b3f-92d9-48ae-a34f-78ffad0a4061",
-        "91a60913-3a8f-490a-84da-7d8b1d2ddef0",
-        "98f9abbf-6fea-408b-99f2-c369aa6457c5"
+        "1549fecd-23a1-4073-a6ab-f6042d380277",
+        "c0af36e8-2bb9-457f-bb51-f246528091b0",
+        "763e56a3-bca1-43a3-be93-adbeb09cbae1",
+        "4000e7b2-797a-4bfa-98ba-73f2b59d3f41",
+        "f92772d3-19f1-4e40-aaa6-9068e27342d9",
+        "5867ec38-4065-4948-ae47-e800f4bfefdc",
+        "9c75df0e-85fa-4a3d-b3bd-a6b873a1a2c0",
+        "e0c1d395-f7e9-4ee3-993c-d42e73ef6921",
+        "357388bc-c71e-4829-83d0-4af3db4f367d"
       ]
     }
   ],

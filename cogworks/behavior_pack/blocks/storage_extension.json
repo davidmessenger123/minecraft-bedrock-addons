@@ -5,6 +5,14 @@
       "identifier": "cw:storage_extension",
       "menu_category": {
         "category": "construction"
+      },
+      "states": {
+        "cw:channel": [
+          "copper",
+          "iron",
+          "gold",
+          "amethyst"
+        ]
       }
     },
     "components": {

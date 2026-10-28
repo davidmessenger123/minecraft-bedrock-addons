@@ -52,6 +52,7 @@ const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
 const FACINGS = ["north", "east", "south", "west"];
+const STORAGE_CHANNELS = ["copper", "iron", "gold", "amethyst"];
 const OPPOSITE = { north: "south", east: "west", south: "north", west: "east" };
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
 const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
@@ -197,6 +198,26 @@ function setFacing(block, value) {
     } catch {
         // It may be a removed block during a tick.
     }
+}
+
+function channelOf(block) {
+    try {
+        const value = block.permutation.getState("cw:channel");
+        return typeof value === "string" ? value : "copper";
+    } catch {
+        return "copper";
+    }
+}
+
+function cycleStorageChannel(block) {
+    const current = channelOf(block);
+    const next = STORAGE_CHANNELS[(STORAGE_CHANNELS.indexOf(current) + 1) % STORAGE_CHANNELS.length];
+    try {
+        block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:channel": next }));
+    } catch {
+        // Ignore transient block unloads.
+    }
+    return next;
 }
 
 function curveOf(block) {
@@ -525,6 +546,7 @@ function storageGroup(start) {
     const queue = [start];
     const seen = new Set();
     const blocks = [];
+    const channel = channelOf(start);
     while (queue.length) {
         const block = queue.shift();
         if (!block) continue;
@@ -532,6 +554,7 @@ function storageGroup(start) {
         if (seen.has(key)) continue;
         seen.add(key);
         if (block.typeId !== STORAGE_CORE && block.typeId !== STORAGE_EXTENSION) continue;
+        if (channelOf(block) !== channel) continue;
         blocks.push(block);
         for (const next of allNeighbors(block)) {
             if (next && (next.typeId === STORAGE_CORE || next.typeId === STORAGE_EXTENSION)) {
@@ -582,7 +605,7 @@ async function openStorage(player, block, query = "", terminal = false) {
     const used = Object.values(info.items).reduce((sum, count) => sum + Math.ceil(Number(count || 0) / 64), 0);
     const form = new ActionFormData()
         .title(terminal ? "Storage Terminal" : "Storage Core")
-        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw or craft directly from the network." : "Use a Storage Extractor to pull items onto belts."}`);
+        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nChannel: ${channelOf(block)}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw or craft directly from the network." : "Use a Storage Extractor to pull items onto belts."}`);
     form.button("Search items");
     form.button("Deposit held item");
     if (terminal) form.button("Recipe Terminal");
@@ -632,9 +655,10 @@ async function openStorage(player, block, query = "", terminal = false) {
     action(player, `Withdrew ${taken} ${formatName(typeId)}.`);
 }
 
-function adjacentStorage(block) {
+function adjacentStorage(block, channel = null) {
     for (const next of allNeighbors(block)) {
-        if (next && (next.typeId === STORAGE_CORE || next.typeId === STORAGE_EXTENSION)) return next;
+        if (!next || (next.typeId !== STORAGE_CORE && next.typeId !== STORAGE_EXTENSION)) continue;
+        if (channel === null || channelOf(next) === channel) return next;
     }
     return undefined;
 }
@@ -662,7 +686,7 @@ function adjacentNativeContainer(port) {
 }
 
 function tickStoragePort(port) {
-    const storage = adjacentStorage(port);
+    const storage = adjacentStorage(port, channelOf(port));
     const native = adjacentNativeContainer(port);
     if (!storage || !native) return;
     const mode = read(port, "mode", "import");
@@ -697,11 +721,11 @@ function tickStoragePort(port) {
 }
 
 function openPort(player, block) {
-    const storage = adjacentStorage(block);
+    const storage = adjacentStorage(block, channelOf(block));
     const native = adjacentNativeContainer(block);
     const form = new ActionFormData()
         .title("Storage Port")
-        .body(`Mode: ${read(block, "mode", "import")}\nStorage: ${storage ? "connected" : "missing"}\nNative inventory: ${native ? native.block.typeId.replace("minecraft:", "") : "missing"}\nFilters: ${Object.keys(beltFilters(block)).map(formatName).join(", ") || "none"}\n\nPlace a chest, barrel or hopper beside the port and a Storage Core beside it. Right-click the port with an item to toggle a filter.`);
+        .body(`Channel: ${channelOf(block)}\nMode: ${read(block, "mode", "import")}\nStorage: ${storage ? "connected" : "missing"}\nNative inventory: ${native ? native.block.typeId.replace("minecraft:", "") : "missing"}\nFilters: ${Object.keys(beltFilters(block)).map(formatName).join(", ") || "none"}\n\nPlace a chest, barrel or hopper beside the port and a Storage Core beside it. Right-click the port with an item to toggle a filter. Use the wrench to cycle channels.`);
     form.button("Toggle import / export");
     form.button("Clear filters");
     form.button("Close");
@@ -1949,6 +1973,11 @@ function interact(event) {
     const item = event.itemStack;
     if (!player || !block) return;
 
+    if (item?.typeId === WRENCH && [STORAGE_CORE, STORAGE_EXTENSION, STORAGE_PORT].includes(block.typeId)) {
+        const channel = cycleStorageChannel(block);
+        action(player, `Storage channel: ${channel}.`);
+        return;
+    }
     if (item?.typeId === WRENCH) {
         if (player.isSneaking) {
             copyBlueprint(player, block);

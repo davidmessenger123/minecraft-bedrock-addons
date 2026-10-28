@@ -157,6 +157,8 @@ def block_json(spec: content.BlockSpec) -> dict:
         description.setdefault("states", {})["cw:status"] = ["idle", "working", "blocked"]
     if spec.curve_state:
         description.setdefault("states", {})["cw:curve"] = ["straight", "left", "right"]
+    if spec.channel_state:
+        description.setdefault("states", {})["cw:channel"] = ["copper", "iron", "gold", "amethyst"]
 
     materials = {
         "*": {

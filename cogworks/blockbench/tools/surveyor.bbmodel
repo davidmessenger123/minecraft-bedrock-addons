@@ -84,7 +84,7 @@
         }
       },
       "type": "cube",
-      "uuid": "88bd4d38-5128-4a04-9bc9-d8ac629e67f5"
+      "uuid": "02403b84-dae8-420a-8719-6ea2404f3200"
     },
     {
       "name": "tool_1",
@@ -160,7 +160,7 @@
         }
       },
       "type": "cube",
-      "uuid": "0bc8b2f7-671d-4c73-a65c-ba103f8b2579"
+      "uuid": "5ec15e61-3ec3-4d59-bb38-ef060c57e14c"
     },
     {
       "name": "tool_2",
@@ -236,7 +236,7 @@
         }
       },
       "type": "cube",
-      "uuid": "475301ad-8d0a-47dd-b01c-774a59537d14"
+      "uuid": "05e58bf0-25cb-45c5-9221-5ff13b347c8f"
     },
     {
       "name": "tool_3",
@@ -312,7 +312,7 @@
         }
       },
       "type": "cube",
-      "uuid": "b76fe58e-5e4d-4476-9021-41a5e3162eef"
+      "uuid": "4ae42466-610c-49d1-9bbe-383de27fc363"
     },
     {
       "name": "tool_4",
@@ -388,7 +388,7 @@
         }
       },
       "type": "cube",
-      "uuid": "d1a273f3-e067-4e5b-be1d-2c3afc757116"
+      "uuid": "6e4706a0-f770-4f09-a5bc-135b88200682"
     },
     {
       "name": "tool_5",
@@ -464,7 +464,7 @@
         }
       },
       "type": "cube",
-      "uuid": "4d309dda-ab5c-441f-a329-5d1fa2d7c703"
+      "uuid": "2996a3ec-0385-43da-9ab7-b7eeda4f730c"
     }
   ],
   "outliner": [
@@ -475,14 +475,14 @@
         0,
         0
       ],
-      "uuid": "443596a5-02b9-428e-ab17-af0beafd4077",
+      "uuid": "6541926e-01a2-47d3-a6c3-1b519c3fdfbd",
       "children": [
-        "88bd4d38-5128-4a04-9bc9-d8ac629e67f5",
-        "0bc8b2f7-671d-4c73-a65c-ba103f8b2579",
-        "475301ad-8d0a-47dd-b01c-774a59537d14",
-        "b76fe58e-5e4d-4476-9021-41a5e3162eef",
-        "d1a273f3-e067-4e5b-be1d-2c3afc757116",
-        "4d309dda-ab5c-441f-a329-5d1fa2d7c703"
+        "02403b84-dae8-420a-8719-6ea2404f3200",
+        "5ec15e61-3ec3-4d59-bb38-ef060c57e14c",
+        "05e58bf0-25cb-45c5-9221-5ff13b347c8f",
+        "4ae42466-610c-49d1-9bbe-383de27fc363",
+        "6e4706a0-f770-4f09-a5bc-135b88200682",
+        "2996a3ec-0385-43da-9ab7-b7eeda4f730c"
       ]
     }
   ],

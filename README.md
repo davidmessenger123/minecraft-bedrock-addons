@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.6.0 | [Cogworks-1.6.0.mcaddon](cogworks/Cogworks-1.6.0.mcaddon) |
+| **Cogworks** | Add-on | 1.7.0 | [Cogworks-1.7.0.mcaddon](cogworks/Cogworks-1.7.0.mcaddon) |
 
 ## Install
 
@@ -180,7 +180,8 @@ to bedrock into expandable storage.
   route them between machines; belt corners are selected automatically from
   adjacent connections, with no separate corner item.
 - Storage Core holds 8 item stacks; each connected Storage Extension adds 8
-  more. The storage form includes search. The Storage Terminal queues machine
+  more. The storage form includes search, and storage networks use
+  copper/iron/gold/amethyst channels. The Storage Terminal queues machine
   recipes with running/queued states, progress, cancel and rotate controls; the
   Storage Port bridges chests, barrels and hoppers.
 - The Storage Extractor supports per-item filters, allow/deny modes and three
@@ -194,7 +195,8 @@ to bedrock into expandable storage.
   area while active.
 - Powered Drill supports 1×1, 3×3 and 3×3×3 modes; Powered Chainsaw fells a
   connected tree; Cogworks Wrench rotates belts and logistics blocks.
-- **1.7 start:** wrench blueprints copy/paste machine settings.
+- **1.7 start:** wrench blueprints copy/paste machine settings; storage networks
+  are separated by copper/iron/gold/amethyst channels.
 - Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
   `@minecraft/server-ui` **2.0.0**.
 
@@ -285,3 +287,4 @@ details and the Blockbench source.
 - [Cogworks 1.4.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.4.0)
 - [Cogworks 1.5.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.5.0)
 - [Cogworks 1.6.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.6.0)
+- [Cogworks 1.7.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.7.0)

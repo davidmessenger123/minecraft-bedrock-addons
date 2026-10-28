@@ -4,7 +4,7 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.6.0.mcaddon](Cogworks-1.6.0.mcaddon)
+**Download:** [Cogworks-1.7.0.mcaddon](Cogworks-1.7.0.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, Battery Bank, Energy Meter, Conveyor Belt, Item
@@ -29,9 +29,10 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
 - **Splitter filtering:** each splitter output (front/left/right) has its own
   pass-list; click that side with an item to configure it.
 - **Storage:** a core supports 8 item stacks; every connected Storage Extension
-  adds another 8. The storage form has search; a Storage Extractor pulls the
-  selected items back out onto a belt. Extractor priority and allow/deny filter
-  modes are configurable.
+  adds another 8. Use the wrench on storage blocks and ports to cycle a
+  copper/iron/gold/amethyst channel; only matching channels connect. The
+  storage form has search; a Storage Extractor pulls selected items back onto
+  belts with priority and allow/deny filter modes.
 - **Terminal and native bridge:** the Storage Terminal adds search, withdrawal
   and a persistent recipe queue with running/queued states, progress, cancel
   and rotate controls. The Storage Port bridges an adjacent chest, barrel or
@@ -75,7 +76,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.6.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.7.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -134,14 +135,17 @@ Place a **Storage Extractor** beside storage and point it at a belt to pull
 items out. It has a pass-list, three priority levels and an allow/deny filter
 mode. Higher-priority extractors on the same storage are serviced first.
 
+Storage networks have four channels: **copper, iron, gold and amethyst**. Use
+the wrench on a Storage Core, Extension or Port to cycle its channel. Only
+storage blocks and ports on the same channel share a network.
+
 A **Storage Terminal** placed beside storage opens the same search form plus a
-**Recipe Terminal** page. Select machine recipes to append them to a persistent
-queue on the network; the terminal processes them from stored ingredients and
-returns results to storage. A **Storage Port** placed beside storage and a
-chest, barrel or hopper bridges that native inventory into the network; toggle
-it between import and export. This gives vanilla hoppers a supported route into
-and out of Cogworks storage without requiring experimental custom-block
-containers.
+**Recipe Terminal** page. It shows the running job and progress, with cancel,
+rotate-first and clear-queue controls. A **Storage Port** placed beside storage
+and a chest, barrel or hopper bridges that native inventory into the network;
+toggle it between import and export. This gives vanilla hoppers a supported
+route into and out of Cogworks storage without requiring experimental
+custom-block containers.
 
 ### Assembler
 
