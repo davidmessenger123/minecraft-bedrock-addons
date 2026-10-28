@@ -4,20 +4,20 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.4.0.mcaddon](Cogworks-1.4.0.mcaddon)
+**Download:** [Cogworks-1.5.0.mcaddon](Cogworks-1.5.0.mcaddon)
 
-- **Blocks:** Coal Generator, Wind Turbine, Copper Cable, Battery Bank, Energy
-  Meter, Conveyor Belt, Item Filter, Belt Splitter, Belt Merger, Storage
-  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher,
-  Sawmill, Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension
-  and Quarry Controller.
+- **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Copper
+  Cable, Battery Bank, Energy Meter, Conveyor Belt, Item Filter, Belt Splitter,
+  Belt Merger, Storage Extractor, Storage Terminal, Storage Port, Electric
+  Furnace, Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage Core,
+  Storage Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry Surveyor,
   Cogwork Gear, Control Circuit and Electric Motor.
 - **Held items:** all seven custom items — drill, chainsaw, wrench, surveyor,
   gear, circuit and motor — have 3D attachable models that render in the
   player's hand in first and third person. Their inventory icons remain.
-- **Power:** coal/charcoal/coal-block generation, 5,000 E batteries, copper
-  cable networks and machine energy costs.
+- **Power:** coal/charcoal/coal-block generation, wind, daylight solar and water
+  wheels, 5,000 E batteries, copper cable networks and machine energy costs.
 - **Visible transport:** item stacks ride on belts as display entities.
   Filter pass-lists, three-way splitters and three-input mergers let you build
   real routing lines. Belts automatically choose straight, left-corner or
@@ -37,18 +37,19 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   data-driven recipes from `tools/recipes.json`, with per-recipe energy and
   processing time. Crusher doubles ore output; Sawmill cuts logs; Alloy Smelter
   makes netherite.
-- **Power:** a Wind Turbine adds renewable generation, and the Energy Meter
-  shows the connected network total.
+- **Power:** Wind Turbine, Solar Panel and Water Wheel add renewable
+  generation; the Energy Meter shows the connected network total.
 - **Automation:** the assembler has selectable recipes and automatic mode. Working
   machines raise their status light to level 15 and pulse teal; blocked/idle
   machines pulse orange/blue.
 - **Quarry:** survey two corners, install the area on the controller, and it
   digs from the top of the surveyed footprint all the way down to the
   dimension floor (bedrock in the Overworld). It reports progress, supports
-  output filters, and pushes drops to storage or belts.
-- **Tools:** the drill breaks a 3×3 stone/ore face; the chainsaw fells a vertical
-  run of logs; the wrench rotates conveyors, filters, splitters, mergers and
-  extractors.
+  output filters, Fortune/Silk Touch toggles and chunk loading, and pushes
+  drops to storage or belts.
+- **Tools:** the drill supports 1×1, 3×3 and 3×3×3 modes (sneak-use to cycle);
+  the chainsaw fells the connected tree; the wrench rotates conveyors, filters,
+  splitters, mergers and extractors.
 
 ### Held item models
 
@@ -68,7 +69,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.4.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.5.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -86,7 +87,8 @@ and **Storage Core**:
 - **Filter / splitter / merger:** iron, gears, circuit and redstone.
 - **Electric Furnace / Crusher / Sawmill / Alloy Smelter:** iron, gears,
   motors, circuits and a furnace or blast furnace.
-- **Wind Turbine / Energy Meter:** iron, copper, gears, motors and circuits.
+- **Wind Turbine / Solar Panel / Water Wheel / Energy Meter:** iron, copper,
+  gears, motors, circuits, glass, water and fuel-free generation.
 - **Storage Core / Extension:** iron, copper/circuit and a barrel.
 - **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
@@ -168,10 +170,10 @@ storage. Recipes, energy costs and processing times live in
 
 ### Power
 
-The **Wind Turbine** generates energy based on its height and connects to the
-same cable network as the coal generator and batteries. The **Energy Meter**
-shows the total stored network energy. Wind generation currently runs
-continuously; weather and wind-speed variation are future work.
+The **Wind Turbine** generates energy based on its height, the **Solar Panel**
+generates during daylight, and the **Water Wheel** generates when adjacent to
+water. All three connect to the same cable network as the coal generator and
+batteries. The **Energy Meter** shows total stored network energy.
 
 ### Quarry
 
@@ -185,8 +187,9 @@ The quarry's footprint is limited to **32×32**, but its depth is the full
 dimension height from the top surveyed Y down to the dimension floor. In the
 Overworld this reaches **bedrock at Y=-64**. It skips air, fluids, bedrock and
 Cogworks machines, reports scanned/mined progress, and can filter which drops
-are collected. Right-click the quarry with an item to toggle that item as an
-output filter; use **Clear output filters** in its form.
+are collected. The controller can toggle **Fortune** and **Silk Touch**, and it
+loads its excavation area while active. Right-click the quarry with an item to
+toggle that item as an output filter; use **Clear output filters** in its form.
 
 Output is buffered until an adjacent storage block or conveyor accepts it.
 
@@ -196,7 +199,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all twenty blocks, the
+[block model sheet](previews/models.png) shows all twenty-two blocks, the
 [item model sheet](previews/tools.png) shows all seven held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial

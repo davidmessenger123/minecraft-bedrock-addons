@@ -467,6 +467,34 @@ def energy_meter_geo() -> dict:
     ], (1.0, 1.1, (0, 0.55, 0)))
 
 
+def solar_panel_geo() -> dict:
+    return block_geo("geometry.cw.solar_panel", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 7, 12], DARK),
+        cube([-7, 9, -7], [14, 1, 14], COPPER),
+        cube([-6, 10, -6], [12, 1, 12], ENERGY),
+        cube([-2, 11, -2], [4, 1, 4], LIGHT),
+        cube([-7, 3, -7], [1, 5, 14], STEEL),
+        cube([6, 3, -7], [1, 5, 14], STEEL),
+    ], (1.2, 1.1, (0, 0.55, 0)))
+
+
+def water_wheel_geo() -> dict:
+    return block_geo("geometry.cw.water_wheel", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 4, 12], DARK),
+        cube([-1, 6, -7], [2, 10, 2], STEEL),
+        cube([-7, 6, -1], [2, 10, 2], STEEL),
+        cube([5, 6, -1], [2, 10, 2], STEEL),
+        cube([-1, 6, 5], [2, 10, 2], STEEL),
+        cube([-5, 10, -1], [10, 2, 2], COPPER),
+        cube([-1, 10, -5], [2, 2, 10], COPPER),
+        cube([-5, 10, -5], [3, 3, 3], BRASS),
+        cube([2, 10, 2], [3, 3, 3], BRASS),
+        cube([-2, 14, -2], [4, 2, 4], LIGHT),
+    ], (1.4, 1.5, (0, 0.75, 0)))
+
+
 def block_geometries() -> dict[str, dict]:
     return {
         "generator": generator_geo(),
@@ -488,6 +516,8 @@ def block_geometries() -> dict[str, dict]:
         "alloy_smelter": alloy_smelter_geo(),
         "wind_turbine": wind_turbine_geo(),
         "energy_meter": energy_meter_geo(),
+        "solar_panel": solar_panel_geo(),
+        "water_wheel": water_wheel_geo(),
         "quarry": quarry_geo(),
     }
 
@@ -781,6 +811,8 @@ BLOCKS: list[BlockSpec] = [
     BlockSpec("sawmill", "Sawmill", "geometry.cw.sawmill", 3.0, light=3, machine=True, sound="metal", status_state=True),
     BlockSpec("alloy_smelter", "Alloy Smelter", "geometry.cw.alloy_smelter", 3.5, light=5, machine=True, sound="metal", status_state=True),
     BlockSpec("wind_turbine", "Wind Turbine", "geometry.cw.wind_turbine", 3.0, light=0, machine=True, sound="metal", tick_range=(20, 20)),
+    BlockSpec("solar_panel", "Solar Panel", "geometry.cw.solar_panel", 2.5, light=0, machine=True, sound="metal", tick_range=(20, 20)),
+    BlockSpec("water_wheel", "Water Wheel", "geometry.cw.water_wheel", 2.5, light=0, machine=True, sound="wood", tick_range=(20, 20)),
     BlockSpec("energy_meter", "Energy Meter", "geometry.cw.energy_meter", 2.0, light=2, sound="metal", dynamic=False),
     BlockSpec("quarry", "Quarry Controller", "geometry.cw.quarry", 4.0, light=5, machine=True, sound="metal", tick_range=(1, 1), status_state=True),
 ]

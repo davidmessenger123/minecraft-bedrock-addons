@@ -84,7 +84,7 @@
         }
       },
       "type": "cube",
-      "uuid": "882ee02f-c3cd-4bbc-8e48-6e086221e8df"
+      "uuid": "069edf1a-1b09-40db-bb8b-647048757355"
     },
     {
       "name": "tool_1",
@@ -160,7 +160,7 @@
         }
       },
       "type": "cube",
-      "uuid": "09bf9290-9377-4223-83a3-7f4b717cdf70"
+      "uuid": "3f90e660-53cc-4279-a3ec-a04ba4202ddb"
     },
     {
       "name": "tool_2",
@@ -236,7 +236,7 @@
         }
       },
       "type": "cube",
-      "uuid": "6416b53e-2c96-4495-a320-9e33f30c2561"
+      "uuid": "537de72c-4362-4f0f-b2c8-387243d2d1c4"
     },
     {
       "name": "tool_3",
@@ -312,7 +312,7 @@
         }
       },
       "type": "cube",
-      "uuid": "2a67335e-9496-4f06-8473-78df8676fdf2"
+      "uuid": "fb3fd669-3dd1-4f17-8f7d-8024f6fde949"
     },
     {
       "name": "tool_4",
@@ -388,7 +388,7 @@
         }
       },
       "type": "cube",
-      "uuid": "1d2cc64b-642a-48e8-b256-66f86ab67221"
+      "uuid": "0c72be94-9292-482d-becd-e7fafb2da1c9"
     },
     {
       "name": "tool_5",
@@ -464,7 +464,7 @@
         }
       },
       "type": "cube",
-      "uuid": "6dd53775-e30a-47e4-81fe-d98a4faae04b"
+      "uuid": "0ca37bef-44f1-47f9-997e-f656f2b1b688"
     },
     {
       "name": "tool_6",
@@ -540,7 +540,7 @@
         }
       },
       "type": "cube",
-      "uuid": "07af22f7-2579-4277-bf2e-70a14b4c41df"
+      "uuid": "de8adaa4-f7cb-4bd0-92ab-3b7f632cb6a2"
     }
   ],
   "outliner": [
@@ -551,15 +551,15 @@
         0,
         0
       ],
-      "uuid": "bf88979d-d6a7-4107-a30a-60fc69699037",
+      "uuid": "401990e3-8119-4ab1-878d-128bfb3b7a0c",
       "children": [
-        "882ee02f-c3cd-4bbc-8e48-6e086221e8df",
-        "09bf9290-9377-4223-83a3-7f4b717cdf70",
-        "6416b53e-2c96-4495-a320-9e33f30c2561",
-        "2a67335e-9496-4f06-8473-78df8676fdf2",
-        "1d2cc64b-642a-48e8-b256-66f86ab67221",
-        "6dd53775-e30a-47e4-81fe-d98a4faae04b",
-        "07af22f7-2579-4277-bf2e-70a14b4c41df"
+        "069edf1a-1b09-40db-bb8b-647048757355",
+        "3f90e660-53cc-4279-a3ec-a04ba4202ddb",
+        "537de72c-4362-4f0f-b2c8-387243d2d1c4",
+        "fb3fd669-3dd1-4f17-8f7d-8024f6fde949",
+        "0c72be94-9292-482d-becd-e7fafb2da1c9",
+        "0ca37bef-44f1-47f9-997e-f656f2b1b688",
+        "de8adaa4-f7cb-4bd0-92ab-3b7f632cb6a2"
       ]
     }
   ],

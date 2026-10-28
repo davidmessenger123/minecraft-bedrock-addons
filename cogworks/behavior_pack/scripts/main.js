@@ -32,6 +32,8 @@ const CRUSHER = "cw:crusher";
 const SAWMILL = "cw:sawmill";
 const ALLOY_SMELTER = "cw:alloy_smelter";
 const WIND_TURBINE = "cw:wind_turbine";
+const SOLAR_PANEL = "cw:solar_panel";
+const WATER_WHEEL = "cw:water_wheel";
 const ENERGY_METER = "cw:energy_meter";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
@@ -44,7 +46,7 @@ const WRENCH = "cw:wrench";
 const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
 
-const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE]);
+const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL]);
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
@@ -52,6 +54,7 @@ const FACINGS = ["north", "east", "south", "west"];
 const OPPOSITE = { north: "south", east: "west", south: "north", west: "east" };
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
 const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
+const DRILL_MODES = ["1x1", "3x3", "3x3x3"];
 const DIRECTIONS = {
     north: { x: 0, y: 0, z: -1 },
     south: { x: 0, y: 0, z: 1 },
@@ -880,7 +883,7 @@ function energyBlocks(start) {
 function networkEnergy(block) {
     let total = 0;
     for (const part of energyBlocks(block)) {
-        if (part.typeId === BATTERY || part.typeId === GENERATOR || part.typeId === WIND_TURBINE) {
+        if ([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL].includes(part.typeId)) {
             total += Number(read(part, "energy", 0));
         }
     }
@@ -888,8 +891,8 @@ function networkEnergy(block) {
 }
 
 function drainEnergy(block, amount) {
-    const parts = energyBlocks(block).filter((part) =>
-        part.typeId === BATTERY || part.typeId === GENERATOR || part.typeId === WIND_TURBINE);
+    const sources = new Set([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL]);
+    const parts = energyBlocks(block).filter((part) => sources.has(part.typeId));
     let total = parts.reduce((sum, part) => sum + Number(read(part, "energy", 0)), 0);
     if (total < amount) return false;
     let left = amount;
@@ -935,7 +938,50 @@ function tickWindTurbine(block) {
     const current = Number(read(block, "energy", 0));
     const altitude = Math.max(0, Math.min(12, Math.floor((block.location.y + 64) / 32)));
     const generated = 4 + altitude;
-    write(block, "energy", Math.min(2000, current + generated));
+    const budget = Math.min(2000, current + generated);
+    const leftover = chargeBatteries(block, budget);
+    write(block, "energy", leftover);
+}
+
+function chargeBatteries(source, budget) {
+    let energy = budget;
+    for (const part of energyBlocks(source)) {
+        if (part.typeId !== BATTERY) continue;
+        const stored = Number(read(part, "energy", 0));
+        if (stored >= 5000) continue;
+        const moved = Math.min(energy, 5000 - stored);
+        if (moved > 0) {
+            write(part, "energy", stored + moved);
+            energy -= moved;
+            if (energy <= 0) break;
+        }
+    }
+    return Math.max(0, energy);
+}
+
+function tickSolarPanel(block) {
+    let daylight = true;
+    try {
+        const time = world.getTimeOfDay() % 24000;
+        daylight = time < 12000;
+    } catch {
+        // Keep generating if the clock is unavailable.
+    }
+    if (!daylight) return;
+    const current = Number(read(block, "energy", 0));
+    const budget = Math.min(2000, current + 7);
+    write(block, "energy", chargeBatteries(block, budget));
+}
+
+function tickWaterWheel(block) {
+    let water = 0;
+    for (const next of allNeighbors(block)) {
+        if (next && (next.typeId === "minecraft:water" || next.typeId === "minecraft:flowing_water")) water++;
+    }
+    if (!water) return;
+    const current = Number(read(block, "energy", 0));
+    const budget = Math.min(2000, current + Math.min(12, 2 + water * 2));
+    write(block, "energy", chargeBatteries(block, budget));
 }
 
 function storageAdjacent(block) {
@@ -1132,6 +1178,50 @@ function dropFor(typeId) {
     return typeId;
 }
 
+function quarryChunkName(block) {
+    return `cw_quarry_${block.location.x}_${block.location.y}_${block.location.z}`;
+}
+
+function ensureQuarryChunks(block, data) {
+    if (!data.area) return;
+    const name = data.chunkArea || quarryChunkName(block);
+    data.chunkArea = name;
+    const from = { x: data.area.min.x, y: data.area.min.y, z: data.area.min.z };
+    const to = { x: data.area.max.x, y: data.area.max.y, z: data.area.max.z };
+    try {
+        const manager = world.tickingAreaManager;
+        if (manager?.hasTickingArea(name)) return;
+        if (manager && (!manager.hasCapacity || manager.hasCapacity({ dimension: block.dimension, from, to }))) {
+            const pending = manager.createTickingArea(name, { dimension: block.dimension, from, to });
+            if (pending?.catch) pending.catch(() => {});
+            return;
+        }
+    } catch {
+        // Fall through to the command.
+    }
+    try {
+        block.dimension.runCommand(`tickingarea add ${from.x} ${from.y} ${from.z} ${to.x} ${to.y} ${to.z} ${name}`);
+    } catch {
+        // Already exists or area capacity is full.
+    }
+}
+
+function releaseQuarryChunks(block, data) {
+    const name = data.chunkArea || quarryChunkName(block);
+    try {
+        const manager = world.tickingAreaManager;
+        if (manager?.hasTickingArea(name)) manager.removeTickingArea(name);
+    } catch {
+        // Fall through to the command.
+    }
+    try {
+        block.dimension.runCommand(`tickingarea remove ${name}`);
+    } catch {
+        // It may not exist.
+    }
+    data.chunkArea = undefined;
+}
+
 function tickQuarry(block) {
     const data = readJson(block, "data", { buffer: {} });
     data.buffer = data.buffer || {};
@@ -1149,8 +1239,10 @@ function tickQuarry(block) {
         if (accepted >= amount) delete data.buffer[typeId];
         else data.buffer[typeId] = amount - accepted;
     }
+    if (data.active && !data.chunkArea && quarryArea(data)) ensureQuarryChunks(block, data);
     if (!data.active || !quarryArea(data)) {
         markStatus(block, data.active ? "blocked" : "idle");
+        if (!data.active && data.chunkArea) releaseQuarryChunks(block, data);
         writeJson(block, "data", data);
         return;
     }
@@ -1196,14 +1288,21 @@ function tickQuarry(block) {
             blocked = true;
             break;
         }
-        const drop = dropFor(target.typeId);
+        let drop = dropFor(target.typeId);
+        let amount = 1;
+        if (data.silk) {
+            drop = target.typeId;
+        } else if (data.fortune && (target.typeId.includes("ore") || target.typeId.includes("deepslate"))) {
+            amount = 1 + Math.floor(Math.random() * 3);
+        }
         target.setType("minecraft:air");
         data.mined = Number(data.mined || 0) + 1;
         if (quarryAllows(data, drop)) {
-            data.buffer[drop] = Number(data.buffer[drop] || 0) + 1;
+            data.buffer[drop] = Number(data.buffer[drop] || 0) + amount;
         }
         mined++;
     }
+    if (!data.active && data.chunkArea) releaseQuarryChunks(block, data);
     markStatus(block, blocked ? "blocked" : data.active ? "working" : "idle");
     writeJson(block, "data", data);
 }
@@ -1214,6 +1313,8 @@ function tickMachine(block) {
         switch (block.typeId) {
             case GENERATOR: tickGenerator(block); break;
             case WIND_TURBINE: tickWindTurbine(block); break;
+            case SOLAR_PANEL: tickSolarPanel(block); break;
+            case WATER_WHEEL: tickWaterWheel(block); break;
             case CONVEYOR:
             case FILTER:
             case SPLITTER:
@@ -1267,6 +1368,7 @@ function setQuarryArea(player, quarry, a, b) {
     const min = { x: minX, y: minY, z: minZ };
     const max = { x: maxX, y: maxY, z: maxZ };
     const data = readJson(quarry, "data", { buffer: {} });
+    if (data.chunkArea) releaseQuarryChunks(quarry, data);
     data.area = { min, max };
     data.cursor = { x: min.x, y: max.y, z: min.z };
     data.active = false;
@@ -1275,6 +1377,8 @@ function setQuarryArea(player, quarry, a, b) {
     data.mined = 0;
     data.total = (maxX - minX + 1) * (maxZ - minZ + 1) * (maxY - minY + 1);
     data.filters = data.filters || {};
+    data.fortune = Boolean(data.fortune);
+    data.silk = Boolean(data.silk);
     data.buffer = data.buffer || {};
     writeJson(quarry, "data", data);
     action(player, `Quarry area set (${maxX - minX + 1}x${maxZ - minZ + 1}, to bedrock). Connect storage and power.`);
@@ -1318,7 +1422,7 @@ function isDrillBlock(block) {
             "minecraft:tuff", "minecraft:netherrack", "minecraft:end_stone"].includes(type);
 }
 
-function drill(player, block, face) {
+function drill(player, block, face, mode = 1) {
     const normal = DIRECTIONS[String(face).toLowerCase()] || DIRECTIONS.up;
     const targets = [];
     for (let a = -1; a <= 1; a++) {
@@ -1341,8 +1445,22 @@ function drill(player, block, face) {
             });
         }
     }
+    const plane = targets;
+    const volume = [];
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dz = -1; dz <= 1; dz++) {
+                volume.push({
+                    x: block.location.x + dx,
+                    y: block.location.y + dy,
+                    z: block.location.z + dz,
+                });
+            }
+        }
+    }
+    const selected = mode === 0 ? [block.location] : mode === 2 ? volume : plane;
     let mined = 0;
-    for (const pos of targets) {
+    for (const pos of selected) {
         const target = block.dimension.getBlock(pos);
         if (!target || !isDrillBlock(target)) continue;
         const drop = dropFor(target.typeId);
@@ -1360,15 +1478,22 @@ function chainsaw(player, block) {
         return false;
     }
     let mined = 0;
-    let cursor = block;
-    for (let i = 0; i < 10 && cursor; i++) {
-        if (cursor.typeId.endsWith("_log") || cursor.typeId.endsWith("_wood")) {
-            const drop = dropFor(cursor.typeId);
-            cursor.setType("minecraft:air");
-            addItem(player, drop, 1);
-            mined++;
+    const queue = [block];
+    const seen = new Set();
+    while (queue.length && mined < 64) {
+        const cursor = queue.shift();
+        if (!cursor) continue;
+        const key = `${cursor.location.x},${cursor.location.y},${cursor.location.z}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (!cursor.typeId.endsWith("_log") && !cursor.typeId.endsWith("_wood")) continue;
+        const drop = dropFor(cursor.typeId);
+        cursor.setType("minecraft:air");
+        addItem(player, drop, 1);
+        mined++;
+        for (const next of allNeighbors(cursor)) {
+            if (next && (next.typeId.endsWith("_log") || next.typeId.endsWith("_wood"))) queue.push(next);
         }
-        cursor = neighbor(cursor, "up");
     }
     action(player, `Chainsaw cut ${mined} log${mined === 1 ? "" : "s"}.`);
     return mined > 0;
@@ -1507,9 +1632,9 @@ function openMachine(player, block) {
         openTerminal(player, block);
         return;
     }
-    if (block.typeId === WIND_TURBINE) {
+    if (block.typeId === WIND_TURBINE || block.typeId === SOLAR_PANEL || block.typeId === WATER_WHEEL) {
         const energy = Number(read(block, "energy", 0));
-        const form = new ActionFormData().title("Wind Turbine")
+        const form = new ActionFormData().title(formatName(block.typeId))
             .body(`Energy: ${Math.floor(energy)}/2000\nNetwork: ${networkEnergy(block)}\nHeight: Y ${block.location.y}`);
         form.button("Close");
         form.show(player).catch(() => {});
@@ -1581,9 +1706,11 @@ function openMachine(player, block) {
         const percent = Math.min(100, Math.floor(scanned / total * 100));
         const filters = Object.keys(data.filters || {});
         const form = new ActionFormData().title("Quarry Controller")
-            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
+            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
             .button(data.active ? "Pause quarry" : "Start quarry")
             .button("Clear output filters")
+            .button("Toggle fortune")
+            .button("Toggle silk touch")
             .button("Close");
         form.show(player).then((response) => {
             if (!response || response.canceled) return;
@@ -1591,6 +1718,18 @@ function openMachine(player, block) {
                 data.filters = {};
                 writeJson(block, "data", data);
                 action(player, "Quarry output filters cleared.");
+                return;
+            }
+            if (response.selection === 2) {
+                data.fortune = !data.fortune;
+                writeJson(block, "data", data);
+                action(player, `Quarry fortune: ${data.fortune ? "on" : "off"}.`);
+                return;
+            }
+            if (response.selection === 3) {
+                data.silk = !data.silk;
+                writeJson(block, "data", data);
+                action(player, `Quarry silk touch: ${data.silk ? "on" : "off"}.`);
                 return;
             }
             if (response.selection !== 0) return;
@@ -1603,6 +1742,8 @@ function openMachine(player, block) {
                 return;
             }
             data.active = !data.active;
+            if (data.active) ensureQuarryChunks(block, data);
+            else releaseQuarryChunks(block, data);
             writeJson(block, "data", data);
             action(player, data.active ? "Quarry started." : "Quarry paused.");
         }).catch(() => {});
@@ -1627,7 +1768,14 @@ function interact(event) {
         return;
     }
     if (item?.typeId === DRILL) {
-        if (drill(player, block, event.blockFace)) damageHeld(player, item);
+        if (player.isSneaking) {
+            const next = (Number(player.getDynamicProperty("cw:drill_mode") ?? 1) + 1) % DRILL_MODES.length;
+            player.setDynamicProperty("cw:drill_mode", next);
+            action(player, `Drill mode: ${DRILL_MODES[next]}.`);
+            return;
+        }
+        const mode = Number(player.getDynamicProperty("cw:drill_mode") ?? 1);
+        if (drill(player, block, event.blockFace, mode)) damageHeld(player, item);
         return;
     }
     if (item?.typeId === CHAINSAW) {
@@ -1681,7 +1829,7 @@ function interact(event) {
         later(() => openTerminal(player, block));
         return;
     }
-    if (block.typeId === WIND_TURBINE || block.typeId === ENERGY_METER) {
+    if (block.typeId === WIND_TURBINE || block.typeId === SOLAR_PANEL || block.typeId === WATER_WHEEL || block.typeId === ENERGY_METER) {
         later(() => openMachine(player, block));
         return;
     }
@@ -1758,12 +1906,17 @@ world.afterEvents.playerPlaceBlock.subscribe((event) => {
 
 world.beforeEvents.playerBreakBlock?.subscribe((event) => {
     try {
-        if (!BELT_TYPES.has(event.block.typeId)) return;
-        const id = read(event.block, "displayId", undefined);
-        if (typeof id === "string") {
-            system.run(() => {
-                try { world.getEntity(id)?.remove(); } catch { /* already gone */ }
-            });
+        if (BELT_TYPES.has(event.block.typeId)) {
+            const id = read(event.block, "displayId", undefined);
+            if (typeof id === "string") {
+                system.run(() => {
+                    try { world.getEntity(id)?.remove(); } catch { /* already gone */ }
+                });
+            }
+        }
+        if (event.block.typeId === QUARRY) {
+            const data = readJson(event.block, "data", {});
+            if (data.chunkArea) releaseQuarryChunks(event.block, data);
         }
     } catch {
         // Ignore.

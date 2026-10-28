@@ -53,6 +53,12 @@
   "cw:wind_turbine": {
     "sound": "metal"
   },
+  "cw:solar_panel": {
+    "sound": "metal"
+  },
+  "cw:water_wheel": {
+    "sound": "wood"
+  },
   "cw:energy_meter": {
     "sound": "metal"
   },

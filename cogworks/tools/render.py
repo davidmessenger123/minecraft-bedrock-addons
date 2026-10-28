@@ -49,6 +49,8 @@ CAPTIONS = {
     "sawmill": ("Sawmill", "logs into planks"),
     "alloy_smelter": ("Alloy Smelter", "netherite alloy"),
     "wind_turbine": ("Wind Turbine", "renewable energy"),
+    "solar_panel": ("Solar Panel", "daylight generation"),
+    "water_wheel": ("Water Wheel", "flow generation"),
     "energy_meter": ("Energy Meter", "network diagnostics"),
     "quarry": ("Quarry Controller", "surveyor-defined excavation"),
 }
