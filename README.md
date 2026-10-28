@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.2.0 | [Cogworks-1.2.0.mcaddon](cogworks/Cogworks-1.2.0.mcaddon) |
+| **Cogworks** | Add-on | 1.3.0 | [Cogworks-1.3.0.mcaddon](cogworks/Cogworks-1.3.0.mcaddon) |
 
 ## Install
 
@@ -165,9 +165,10 @@ network, visible stacks ride conveyors through filters/splitters/mergers, an
 automated assembler crafts, and a surveyor-defined quarry excavates all the way
 to bedrock into expandable storage.
 
-- 12 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
-  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Crafting
-  Assembler, Storage Core, Storage Extension and Quarry Controller.
+- 14 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
+  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
+  Storage Port, Crafting Assembler, Storage Core, Storage Extension and Quarry
+  Controller.
 - 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
   Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
 - All seven items have 3D Blockbench attachable models that render in the
@@ -175,10 +176,13 @@ to bedrock into expandable storage.
 - Generator burns coal, charcoal or coal blocks; batteries store 5,000 E;
   machines draw from the connected cable network.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
-  route them between machines; the Storage Extractor pulls items back out of
-  storage.
+  route them between machines; belt corners are selected automatically from
+  adjacent connections, with no separate corner item.
 - Storage Core holds 8 item stacks; each connected Storage Extension adds 8
-  more. The storage form includes search.
+  more. The storage form includes search. The Storage Terminal adds crafting
+  from the network; the Storage Port bridges chests, barrels and hoppers.
+- The Storage Extractor supports per-item filters, allow/deny modes and three
+  priority levels.
 - Assembler recipes can be selected manually or left on automatic. Machines
   raise their status light and pulse when working, blocked or idle.
 - Quarry Surveyor sets a 32×32 footprint; the quarry digs down to the dimension
@@ -190,8 +194,10 @@ to bedrock into expandable storage.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
-[block model sheet](cogworks/previews/models.png) shows all twelve blocks and
-the [item model sheet](cogworks/previews/tools.png) shows all seven held items.
+[block model sheet](cogworks/previews/models.png) shows all fourteen blocks,
+the [item model sheet](cogworks/previews/tools.png) shows all seven held items,
+and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
+corner variants.
 
 ## R2-D2 Droid
 
@@ -269,3 +275,4 @@ details and the Blockbench source.
 - [Cogworks 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.0.0)
 - [Cogworks 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.1.0)
 - [Cogworks 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.2.0)
+- [Cogworks 1.3.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.3.0)

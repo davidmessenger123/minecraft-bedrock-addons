@@ -42,6 +42,8 @@ CAPTIONS = {
     "assembler": ("Crafting Assembler", "recipes + energy"),
     "storage_core": ("Storage Core", "8 slots, expandable"),
     "storage_extension": ("Storage Extension", "+8 slots"),
+    "storage_terminal": ("Storage Terminal", "search + crafting"),
+    "storage_port": ("Storage Port", "chest/hopper bridge"),
     "quarry": ("Quarry Controller", "surveyor-defined excavation"),
 }
 
@@ -127,10 +129,12 @@ def project(point: Sequence[float], size: int, bounds, scale: float,
 
 
 def model_image(geometry: dict, texture: Image.Image, label: str, caption: str,
-                size: int = 230) -> Image.Image:
+                size: int = 230, visible_bones: set[str] | None = None) -> Image.Image:
     entry = geometry["minecraft:geometry"][0]
     cubes = []
     for bone in entry.get("bones", []):
+        if visible_bones is not None and bone.get("name") not in visible_bones:
+            continue
         for index, cube in enumerate(bone.get("cubes", [])):
             cubes.append(cube)
 
@@ -206,7 +210,8 @@ def build_model_sheet(path: Path) -> None:
     tiles = []
     for key, geo in content.block_geometries().items():
         label, caption = CAPTIONS.get(key, (key.replace("_", " ").title(), ""))
-        tiles.append((label, caption, model_image(geo, atlas, label, caption)))
+        visible = {"straight"} if key == "conveyor" else None
+        tiles.append((label, caption, model_image(geo, atlas, label, caption, visible_bones=visible)))
 
     columns = 4
     cell_w, cell_h = 252, 292
@@ -250,6 +255,29 @@ def build_tool_sheet(path: Path) -> None:
         col, row = index % columns, index // columns
         x = 14 + col * cell_w
         y = 104 + row * cell_h
+        image.paste(tile, (x, y), tile)
+        draw.text((x + 4, y + tile.height + 7), label, font=font(12, True), fill=INK)
+        draw.text((x + 4, y + tile.height + 23), caption, font=font(10), fill=MUTED)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path, "PNG")
+
+
+def build_belt_sheet(path: Path) -> None:
+    atlas = content.block_atlas()
+    geometry = content.conveyor_curve_geo()
+    tiles = []
+    for bone, label in (("straight", "Straight"), ("left", "Left corner"), ("right", "Right corner")):
+        tiles.append((label, "auto-selected by the belt state",
+                      model_image(geometry, atlas, label, "auto-selected by adjacency",
+                                  size=260, visible_bones={bone})))
+    image = Image.new("RGB", (3 * 290 + 28, 390), BG)
+    draw = ImageDraw.Draw(image)
+    draw.text((20, 18), "Automatic belt corners", font=font(28, True), fill=INK)
+    draw.text((20, 56), "One Conveyor Belt item; the block state selects straight, left or right.",
+              font=font(13), fill=MUTED)
+    for index, (label, caption, tile) in enumerate(tiles):
+        x = 14 + index * 290
+        y = 104
         image.paste(tile, (x, y), tile)
         draw.text((x + 4, y + tile.height + 7), label, font=font(12, True), fill=INK)
         draw.text((x + 4, y + tile.height + 23), caption, font=font(10), fill=MUTED)

@@ -12,11 +12,23 @@
           "east",
           "south",
           "west"
+        ],
+        "cw:curve": [
+          "straight",
+          "left",
+          "right"
         ]
       }
     },
     "components": {
-      "minecraft:geometry": "geometry.cw.conveyor",
+      "minecraft:geometry": {
+        "identifier": "geometry.cw.conveyor",
+        "bone_visibility": {
+          "straight": "q.block_state('cw:curve') == 'straight'",
+          "left": "q.block_state('cw:curve') == 'left'",
+          "right": "q.block_state('cw:curve') == 'right'"
+        }
+      },
       "minecraft:material_instances": {
         "*": {
           "texture": "cw_blocks",
@@ -26,7 +38,14 @@
         }
       },
       "minecraft:item_visual": {
-        "geometry": "geometry.cw.conveyor",
+        "geometry": {
+          "identifier": "geometry.cw.conveyor",
+          "bone_visibility": {
+            "straight": true,
+            "left": false,
+            "right": false
+          }
+        },
         "material_instances": {
           "*": {
             "texture": "cw_blocks",

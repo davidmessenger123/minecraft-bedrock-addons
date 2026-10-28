@@ -149,8 +149,9 @@ def main() -> int:
     for block_id, data in block_data.items():
         components = data.get("minecraft:block", {}).get("components", {})
         geometry = components.get("minecraft:geometry")
-        if geometry not in geo_ids:
-            fail(f"{block_id}: geometry {geometry} not found")
+        geometry_id = geometry.get("identifier") if isinstance(geometry, dict) else geometry
+        if geometry_id not in geo_ids:
+            fail(f"{block_id}: geometry {geometry_id} not found")
         for material in components.get("minecraft:material_instances", {}).values():
             if isinstance(material, dict) and material.get("texture") not in terrain_data:
                 fail(f"{block_id}: material texture missing from atlas")
@@ -192,6 +193,8 @@ def main() -> int:
         fail("previews/models.png is missing")
     if not (PREVIEWS / "tools.png").is_file():
         fail("previews/tools.png is missing")
+    if not (PREVIEWS / "belt_shapes.png").is_file():
+        fail("previews/belt_shapes.png is missing")
     if not (PREVIEWS / "materials.png").is_file():
         fail("previews/materials.png is missing")
 

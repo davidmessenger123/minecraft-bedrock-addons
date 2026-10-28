@@ -155,6 +155,8 @@ def block_json(spec: content.BlockSpec) -> dict:
         description["states"] = {"cw:facing": ["north", "east", "south", "west"]}
     if spec.status_state:
         description.setdefault("states", {})["cw:status"] = ["idle", "working", "blocked"]
+    if spec.curve_state:
+        description.setdefault("states", {})["cw:curve"] = ["straight", "left", "right"]
 
     materials = {
         "*": {
@@ -164,10 +166,26 @@ def block_json(spec: content.BlockSpec) -> dict:
             "ambient_occlusion": True,
         }
     }
+    if spec.curve_state:
+        geometry = {
+            "identifier": spec.geometry,
+            "bone_visibility": {
+                "straight": "q.block_state('cw:curve') == 'straight'",
+                "left": "q.block_state('cw:curve') == 'left'",
+                "right": "q.block_state('cw:curve') == 'right'",
+            },
+        }
+        item_geometry = {
+            "identifier": spec.geometry,
+            "bone_visibility": {"straight": True, "left": False, "right": False},
+        }
+    else:
+        geometry = spec.geometry
+        item_geometry = spec.geometry
     components = {
-        "minecraft:geometry": spec.geometry,
+        "minecraft:geometry": geometry,
         "minecraft:material_instances": materials,
-        "minecraft:item_visual": {"geometry": spec.geometry, "material_instances": materials},
+        "minecraft:item_visual": {"geometry": item_geometry, "material_instances": materials},
         "minecraft:destructible_by_mining": {"seconds_to_destroy": spec.hardness},
         "minecraft:destructible_by_explosion": {"explosion_resistance": 4},
         "minecraft:light_emission": spec.light,
@@ -296,6 +314,8 @@ def build_recipes() -> None:
         "battery": shaped("cw:battery_recipe", ["CRC", "RGR", "CRC"], {"C": "minecraft:copper_ingot", "R": "minecraft:redstone", "G": "cw:gear"}, "cw:battery", 1),
         "storage_core": shaped("cw:storage_core_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_core", 1),
         "storage_extension": shaped("cw:storage_extension_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "B": "minecraft:barrel"}, "cw:storage_extension", 1),
+        "storage_terminal": shaped("cw:storage_terminal_recipe", ["IGI", "CBC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_terminal", 1),
+        "storage_port": shaped("cw:storage_port_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_port", 1),
         "quarry": shaped("cw:quarry_recipe", ["IMI", "GQG", "IMI"], {"I": "minecraft:iron_block", "M": "cw:motor", "G": "cw:gear", "Q": "cw:circuit"}, "cw:quarry", 1),
         "drill": shaped("cw:drill_recipe", [" I ", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:drill", 1),
         "chainsaw": shaped("cw:chainsaw_recipe", [" II", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:chainsaw", 1),
@@ -473,6 +493,7 @@ def build_extras():
     save_png(PREVIEWS / "materials.png", sheet)
     render.build_model_sheet(PREVIEWS / "models.png")
     render.build_tool_sheet(PREVIEWS / "tools.png")
+    render.build_belt_sheet(PREVIEWS / "belt_shapes.png")
 
 
 def build_addon():

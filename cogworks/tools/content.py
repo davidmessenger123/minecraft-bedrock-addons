@@ -223,6 +223,59 @@ def conveyor_cubes() -> list[dict]:
     ]
 
 
+def conveyor_frame_cubes() -> list[dict]:
+    return [
+        cube([-8, 0, -7], [1, 9, 14], STEEL),
+        cube([7, 0, -7], [1, 9, 14], STEEL),
+        cube([-7, 7, -7], [14, 1, 1], DARK),
+        cube([-7, 7, 6], [14, 1, 1], DARK),
+        cube([-7, 8, -7], [1, 1, 14], BRASS),
+        cube([6, 8, -7], [1, 1, 14], BRASS),
+        cube([-6, 1, -6], [2, 6, 2], COPPER),
+        cube([4, 1, -6], [2, 6, 2], COPPER),
+        cube([-6, 1, 4], [2, 6, 2], COPPER),
+        cube([4, 1, 4], [2, 6, 2], COPPER),
+    ]
+
+
+def conveyor_curve_geo() -> dict:
+    """One belt block with straight/left/right geometry selected by state."""
+    straight = conveyor_cubes()
+    left = conveyor_frame_cubes() + [
+        cube([-7, 8, 0], [8, 1, 8], BELT),
+        cube([-7, 8, -7], [8, 1, 8], BELT),
+        cube([0, 8, -7], [8, 1, 7], BELT),
+        cube([-7, 8, 6], [8, 1, 1], BRASS),
+        cube([6, 8, -7], [1, 1, 8], BRASS),
+    ]
+    right = conveyor_frame_cubes() + [
+        cube([-1, 8, 0], [8, 1, 8], BELT),
+        cube([-1, 8, -7], [8, 1, 8], BELT),
+        cube([-8, 8, -7], [8, 1, 7], BELT),
+        cube([-8, 8, 6], [8, 1, 1], BRASS),
+        cube([-7, 8, -7], [1, 1, 8], BRASS),
+    ]
+    return {
+        "format_version": "1.21.90",
+        "minecraft:geometry": [{
+            "description": {
+                "identifier": "geometry.cw.conveyor",
+                "texture_width": ATLAS,
+                "texture_height": ATLAS,
+                "visible_bounds_width": 1.0,
+                "visible_bounds_height": 0.7,
+                "visible_bounds_offset": [0, 0.35, 0],
+            },
+            "bones": [
+                {"name": "straight", "pivot": [0, 0, 0], "cubes": straight},
+                {"name": "left", "pivot": [0, 0, 0], "cubes": left},
+                {"name": "right", "pivot": [0, 0, 0], "cubes": right},
+            ],
+        }],
+    }
+
+
+
 def conveyor_geo() -> dict:
     return block_geo("geometry.cw.conveyor", conveyor_cubes(),
                      (1.0, 0.7, (0, 0.35, 0)))
@@ -309,12 +362,36 @@ def quarry_geo() -> dict:
     ], (1.2, 1.8, (0, 0.9, 0)))
 
 
+def storage_terminal_geo() -> dict:
+    return block_geo("geometry.cw.storage_terminal", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 7, 12], DARK),
+        cube([-5, 3, -7], [10, 4, 1], ENERGY),
+        cube([-4, 9, -4], [8, 1, 8], STEEL),
+        cube([-5, 10, -5], [10, 1, 10], BRASS),
+        cube([-6, 11, -6], [12, 2, 12], COPPER),
+        cube([-6, 5, -8], [12, 1, 1], BRASS),
+    ], (1.1, 1.1, (0, 0.65, 0)))
+
+
+def storage_port_geo() -> dict:
+    return block_geo("geometry.cw.storage_port", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 6, 12], DARK),
+        cube([-4, 8, -4], [8, 3, 8], COPPER),
+        cube([-5, 11, -5], [10, 1, 10], BRASS),
+        cube([-3, 4, -8], [6, 3, 1], ENERGY),
+        cube([-7, 5, -7], [1, 4, 14], STEEL),
+        cube([6, 5, -7], [1, 4, 14], STEEL),
+    ], (1.1, 1.2, (0, 0.6, 0)))
+
+
 def block_geometries() -> dict[str, dict]:
     return {
         "generator": generator_geo(),
         "cable": cable_geo(),
         "battery": battery_geo(),
-        "conveyor": conveyor_geo(),
+        "conveyor": conveyor_curve_geo(),
         "filter": logistics_geo("filter"),
         "splitter": logistics_geo("splitter"),
         "merger": logistics_geo("merger"),
@@ -322,6 +399,8 @@ def block_geometries() -> dict[str, dict]:
         "assembler": assembler_geo(),
         "storage_core": storage_geo(False),
         "storage_extension": storage_geo(True),
+        "storage_terminal": storage_terminal_geo(),
+        "storage_port": storage_port_geo(),
         "quarry": quarry_geo(),
     }
 
@@ -593,13 +672,14 @@ class BlockSpec:
     fuel: bool = False
     tick_range: tuple[int, int] = (10, 20)
     status_state: bool = False
+    curve_state: bool = False
 
 
 BLOCKS: list[BlockSpec] = [
     BlockSpec("generator", "Coal Generator", "geometry.cw.generator", 3.0, light=8, machine=True, fuel=True, sound="metal", status_state=True),
     BlockSpec("cable", "Copper Cable", "geometry.cw.cable", 1.0, collision={"origin": [-5, 0, -5], "size": [10, 8, 10]}, sound="metal"),
     BlockSpec("battery", "Battery Bank", "geometry.cw.battery", 2.5, light=4, collision={"origin": [-8, 0, -8], "size": [16, 12, 16]}, sound="metal"),
-    BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8), curve_state=True),
     BlockSpec("filter", "Item Filter", "geometry.cw.filter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("splitter", "Belt Splitter", "geometry.cw.splitter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("merger", "Belt Merger", "geometry.cw.merger", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
@@ -607,6 +687,8 @@ BLOCKS: list[BlockSpec] = [
     BlockSpec("assembler", "Crafting Assembler", "geometry.cw.assembler", 3.0, light=3, machine=True, sound="metal", status_state=True),
     BlockSpec("storage_core", "Storage Core", "geometry.cw.storage_core", 2.0, sound="wood"),
     BlockSpec("storage_extension", "Storage Extension", "geometry.cw.storage_extension", 2.0, sound="wood"),
+    BlockSpec("storage_terminal", "Storage Terminal", "geometry.cw.storage_terminal", 2.5, light=4, sound="metal", dynamic=False),
+    BlockSpec("storage_port", "Storage Port", "geometry.cw.storage_port", 2.5, light=3, machine=True, sound="metal", tick_range=(8, 12)),
     BlockSpec("quarry", "Quarry Controller", "geometry.cw.quarry", 4.0, light=5, machine=True, sound="metal", tick_range=(1, 1), status_state=True),
 ]
 

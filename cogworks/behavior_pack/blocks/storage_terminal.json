@@ -1,0 +1,44 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "cw:storage_terminal",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.cw.storage_terminal",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "cw_blocks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.cw.storage_terminal",
+        "material_instances": {
+          "*": {
+            "texture": "cw_blocks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 4
+      },
+      "minecraft:light_emission": 4,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#59616d",
+      "minecraft:display_name": "tile.cw:storage_terminal.name",
+      "minecraft:loot": "loot_tables/blocks/storage_terminal.json"
+    }
+  }
+}

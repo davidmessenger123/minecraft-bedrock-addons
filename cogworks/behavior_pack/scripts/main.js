@@ -29,6 +29,8 @@ const EXTRACTOR = "cw:extractor";
 const ASSEMBLER = "cw:assembler";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
+const STORAGE_TERMINAL = "cw:storage_terminal";
+const STORAGE_PORT = "cw:storage_port";
 const QUARRY = "cw:quarry";
 const DRILL = "cw:drill";
 const CHAINSAW = "cw:chainsaw";
@@ -40,6 +42,7 @@ const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY]);
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const FACINGS = ["north", "east", "south", "west"];
+const OPPOSITE = { north: "south", east: "west", south: "north", west: "east" };
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
 const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
 const DIRECTIONS = {
@@ -173,11 +176,79 @@ function facing(block) {
 
 function setFacing(block, value) {
     try {
-        block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:facing": value }));
+        const states = { "cw:facing": value };
+        const curve = block.permutation.getState("cw:curve");
+        if (typeof curve === "string") states["cw:curve"] = curve;
+        block.setPermutation(BlockPermutation.resolve(block.typeId, states));
     } catch {
         // It may be a removed block during a tick.
     }
 }
+
+function curveOf(block) {
+    try {
+        const value = block.permutation.getState("cw:curve");
+        return typeof value === "string" ? value : "straight";
+    } catch {
+        return "straight";
+    }
+}
+
+function setCurve(block, curve) {
+    if (block.typeId !== CONVEYOR || curveOf(block) === curve) return;
+    try {
+        block.setPermutation(BlockPermutation.resolve(block.typeId, {
+            "cw:facing": facing(block),
+            "cw:curve": curve,
+        }));
+    } catch {
+        // The block may have been removed during a tick.
+    }
+}
+
+function connectable(block) {
+    if (!block) return false;
+    return BELT_TYPES.has(block.typeId)
+        || block.typeId === STORAGE_CORE
+        || block.typeId === STORAGE_EXTENSION
+        || block.typeId === ASSEMBLER
+        || block.typeId === GENERATOR;
+}
+
+function updateBeltCurve(block) {
+    if (!block || block.typeId !== CONVEYOR) return;
+    const output = facing(block);
+    let curve = "straight";
+    for (const direction of FACINGS) {
+        const next = neighbor(block, direction);
+        if (!next || !BELT_TYPES.has(next.typeId)) continue;
+        if (facing(next) !== OPPOSITE[direction]) continue;
+        if (direction === LEFT_OF[output]) curve = "left";
+        else if (direction === RIGHT_OF[output]) curve = "right";
+        if (curve !== "straight") break;
+    }
+    setCurve(block, curve);
+}
+
+function updateNeighborCurves(block) {
+    for (const next of allNeighbors(block)) updateBeltCurve(next);
+}
+
+function autoConnectNeighbors(block) {
+    // When a belt is placed beside an idle belt, turn the idle belt toward the
+    // new block. This is the rail-like part: a straight test line naturally
+    // becomes a bend without a separate corner item.
+    for (const direction of FACINGS) {
+        const next = neighbor(block, direction);
+        if (!next || !BELT_TYPES.has(next.typeId)) continue;
+        const toward = OPPOSITE[direction];
+        if (facing(next) === toward) continue;
+        const front = neighbor(next, facing(next));
+        if (front && connectable(front)) continue;
+        setFacing(next, toward);
+    }
+}
+
 
 function formatName(id) {
     const short = String(id).replace(/^minecraft:/, "").replace(/^cw:/, "Cogworks ");
@@ -441,7 +512,7 @@ function storageInfo(start) {
     };
 }
 
-async function openStorage(player, block, query = "") {
+async function openStorage(player, block, query = "", terminal = false) {
     const info = storageInfo(block);
     if (!info.core) {
         player.sendMessage("Connect a Storage Extension to a Storage Core first.");
@@ -455,10 +526,11 @@ async function openStorage(player, block, query = "") {
         .sort(([a], [b]) => a.localeCompare(b));
     const used = Object.values(info.items).reduce((sum, count) => sum + Math.ceil(Number(count || 0) / 64), 0);
     const form = new ActionFormData()
-        .title("Storage Core")
-        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}Use a Storage Extractor to pull items onto belts.`);
+        .title(terminal ? "Storage Terminal" : "Storage Core")
+        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw or craft directly from the network." : "Use a Storage Extractor to pull items onto belts."}`);
     form.button("Search items");
     form.button("Deposit held item");
+    if (terminal) form.button("Craft from storage");
     if (!entries.length) form.button(needle ? "No matching items" : "No stored items");
     for (const [typeId, count] of entries) {
         form.button(`${formatName(typeId)}  x${count}`);
@@ -474,7 +546,7 @@ async function openStorage(player, block, query = "") {
         try { result = await search.show(player); } catch { return; }
         if (result.canceled) return;
         const nextQuery = String(result.formValues?.[0] || "");
-        later(() => openStorage(player, block, nextQuery));
+        later(() => openStorage(player, block, nextQuery, terminal));
         return;
     }
     if (response.selection === 1) {
@@ -492,12 +564,154 @@ async function openStorage(player, block, query = "") {
         action(player, `Deposited ${accepted} ${formatName(item.typeId)}.`);
         return;
     }
-    const [typeId, count] = entries[response.selection - 2] || [];
+    const entryStart = terminal ? 3 : 2;
+    if (terminal && response.selection === 2) {
+        later(() => openCraftingTerminal(player, block));
+        return;
+    }
+    const [typeId, count] = entries[response.selection - entryStart] || [];
     if (!typeId) return;
     const take = Math.min(64, count);
     const taken = takeStorage(block, typeId, take);
     addItem(player, typeId, taken);
     action(player, `Withdrew ${taken} ${formatName(typeId)}.`);
+}
+
+function adjacentStorage(block) {
+    for (const next of allNeighbors(block)) {
+        if (next && (next.typeId === STORAGE_CORE || next.typeId === STORAGE_EXTENSION)) return next;
+    }
+    return undefined;
+}
+
+function nativeContainer(block) {
+    try {
+        return block?.getComponent("minecraft:inventory")?.container;
+    } catch {
+        return undefined;
+    }
+}
+
+function adjacentNativeContainer(port) {
+    for (const next of allNeighbors(port)) {
+        if (!next) continue;
+        if (next.typeId === "minecraft:chest"
+            || next.typeId === "minecraft:trapped_chest"
+            || next.typeId === "minecraft:barrel"
+            || next.typeId === "minecraft:hopper") {
+            const container = nativeContainer(next);
+            if (container) return { block: next, container };
+        }
+    }
+    return undefined;
+}
+
+function tickStoragePort(port) {
+    const storage = adjacentStorage(port);
+    const native = adjacentNativeContainer(port);
+    if (!storage || !native) return;
+    const mode = read(port, "mode", "import");
+    const filters = beltFilters(port);
+    const hasFilter = Object.keys(filters).length > 0;
+    const allows = (typeId) => !hasFilter || filters[typeId] === true;
+    const { container } = native;
+    if (mode === "import") {
+        for (let slot = 0; slot < container.size; slot++) {
+            const item = container.getItem(slot);
+            if (!item || !allows(item.typeId)) continue;
+            const accepted = insertStorage(storage, item.typeId, item.amount);
+            if (accepted <= 0) continue;
+            if (accepted >= item.amount) container.setItem(slot, undefined);
+            else {
+                item.amount -= accepted;
+                container.setItem(slot, item);
+            }
+        }
+    } else {
+        const items = storageInfo(storage).items;
+        for (const [typeId, count] of Object.entries(items)) {
+            if (!allows(typeId)) continue;
+            const stack = new ItemStack(typeId, Math.min(64, count));
+            let leftover;
+            try { leftover = container.addItem(stack); } catch { continue; }
+            const remaining = leftover ? leftover.amount : 0;
+            const moved = Math.min(64, count) - remaining;
+            if (moved > 0) takeStorage(storage, typeId, moved);
+        }
+    }
+}
+
+function openPort(player, block) {
+    const storage = adjacentStorage(block);
+    const native = adjacentNativeContainer(block);
+    const form = new ActionFormData()
+        .title("Storage Port")
+        .body(`Mode: ${read(block, "mode", "import")}\nStorage: ${storage ? "connected" : "missing"}\nNative inventory: ${native ? native.block.typeId.replace("minecraft:", "") : "missing"}\nFilters: ${Object.keys(beltFilters(block)).map(formatName).join(", ") || "none"}\n\nPlace a chest, barrel or hopper beside the port and a Storage Core beside it. Right-click the port with an item to toggle a filter.`);
+    form.button("Toggle import / export");
+    form.button("Clear filters");
+    form.button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            const next = read(block, "mode", "import") === "import" ? "export" : "import";
+            write(block, "mode", next);
+            action(player, `Storage Port mode: ${next}.`);
+        } else if (response.selection === 1) {
+            writeJson(block, "filters", {});
+            action(player, "Storage Port filters cleared.");
+        }
+    }).catch(() => {});
+}
+
+function openTerminal(player, terminal) {
+    const storage = adjacentStorage(terminal);
+    if (!storage) {
+        action(player, "Place the Storage Terminal beside a Storage Core or Extension.");
+        return;
+    }
+    void openStorage(player, storage, "", true);
+}
+
+function storageHas(core, recipe) {
+    const items = storageInfo(core).items;
+    for (const [typeId, count] of Object.entries(recipe.input)) {
+        if (Number(items[typeId] || 0) < count) return false;
+    }
+    return true;
+}
+
+function openCraftingTerminal(player, core) {
+    const form = new ActionFormData()
+        .title("Storage Terminal — Crafting")
+        .body("Craft from items stored in the connected network. Missing ingredients are marked.");
+    for (const recipe of ASSEMBLER_RECIPES) {
+        const ready = storageHas(core, recipe);
+        const missing = Object.entries(recipe.input)
+            .filter(([typeId, count]) => Number(storageInfo(core).items[typeId] || 0) < count)
+            .map(([typeId]) => formatName(typeId));
+        form.button(`${recipe.name}${ready ? " — ready" : ` — need ${missing.join(", ")}`}`);
+    }
+    form.button("Back");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection >= ASSEMBLER_RECIPES.length) {
+            later(() => openStorage(player, core, "", true));
+            return;
+        }
+        const recipe = ASSEMBLER_RECIPES[response.selection];
+        if (!storageHas(core, recipe)) {
+            action(player, "Not enough items in storage.");
+            return;
+        }
+        for (const [typeId, count] of Object.entries(recipe.input)) {
+            takeStorage(core, typeId, count);
+        }
+        for (const [typeId, count] of Object.entries(recipe.output)) {
+            addItem(player, typeId, count);
+        }
+        action(player, `Crafted ${recipe.name}.`);
+        later(() => openStorage(player, core, "", true));
+    }).catch(() => {});
 }
 
 function insertAssembler(assembler, typeId, amount) {
@@ -506,6 +720,23 @@ function insertAssembler(assembler, typeId, amount) {
     input[typeId] = Number(input[typeId] || 0) + amount;
     writeJson(assembler, "input", input);
     return amount;
+}
+
+function splitterOutputFilters(block) {
+    return readJson(block, "outputFilters", { front: {}, left: {}, right: {} });
+}
+
+function splitterAllows(block, side, typeId) {
+    const filters = splitterOutputFilters(block)[side] || {};
+    return Object.keys(filters).length === 0 || filters[typeId] === true;
+}
+
+function toggleSplitterOutputFilter(block, side, typeId) {
+    const filters = splitterOutputFilters(block);
+    filters[side] = filters[side] || {};
+    if (filters[side][typeId]) delete filters[side][typeId];
+    else filters[side][typeId] = true;
+    writeJson(block, "outputFilters", filters);
 }
 
 function beltFilters(block) {
@@ -654,10 +885,21 @@ function storageAdjacent(block) {
 function pullFromStorage(extractor) {
     const source = storageAdjacent(extractor);
     if (!source) return;
+    const ownPriority = Number(read(extractor, "priority", 1));
+    let highest = ownPriority;
+    for (const next of allNeighbors(source)) {
+        if (next?.typeId === EXTRACTOR) highest = Math.max(highest, Number(read(next, "priority", 1)));
+    }
+    if (ownPriority < highest) return;
     const info = storageInfo(source);
     const filters = beltFilters(extractor);
-    const entry = Object.entries(info.items).find(([typeId]) =>
-        Object.keys(filters).length === 0 || filters[typeId] === true);
+    const mode = read(extractor, "filterMode", "allow");
+    const hasFilter = Object.keys(filters).length > 0;
+    const entry = Object.entries(info.items).find(([typeId]) => {
+        if (!hasFilter) return true;
+        const listed = filters[typeId] === true;
+        return mode === "deny" ? !listed : listed;
+    });
     if (!entry) return;
     const [typeId, count] = entry;
     const take = takeStorage(source, typeId, Math.min(64, count));
@@ -671,6 +913,7 @@ function moveBeltItem(block, item, direction) {
 }
 
 function tickConveyor(block) {
+    if (block.typeId === CONVEYOR) updateBeltCurve(block);
     syncDisplay(block);
     if (block.typeId === EXTRACTOR) pullFromStorage(block);
     let item = readJson(block, "item", null);
@@ -682,9 +925,11 @@ function tickConveyor(block) {
     let accepted = 0;
     if (block.typeId === SPLITTER) {
         const order = [facing(block), LEFT_OF[facing(block)], RIGHT_OF[facing(block)]];
+        const sides = ["front", "left", "right"];
         const start = Number(read(block, "splitIndex", 0)) % order.length;
         for (let step = 0; step < order.length; step++) {
             const index = (start + step) % order.length;
+            if (!splitterAllows(block, sides[index], item.id)) continue;
             accepted = moveBeltItem(block, item, order[index]);
             if (accepted > 0) {
                 write(block, "splitIndex", (index + 1) % order.length);
@@ -871,6 +1116,7 @@ function tickMachine(block) {
                 tickConveyor(block);
                 break;
             case ASSEMBLER: tickAssembler(block); break;
+            case STORAGE_PORT: tickStoragePort(block); break;
             case QUARRY: tickQuarry(block); break;
         }
     } catch (error) {
@@ -1019,6 +1265,8 @@ function rotateConveyor(block) {
     const current = facing(block);
     const next = FACINGS[(FACINGS.indexOf(current) + 1) % FACINGS.length];
     setFacing(block, next);
+    updateBeltCurve(block);
+    updateNeighborCurves(block);
     return next;
 }
 
@@ -1046,17 +1294,59 @@ function openRecipePicker(player, block) {
 function openLogistics(player, block) {
     const item = readJson(block, "item", null);
     const filters = Object.keys(beltFilters(block));
+    const isSplitter = block.typeId === SPLITTER;
+    const isExtractor = block.typeId === EXTRACTOR;
+    const outputs = isSplitter ? splitterOutputFilters(block) : null;
+    const outputText = isSplitter
+        ? `\nFront: ${Object.keys(outputs.front || {}).map(formatName).join(", ") || "all"}\nLeft: ${Object.keys(outputs.left || {}).map(formatName).join(", ") || "all"}\nRight: ${Object.keys(outputs.right || {}).map(formatName).join(", ") || "all"}`
+        : "";
+    const extractorText = isExtractor
+        ? `\nPriority: ${Number(read(block, "priority", 1))}\nFilter mode: ${read(block, "filterMode", "allow")}`
+        : "";
     const form = new ActionFormData()
         .title(formatName(block.typeId))
-        .body(`Facing: ${facing(block)}\nBuffer: ${item ? `${formatName(item.id)} x${item.amount}` : "empty"}\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (pass all)"}\n\nRight-click with an item to toggle it as a filter. Use the wrench to rotate.`);
-    form.button("Clear filters");
+        .body(`Facing: ${facing(block)}\nBuffer: ${item ? `${formatName(item.id)} x${item.amount}` : "empty"}\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (pass all)"}${outputText}${extractorText}\n\nRight-click a belt with an item to toggle its input filter. On a splitter, click an output side to filter that side. Use the wrench to rotate.`);
+    form.button("Clear input filters");
+    if (isSplitter) form.button("Clear output filters");
+    if (isExtractor) {
+        form.button("Cycle priority");
+        form.button("Toggle filter mode");
+    }
     form.button("Close");
     form.show(player).then((response) => {
-        if (!response || response.canceled || response.selection !== 0) return;
-        writeJson(block, "filters", {});
-        action(player, "Filters cleared.");
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            writeJson(block, "filters", {});
+            action(player, "Input filters cleared.");
+            return;
+        }
+        if (isSplitter && response.selection === 1) {
+            writeJson(block, "outputFilters", { front: {}, left: {}, right: {} });
+            action(player, "Splitter output filters cleared.");
+            return;
+        }
+        if (isExtractor) {
+            if (response.selection === 1) {
+                const next = (Number(read(block, "priority", 1)) + 1) % 3;
+                write(block, "priority", next);
+                action(player, `Extractor priority: ${next}.`);
+            } else if (response.selection === 2) {
+                const next = read(block, "filterMode", "allow") === "allow" ? "deny" : "allow";
+                write(block, "filterMode", next);
+                action(player, `Extractor filter mode: ${next}.`);
+            }
+        }
     }).catch(() => {});
 }
+
+function splitterSideForFace(block, face) {
+    const direction = String(face || "").toLowerCase();
+    if (direction === facing(block)) return "front";
+    if (direction === LEFT_OF[facing(block)]) return "left";
+    if (direction === RIGHT_OF[facing(block)]) return "right";
+    return "input";
+}
+
 
 function toggleBeltFilter(player, block, typeId) {
     const filters = beltFilters(block);
@@ -1086,6 +1376,14 @@ function toggleQuarryFilter(player, block, typeId) {
 function openMachine(player, block) {
     if (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION) {
         void openStorage(player, block);
+        return;
+    }
+    if (block.typeId === STORAGE_TERMINAL) {
+        openTerminal(player, block);
+        return;
+    }
+    if (block.typeId === STORAGE_PORT) {
+        openPort(player, block);
         return;
     }
     if (BELT_TYPES.has(block.typeId)) {
@@ -1203,10 +1501,30 @@ function interact(event) {
     }
     if (BELT_TYPES.has(block.typeId)) {
         if (item) {
-            toggleBeltFilter(player, block, item.typeId);
+            if (block.typeId === SPLITTER) {
+                const side = splitterSideForFace(block, event.blockFace);
+                if (side === "input") {
+                    toggleBeltFilter(player, block, item.typeId);
+                } else {
+                    toggleSplitterOutputFilter(block, side, item.typeId);
+                    action(player, `Splitter ${side} filter: ${formatName(item.typeId)}.`);
+                }
+            } else {
+                toggleBeltFilter(player, block, item.typeId);
+            }
         } else {
             later(() => openMachine(player, block));
         }
+        return;
+    }
+
+    if (block.typeId === STORAGE_TERMINAL) {
+        later(() => openTerminal(player, block));
+        return;
+    }
+    if (block.typeId === STORAGE_PORT) {
+        if (item) toggleBeltFilter(player, block, item.typeId);
+        else later(() => openMachine(player, block));
         return;
     }
 
@@ -1267,6 +1585,9 @@ world.afterEvents.playerPlaceBlock.subscribe((event) => {
         const yaw = event.player.getRotation().y;
         const index = Math.round(((yaw % 360) + 360) % 360 / 90) % 4;
         setFacing(event.block, ["south", "west", "north", "east"][index]);
+        autoConnectNeighbors(event.block);
+        updateBeltCurve(event.block);
+        updateNeighborCurves(event.block);
     } catch {
         // Ignore placement orientation failures.
     }
@@ -1292,6 +1613,7 @@ world.afterEvents.playerBreakBlock.subscribe((event) => {
             const energy = Number(read(event.block, "energy", 0));
             if (energy > 0) event.player.sendMessage(`Battery removed with ${Math.floor(energy)} energy.`);
         }
+        updateNeighborCurves(event.block);
     } catch {
         // Ignore.
     }

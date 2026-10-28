@@ -32,6 +32,12 @@
   "cw:storage_extension": {
     "sound": "wood"
   },
+  "cw:storage_terminal": {
+    "sound": "metal"
+  },
+  "cw:storage_port": {
+    "sound": "metal"
+  },
   "cw:quarry": {
     "sound": "metal"
   }
