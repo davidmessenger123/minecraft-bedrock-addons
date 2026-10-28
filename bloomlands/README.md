@@ -20,10 +20,11 @@ petal hills, a mirror lake and three hand-modelled peaceful Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-1.0.0.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.0.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
-3. Reload the world. The first load creates the island; this can take a little while
-   because the dimension is void-generated and every block is placed by the script.
+3. Reload the world. The first load creates the island; this can take several minutes
+   because the dimension is void-generated, every block is placed by the script, and
+   the 480-block garden is built in sixteen chunk-loading passes.
 4. No experimental toggles are needed. If your build exposes stable Script API 2.0.0
    behind **Beta APIs**, enable that experiment.
 
@@ -73,9 +74,16 @@ curious explorer cannot strand themselves.
 
 ## The island
 
-The island is roughly 120 blocks across, with its surface at **Y = 64**. Terrain,
-flowers, trees, paths, water and the return gate are all placed once and then saved
-with the world.
+The island is roughly 480 blocks across (a 240-block radius), with its surface at
+**Y = 64**. The arrival platform sits south of the return Bloomgate: the southern rim
+is about 114 blocks away, the centre about 126 blocks, and the northern rim about 366
+blocks. Terrain, flowers, trees, paths, water and the return gate are all placed once
+and then saved with the world.
+
+The script builds the island in sixteen 8x8-chunk tiles with a one-chunk feature
+margin. Each tile gets its own temporary ticking area, so generation stays inside
+Bedrock's ticking-area budget; the central tile is built last so the arrival and
+return areas can be probed before the island is marked complete.
 
 | Region | Direction | Character |
 | --- | --- | --- |
@@ -150,7 +158,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-1.0.0.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.0.0.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources
@@ -165,7 +173,8 @@ The `.bbmodel` files are sources for editing; the shipped add-on uses the export
   engine terrain, portals or multiple biomes for a custom dimension. The island,
   vegetation and themed regions are therefore built and dressed by the script.
 - The first world load does the heavy generation. Later loads reuse the saved
-  blocks and keep only the spawn/return area ticking.
+  blocks and keep only the spawn/return area ticking. Existing 1.0.0 worlds use a
+  fresh generation marker and grow the larger island around the old garden.
 - If you remove the behavior pack from a world, the saved island blocks remain in
   the dimension data but the portal and scripted mobs stop working.
 - Models, textures and code in this project are original and released under the

@@ -375,35 +375,38 @@ def region_map(path: Path) -> None:
         y = cy + math.sin(angle) * rr
         draw_flower(draw, (x, y), 7, "#d85b92", "#ffe6a8")
 
-    # Paths.
-    draw.line((cx, cy + 14, cx, cy + 160), fill=(230, 177, 190, 230), width=7)
-    draw.line((cx, cy + 14, cx + 150, cy + 80), fill=(230, 177, 190, 230), width=7)
-    draw.line((cx, cy + 14, cx - 150, cy + 80), fill=(230, 177, 190, 230), width=7)
-    draw.line((cx, cy + 14, cx - 120, cy - 130), fill=(230, 177, 190, 230), width=7)
+    # Paths.  The portal and arrival platform sit south of the island's centre.
+    draw.line((cx, cy + 117, cx, cy + 270), fill=(230, 177, 190, 230), width=7)
+    draw.line((cx, cy + 117, cx + 165, cy + 185), fill=(230, 177, 190, 230), width=7)
+    draw.line((cx, cy + 117, cx - 165, cy + 185), fill=(230, 177, 190, 230), width=7)
+    draw.line((cx, cy + 117, cx - 120, cy - 130), fill=(230, 177, 190, 230), width=7)
 
     # Portal and spawn.
-    draw.ellipse((cx - 13, cy + 1, cx + 13, cy + 27), fill=(240, 122, 168, 255), outline="#fff0a8", width=3)
-    draw.text((cx + 20, cy + 3), "Bloomgate", font=font(14, True), fill=INK)
-    draw.ellipse((cx - 7, cy + 32, cx + 7, cy + 46), fill=TEAL)
-    draw.text((cx + 20, cy + 30), "Arrival", font=font(13, True), fill=TEAL)
+    draw.ellipse((cx - 13, cy + 104, cx + 13, cy + 130), fill=(240, 122, 168, 255), outline="#fff0a8", width=3)
+    draw.text((cx + 20, cy + 106), "Bloomgate", font=font(14, True), fill=INK)
+    draw.ellipse((cx - 7, cy + 139, cx + 7, cy + 153), fill=TEAL)
+    draw.text((cx + 20, cy + 137), "Arrival", font=font(13, True), fill=TEAL)
 
     def label(x: int, y: int, text: str, sub: str, color: str = INK) -> None:
-        box = draw.textbbox((0, 0), text, font=font(20, True))
-        w = box[2] - box[0]
-        draw.rounded_rectangle((x - 12, y - 9, x + w + 12, y + 35), radius=9,
+        title_font = font(20, True)
+        sub_font = font(10)
+        title_box = draw.textbbox((0, 0), text, font=title_font)
+        sub_box = draw.textbbox((0, 0), sub, font=sub_font)
+        w = max(title_box[2] - title_box[0], sub_box[2] - sub_box[0])
+        draw.rounded_rectangle((x - 12, y - 9, x + w + 12, y + 39), radius=9,
                                fill=(24, 19, 31, 220), outline=color, width=2)
-        draw.text((x, y), text, font=font(20, True), fill=color)
-        draw.text((x, y + 23), sub, font=font(10), fill=MUTED)
+        draw.text((x, y), text, font=title_font, fill=color)
+        draw.text((x, y + 25), sub, font=sub_font, fill=MUTED)
 
     label(cx - 375, cy + 170, "Sunpetal Meadow", "flowers, paths, and the arrival garden")
     label(cx - 370, cy - 265, "Whispering Canopy", "dense flower trees under a closed sky")
-    label(cx + 90, cy - 35, "Giant's Garden", "tree-sized blooms and glowing trunks")
+    label(cx + 90, cy - 35, "Giant's Garden", "tree-sized blooms and glow")
     label(cx - 355, cy - 95, "Petal Hills", "six walkable flower terraces")
     label(cx - 355, cy + 30, "Mirror Pool", "a quiet lake, lilies, and a skybell island")
-    label(cx - 65, cy - 320, "Bloomlands Edge", "the stone rim above the void", TEAL)
+    label(cx - 65, cy - 335, "Bloomlands Edge", "the stone rim above the void", TEAL)
 
     draw.text((28, 24), "The Bloomlands", font=font(32, True), fill=INK)
-    draw.text((30, 64), "A floating garden island, roughly 120 blocks across.", font=font(13), fill=MUTED)
+    draw.text((30, 64), "A 480-block floating garden island.", font=font(13), fill=MUTED)
     draw.text((width - 190, 30), "N", font=font(24, True), fill=ACCENT)
     draw.line((width - 165, 36, width - 165, 80), fill=ACCENT, width=4)
     draw.polygon([(width - 165, 26), (width - 176, 44), (width - 154, 44)], fill=ACCENT)

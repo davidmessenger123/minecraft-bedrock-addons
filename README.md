@@ -12,7 +12,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.1 | [Candyland-v1.0.1.mcpack](candyland/dist/Candyland-v1.0.1.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
-| **Bloomlands** | Add-on | 1.0.0 | [Bloomlands-1.0.0.mcaddon](bloomlands/Bloomlands-1.0.0.mcaddon) |
+| **Bloomlands** | Add-on | 2.0.0 | [Bloomlands-2.0.0.mcaddon](bloomlands/Bloomlands-2.0.0.mcaddon) |
 
 ## Install
 
@@ -154,7 +154,7 @@ regions plus the Bloomlands Edge and three detailed peaceful mobs.
 
 - Portal item `bl:bloom_portal` builds a 7×7 petal plaza, eight Bloomgate flowers
   and a central Bloomheart. Stand on the Bloomheart to travel.
-- Void dimension `bl:bloomlands`, script-built once into a 120-block floating
+- Void dimension `bl:bloomlands`, script-built once into a 480-block floating
   garden island with a saved return portal.
 - Regions: Sunpetal Meadow, Whispering Canopy, Giant's Garden, Petal Hills,
   Mirror Pool and the Bloomlands Edge.
@@ -236,3 +236,4 @@ details and the Blockbench source.
 - [R2-D2 Droid 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.1.0)
 - [R2-D2 Droid 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/r2-d2-v1.2.0)
 - [Bloomlands 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v1.0.0)
+- [Bloomlands 2.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.0.0)

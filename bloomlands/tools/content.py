@@ -27,7 +27,7 @@ from typing import Callable, Iterable, Sequence
 from PIL import Image, ImageDraw, ImageFilter
 
 NS = "bl"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 PACK_NAME = "Bloomlands"
 BP_NAME = "Bloomlands Behaviour Pack"
 RP_NAME = "Bloomlands Resource Pack"

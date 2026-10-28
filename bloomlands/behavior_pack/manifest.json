@@ -5,7 +5,7 @@
     "description": "The Bloomlands dimension, Bloomgate and peaceful Bloomling mobs.",
     "uuid": "0f5382a4-3c41-59e6-90c5-62335d404872",
     "version": [
-      1,
+      2,
       0,
       0
     ],
@@ -21,7 +21,7 @@
       "type": "data",
       "uuid": "a5872a02-3791-5906-91da-cef1bd3f3c19",
       "version": [
-        1,
+        2,
         0,
         0
       ]
@@ -33,7 +33,7 @@
       "entry": "scripts/main.js",
       "uuid": "16282ad5-85ba-53ff-a7e1-e44ef299439d",
       "version": [
-        1,
+        2,
         0,
         0
       ]
@@ -43,7 +43,7 @@
     {
       "uuid": "1c0cc0a0-872d-559e-8732-b0845267f916",
       "version": [
-        1,
+        2,
         0,
         0
       ]
