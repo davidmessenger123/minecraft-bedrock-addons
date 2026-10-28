@@ -19,6 +19,16 @@ Bloomling mobs.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.2
+
+- Bloomgate now builds the portal itself: use it while looking at a **grass
+  block**, and the surrounding 4×4 flower bed and 2×2 rainbow surface are
+  created automatically.
+- The 4×4 footprint must be entirely `minecraft:grass_block`; stone, sand,
+  dirt, podzol and mixed ground are rejected.
+- Replaced the Bloomgate crafting recipe with one that uses only vanilla
+  blocks: grass blocks, poppies and an amethyst block.
+
 ## What changed in 2.2.1
 
 - Fixed flower targeting when Bedrock reports the ground block under a flower
@@ -38,7 +48,7 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.1.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.2.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -54,23 +64,23 @@ script modules all load together.
 
 ### Craft a Bloomgate
 
-The **Bloomgate** item (`bl:bloom_portal`) is made with a ring of poppies and ferns
-around an amethyst shard:
+The **Bloomgate** item (`bl:bloom_portal`) uses only vanilla blocks:
 
 ```text
-F S F
-S A S
-F S F
+G F G
+F A F
+G F G
 
+G = minecraft:grass_block
 F = minecraft:poppy
-S = minecraft:fern
-A = minecraft:amethyst_shard
+A = minecraft:amethyst_block
 ```
 
-Place **any 16 flowers in a 4×4 square** on solid ground in the Overworld, Nether
-or End. The flowers can be vanilla flowers or Bloomlands flowers. Use the Bloomgate
-on **any one of those flowers**; the central 2×2 flowers are replaced by a flat,
-animated rainbow portal surface. The 2×2 area above the bed must be clear.
+Use the Bloomgate while looking at a **grass block** in the Overworld, Nether or
+End. The 4×4 footprint around that block must be entirely grass; stone, sand,
+dirt, podzol and mixed ground are rejected. The item clears small plants and
+builds the 4×4 flower bed automatically, with the flat animated rainbow portal in
+the central 2×2. The area above the bed must be clear of solid blocks.
 
 A starter kit is also available:
 
@@ -180,7 +190,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.1.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.2.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

@@ -338,11 +338,11 @@ def build_recipes() -> None:
     recipes = {
         "bloom_portal": recipe_shaped(
             "bl:bloom_portal_recipe",
-            ["FSF", "SAS", "FSF"],
+            ["GFG", "FAF", "GFG"],
             {
+                "G": {"item": "minecraft:grass_block"},
                 "F": {"item": "minecraft:poppy"},
-                "S": {"item": "minecraft:fern"},
-                "A": {"item": "minecraft:amethyst_shard"},
+                "A": {"item": "minecraft:amethyst_block"},
             },
             "bl:bloom_portal",
         ),
@@ -970,11 +970,11 @@ LANG = {
     "bl.region.hills": "Petal Hills",
     "bl.region.pool": "Mirror Pool",
     "bl.region.edge": "Bloomlands Edge",
-    "bl.portal.ready": "The flower square opens into a rainbow Bloomgate. Step onto its centre.",
-    "bl.portal.ground": "Use the Bloomgate on a flower in a 4x4 flower square.",
-    "bl.portal.flower_use": "Use the Bloomgate on one of the flowers in a 4x4 flower square.",
-    "bl.portal.flower_square": "Place a complete 4x4 square of flowers on the ground first.",
-    "bl.portal.no_room": "The 4x4 flower square is incomplete or has no clear ground beneath it.",
+    "bl.portal.ready": "The Bloomgate spreads a flower bed around the rainbow portal. Step onto its centre.",
+    "bl.portal.ground": "Use the Bloomgate while looking at a grass block.",
+    "bl.portal.grass": "Use the Bloomgate while looking at a grass block.",
+    "bl.portal.grass_square": "The Bloomgate needs a 4x4 patch of grass; stone, sand and other ground will not work.",
+    "bl.portal.no_room": "There is not enough clear space above the grass for the flower bed.",
     "bl.portal.building": "The Bloomgate is waking...",
     "bl.portal.waking": "The Bloomlands are still waking. Please wait a moment.",
     "bl.portal.failed": "The Bloomgate could not open. Try again in a moment.",
@@ -987,7 +987,7 @@ LANG = {
     "bl.portal.no_return": "The way home is missing; the Bloomgate returns you to the world spawn.",
     "bl.voidrescue": "The flowers catch you and set you down gently.",
     "bl.region.enter": "Entering the Bloomlands",
-    "bl.item.bloom_portal.desc": "Place a 4x4 square of flowers, then use the Bloomgate on one flower.",
+    "bl.item.bloom_portal.desc": "Use on a 4x4 patch of grass to spread a flower bed and rainbow portal.",
 }
 
 BLOCK_LANG = {
@@ -1030,8 +1030,8 @@ def build_language() -> None:
                 "bl.title.bloomlands", "bl.subtitle.bloomlands",
                 "bl.region.meadow", "bl.region.canopy", "bl.region.garden",
                 "bl.region.hills", "bl.region.pool", "bl.region.edge",
-                "bl.portal.ready", "bl.portal.ground", "bl.portal.flower_use",
-                "bl.portal.flower_square", "bl.portal.no_room",
+                "bl.portal.ready", "bl.portal.ground", "bl.portal.grass",
+                "bl.portal.grass_square", "bl.portal.no_room",
                 "bl.portal.building", "bl.portal.waking", "bl.portal.failed",
                 "bl.portal.cooldown", "bl.portal.rearm", "bl.portal.rooted",
                 "bl.portal.enter", "bl.portal.return",

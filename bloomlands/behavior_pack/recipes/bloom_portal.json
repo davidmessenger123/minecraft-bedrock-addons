@@ -8,19 +8,19 @@
       "crafting_table"
     ],
     "pattern": [
-      "FSF",
-      "SAS",
-      "FSF"
+      "GFG",
+      "FAF",
+      "GFG"
     ],
     "key": {
+      "G": {
+        "item": "minecraft:grass_block"
+      },
       "F": {
         "item": "minecraft:poppy"
       },
-      "S": {
-        "item": "minecraft:fern"
-      },
       "A": {
-        "item": "minecraft:amethyst_shard"
+        "item": "minecraft:amethyst_block"
       }
     },
     "result": {

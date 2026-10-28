@@ -293,7 +293,7 @@ def portal_diagram(path: Path) -> None:
     image = Image.new("RGBA", (width, height), BG)
     draw = ImageDraw.Draw(image)
     draw.text((28, 22), "Bloomgate construction", font=font(30, True), fill=INK)
-    draw.text((28, 60), "A 4 x 4 flower bed with a 2 x 2 rainbow portal at its centre.", font=font(14), fill=MUTED)
+    draw.text((28, 60), "Touch the Bloomgate to a grass block; the item builds the 4 x 4 bed.", font=font(14), fill=MUTED)
 
     cell = 78
     origin_x, origin_y = 96, 128
@@ -343,13 +343,13 @@ def portal_diagram(path: Path) -> None:
     spawn_y = origin_y + 4 * cell + 44
     draw.line((spawn_x, origin_y + 4 * cell + 8, spawn_x, spawn_y - 8), fill=ACCENT, width=4)
     draw.polygon([(spawn_x, spawn_y), (spawn_x - 8, spawn_y - 16), (spawn_x + 8, spawn_y - 16)], fill=ACCENT)
-    draw.text((spawn_x + 18, spawn_y - 30), "Use Bloomgate on a flower", font=font(13, True), fill=ACCENT)
+    draw.text((spawn_x + 18, spawn_y - 30), "Use Bloomgate on grass", font=font(13, True), fill=ACCENT)
 
     # Side note.
     draw.rounded_rectangle((52, 672, 760, 780), radius=16, fill=CARD, outline=(92, 79, 108, 255), width=2)
     draw.text((74, 690), "Build it with the Bloomgate item", font=font(18, True), fill=INK)
-    draw.text((74, 718), "Place 4 x 4 flowers on solid ground. Use the Bloomgate on any flower", font=font(13), fill=MUTED)
-    draw.text((74, 738), "in the square. The central 2 x 2 flowers become the rainbow portal.", font=font(13), fill=MUTED)
+    draw.text((74, 718), "Use Bloomgate while looking at a grass block. The 4 x 4 footprint", font=font(13), fill=MUTED)
+    draw.text((74, 738), "must be grass; the item creates the flowers and central portal.", font=font(13), fill=MUTED)
 
     path.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(path, "PNG")
