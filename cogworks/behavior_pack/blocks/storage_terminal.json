@@ -38,7 +38,18 @@
       "minecraft:light_dampening": 15,
       "minecraft:map_color": "#59616d",
       "minecraft:display_name": "tile.cw:storage_terminal.name",
-      "minecraft:loot": "loot_tables/blocks/storage_terminal.json"
+      "minecraft:loot": "loot_tables/blocks/storage_terminal.json",
+      "minecraft:block_entity": {
+        "dynamic_properties": true
+      },
+      "cw:machine": {},
+      "minecraft:tick": {
+        "interval_range": [
+          20,
+          20
+        ],
+        "looping": true
+      }
     }
   }
 }

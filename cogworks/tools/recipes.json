@@ -1,0 +1,236 @@
+[
+  {
+    "id": "assembler_oak_planks",
+    "machine": "assembler",
+    "name": "Oak Planks",
+    "input": { "minecraft:oak_log": 1 },
+    "output": { "minecraft:oak_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "assembler_sticks",
+    "machine": "assembler",
+    "name": "Sticks",
+    "input": { "minecraft:oak_planks": 2 },
+    "output": { "minecraft:stick": 4 },
+    "energy": 10,
+    "time": 20
+  },
+  {
+    "id": "assembler_iron_ingot",
+    "machine": "assembler",
+    "name": "Iron Ingots",
+    "input": { "minecraft:raw_iron": 1, "minecraft:coal": 1 },
+    "output": { "minecraft:iron_ingot": 2 },
+    "energy": 35,
+    "time": 40
+  },
+  {
+    "id": "assembler_gold_ingot",
+    "machine": "assembler",
+    "name": "Gold Ingots",
+    "input": { "minecraft:raw_gold": 1, "minecraft:coal": 1 },
+    "output": { "minecraft:gold_ingot": 2 },
+    "energy": 35,
+    "time": 40
+  },
+  {
+    "id": "assembler_copper_ingot",
+    "machine": "assembler",
+    "name": "Copper Ingots",
+    "input": { "minecraft:raw_copper": 1 },
+    "output": { "minecraft:copper_ingot": 2 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "assembler_gear",
+    "machine": "assembler",
+    "name": "Cogwork Gear",
+    "input": { "minecraft:iron_ingot": 4 },
+    "output": { "cw:gear": 1 },
+    "energy": 25,
+    "time": 40
+  },
+  {
+    "id": "assembler_circuit",
+    "machine": "assembler",
+    "name": "Control Circuit",
+    "input": { "minecraft:redstone": 4, "minecraft:gold_ingot": 1 },
+    "output": { "cw:circuit": 1 },
+    "energy": 30,
+    "time": 40
+  },
+  {
+    "id": "assembler_motor",
+    "machine": "assembler",
+    "name": "Electric Motor",
+    "input": { "cw:gear": 2, "cw:circuit": 1, "minecraft:copper_ingot": 4 },
+    "output": { "cw:motor": 1 },
+    "energy": 50,
+    "time": 60
+  },
+  {
+    "id": "furnace_iron",
+    "machine": "furnace",
+    "name": "Smelt Raw Iron",
+    "input": { "minecraft:raw_iron": 1 },
+    "output": { "minecraft:iron_ingot": 1 },
+    "energy": 20,
+    "time": 40
+  },
+  {
+    "id": "furnace_gold",
+    "machine": "furnace",
+    "name": "Smelt Raw Gold",
+    "input": { "minecraft:raw_gold": 1 },
+    "output": { "minecraft:gold_ingot": 1 },
+    "energy": 20,
+    "time": 40
+  },
+  {
+    "id": "furnace_copper",
+    "machine": "furnace",
+    "name": "Smelt Raw Copper",
+    "input": { "minecraft:raw_copper": 1 },
+    "output": { "minecraft:copper_ingot": 1 },
+    "energy": 20,
+    "time": 40
+  },
+  {
+    "id": "furnace_glass",
+    "machine": "furnace",
+    "name": "Glass",
+    "input": { "minecraft:sand": 1 },
+    "output": { "minecraft:glass": 1 },
+    "energy": 15,
+    "time": 30
+  },
+  {
+    "id": "furnace_stone",
+    "machine": "furnace",
+    "name": "Stone",
+    "input": { "minecraft:cobblestone": 1 },
+    "output": { "minecraft:stone": 1 },
+    "energy": 10,
+    "time": 25
+  },
+  {
+    "id": "crusher_iron",
+    "machine": "crusher",
+    "name": "Crush Iron Ore",
+    "input": { "minecraft:iron_ore": 1 },
+    "output": { "minecraft:raw_iron": 2 },
+    "energy": 30,
+    "time": 35
+  },
+  {
+    "id": "crusher_deepslate_iron",
+    "machine": "crusher",
+    "name": "Crush Deepslate Iron",
+    "input": { "minecraft:deepslate_iron_ore": 1 },
+    "output": { "minecraft:raw_iron": 2 },
+    "energy": 30,
+    "time": 35
+  },
+  {
+    "id": "crusher_gold",
+    "machine": "crusher",
+    "name": "Crush Gold Ore",
+    "input": { "minecraft:gold_ore": 1 },
+    "output": { "minecraft:raw_gold": 2 },
+    "energy": 30,
+    "time": 35
+  },
+  {
+    "id": "crusher_copper",
+    "machine": "crusher",
+    "name": "Crush Copper Ore",
+    "input": { "minecraft:copper_ore": 1 },
+    "output": { "minecraft:raw_copper": 2 },
+    "energy": 30,
+    "time": 35
+  },
+  {
+    "id": "crusher_cobblestone",
+    "machine": "crusher",
+    "name": "Crush Cobblestone",
+    "input": { "minecraft:cobblestone": 1 },
+    "output": { "minecraft:gravel": 1 },
+    "energy": 10,
+    "time": 25
+  },
+  {
+    "id": "crusher_gravel",
+    "machine": "crusher",
+    "name": "Crush Gravel",
+    "input": { "minecraft:gravel": 1 },
+    "output": { "minecraft:sand": 1 },
+    "energy": 10,
+    "time": 25
+  },
+  {
+    "id": "sawmill_oak",
+    "machine": "sawmill",
+    "name": "Saw Oak Logs",
+    "input": { "minecraft:oak_log": 1 },
+    "output": { "minecraft:oak_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "sawmill_birch",
+    "machine": "sawmill",
+    "name": "Saw Birch Logs",
+    "input": { "minecraft:birch_log": 1 },
+    "output": { "minecraft:birch_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "sawmill_spruce",
+    "machine": "sawmill",
+    "name": "Saw Spruce Logs",
+    "input": { "minecraft:spruce_log": 1 },
+    "output": { "minecraft:spruce_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "sawmill_jungle",
+    "machine": "sawmill",
+    "name": "Saw Jungle Logs",
+    "input": { "minecraft:jungle_log": 1 },
+    "output": { "minecraft:jungle_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "sawmill_acacia",
+    "machine": "sawmill",
+    "name": "Saw Acacia Logs",
+    "input": { "minecraft:acacia_log": 1 },
+    "output": { "minecraft:acacia_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "sawmill_dark_oak",
+    "machine": "sawmill",
+    "name": "Saw Dark Oak Logs",
+    "input": { "minecraft:dark_oak_log": 1 },
+    "output": { "minecraft:dark_oak_planks": 4 },
+    "energy": 20,
+    "time": 30
+  },
+  {
+    "id": "alloy_netherite",
+    "machine": "alloy_smelter",
+    "name": "Netherite Ingot",
+    "input": { "minecraft:netherite_scrap": 4, "minecraft:gold_ingot": 4 },
+    "output": { "minecraft:netherite_ingot": 1 },
+    "energy": 120,
+    "time": 100
+  }
+]

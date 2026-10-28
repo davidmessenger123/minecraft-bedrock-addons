@@ -171,6 +171,28 @@ def main() -> int:
         fail("script does not register the machine custom component")
     if "cw:machine" not in script:
         fail("script does not refer to cw:machine")
+    recipe_source = TOOLS / "recipes.json"
+    if not recipe_source.is_file():
+        fail("tools/recipes.json is missing")
+    else:
+        recipes = load(recipe_source)
+        if isinstance(recipes, list):
+            ids = set()
+            machines = {"assembler", "furnace", "crusher", "sawmill", "alloy_smelter"}
+            for recipe in recipes:
+                rid = recipe.get("id")
+                if not rid or rid in ids:
+                    fail(f"recipe id missing or duplicated: {rid}")
+                ids.add(rid)
+                if recipe.get("machine") not in machines:
+                    fail(f"recipe {rid}: unknown machine {recipe.get('machine')}")
+                for field in ("input", "output"):
+                    if not isinstance(recipe.get(field), dict) or not recipe[field]:
+                        fail(f"recipe {rid}: missing {field}")
+            if "MACHINE_RECIPES = []" in script:
+                fail("generated script has no machine recipes")
+        else:
+            fail("tools/recipes.json must contain an array")
 
     if not (ROOT / "blockbench" / "blocks").is_dir():
         fail("Blockbench source directory is missing")

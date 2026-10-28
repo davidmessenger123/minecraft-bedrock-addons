@@ -4,12 +4,13 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.3.0.mcaddon](Cogworks-1.3.0.mcaddon)
+**Download:** [Cogworks-1.4.0.mcaddon](Cogworks-1.4.0.mcaddon)
 
-- **Blocks:** Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
-  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
-  Storage Port, Crafting Assembler, Storage Core, Storage Extension and Quarry
-  Controller.
+- **Blocks:** Coal Generator, Wind Turbine, Copper Cable, Battery Bank, Energy
+  Meter, Conveyor Belt, Item Filter, Belt Splitter, Belt Merger, Storage
+  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher,
+  Sawmill, Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension
+  and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry Surveyor,
   Cogwork Gear, Control Circuit and Electric Motor.
 - **Held items:** all seven custom items — drill, chainsaw, wrench, surveyor,
@@ -29,9 +30,15 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   selected items back out onto a belt. Extractor priority and allow/deny filter
   modes are configurable.
 - **Terminal and native bridge:** the Storage Terminal adds search, withdrawal
-  and recipe crafting from the network. The Storage Port bridges an adjacent
-  chest, barrel or hopper into the virtual storage network for vanilla-style
-  input/output.
+  and a recipe job queue fed from the storage network. The Storage Port bridges
+  an adjacent chest, barrel or hopper into the virtual storage network for
+  vanilla-style input/output.
+- **Processing:** Electric Furnace, Crusher, Sawmill and Alloy Smelter use
+  data-driven recipes from `tools/recipes.json`, with per-recipe energy and
+  processing time. Crusher doubles ore output; Sawmill cuts logs; Alloy Smelter
+  makes netherite.
+- **Power:** a Wind Turbine adds renewable generation, and the Energy Meter
+  shows the connected network total.
 - **Automation:** the assembler has selectable recipes and automatic mode. Working
   machines raise their status light to level 15 and pulse teal; blocked/idle
   machines pulse orange/blue.
@@ -61,7 +68,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.3.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.4.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -77,6 +84,9 @@ and **Storage Core**:
 - **Generator:** iron, copper and a furnace.
 - **Conveyor:** iron, gears and redstone.
 - **Filter / splitter / merger:** iron, gears, circuit and redstone.
+- **Electric Furnace / Crusher / Sawmill / Alloy Smelter:** iron, gears,
+  motors, circuits and a furnace or blast furnace.
+- **Wind Turbine / Energy Meter:** iron, copper, gears, motors and circuits.
 - **Storage Core / Extension:** iron, copper/circuit and a barrel.
 - **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
@@ -117,11 +127,13 @@ items out. It has a pass-list, three priority levels and an allow/deny filter
 mode. Higher-priority extractors on the same storage are serviced first.
 
 A **Storage Terminal** placed beside storage opens the same search form plus a
-**Craft from storage** page for the assembler recipes. A **Storage Port** placed
-beside storage and a chest, barrel or hopper bridges that native inventory into
-the network; toggle it between import and export. This gives vanilla hoppers a
-supported route into and out of Cogworks storage without requiring experimental
-custom-block containers.
+**Recipe Terminal** page. Select machine recipes to append them to a persistent
+queue on the network; the terminal processes them from stored ingredients and
+returns results to storage. A **Storage Port** placed beside storage and a
+chest, barrel or hopper bridges that native inventory into the network; toggle
+it between import and export. This gives vanilla hoppers a supported route into
+and out of Cogworks storage without requiring experimental custom-block
+containers.
 
 ### Assembler
 
@@ -140,6 +152,26 @@ recipe** or **Use automatic recipe**. It can run:
 
 Each recipe costs energy. Output is pushed to an adjacent conveyor or storage.
 Working machines pulse teal; blocked or waiting machines pulse orange/blue.
+
+### Processing machines
+
+The **Electric Furnace**, **Crusher**, **Sawmill** and **Alloy Smelter** accept
+items by right-clicking or from belts. Empty-hand interact to inspect their
+input, output, progress and recipes. Output is pushed to an adjacent belt or
+storage. Recipes, energy costs and processing times live in
+`tools/recipes.json` and are injected into the script at build time.
+
+- Electric Furnace smelts raw ores, sand and cobblestone.
+- Crusher doubles iron/gold/copper ore output and crushes stone/gravel.
+- Sawmill turns vanilla logs into matching planks.
+- Alloy Smelter turns netherite scrap and gold into netherite ingots.
+
+### Power
+
+The **Wind Turbine** generates energy based on its height and connects to the
+same cable network as the coal generator and batteries. The **Energy Meter**
+shows the total stored network energy. Wind generation currently runs
+continuously; weather and wind-speed variation are future work.
 
 ### Quarry
 
@@ -164,7 +196,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all fourteen blocks, the
+[block model sheet](previews/models.png) shows all twenty blocks, the
 [item model sheet](previews/tools.png) shows all seven held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial

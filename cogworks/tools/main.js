@@ -27,6 +27,12 @@ const SPLITTER = "cw:splitter";
 const MERGER = "cw:merger";
 const EXTRACTOR = "cw:extractor";
 const ASSEMBLER = "cw:assembler";
+const ELECTRIC_FURNACE = "cw:electric_furnace";
+const CRUSHER = "cw:crusher";
+const SAWMILL = "cw:sawmill";
+const ALLOY_SMELTER = "cw:alloy_smelter";
+const WIND_TURBINE = "cw:wind_turbine";
+const ENERGY_METER = "cw:energy_meter";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
 const STORAGE_TERMINAL = "cw:storage_terminal";
@@ -38,9 +44,10 @@ const WRENCH = "cw:wrench";
 const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
 
-const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY]);
+const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE]);
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
+const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
 const FACINGS = ["north", "east", "south", "west"];
 const OPPOSITE = { north: "south", east: "west", south: "north", west: "east" };
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
@@ -96,16 +103,19 @@ const DROPS = {
     "minecraft:cherry_log": "minecraft:cherry_log",
 };
 
-const ASSEMBLER_RECIPES = [
-    { name: "Oak Planks", input: { "minecraft:oak_log": 1 }, output: { "minecraft:oak_planks": 4 }, energy: 20 },
-    { name: "Sticks", input: { "minecraft:oak_planks": 2 }, output: { "minecraft:stick": 4 }, energy: 10 },
-    { name: "Iron Ingots", input: { "minecraft:raw_iron": 1, "minecraft:coal": 1 }, output: { "minecraft:iron_ingot": 2 }, energy: 35 },
-    { name: "Gold Ingots", input: { "minecraft:raw_gold": 1, "minecraft:coal": 1 }, output: { "minecraft:gold_ingot": 2 }, energy: 35 },
-    { name: "Copper Ingots", input: { "minecraft:raw_copper": 1 }, output: { "minecraft:copper_ingot": 2 }, energy: 20 },
-    { name: "Cogwork Gear", input: { "minecraft:iron_ingot": 4 }, output: { "cw:gear": 1 }, energy: 25 },
-    { name: "Control Circuit", input: { "minecraft:redstone": 4, "minecraft:gold_ingot": 1 }, output: { "cw:circuit": 1 }, energy: 30 },
-    { name: "Electric Motor", input: { "cw:gear": 2, "cw:circuit": 1, "minecraft:copper_ingot": 4 }, output: { "cw:motor": 1 }, energy: 50 },
-];
+const MACHINE_RECIPES = /*__MACHINE_RECIPES__*/[];
+const ASSEMBLER_RECIPES = MACHINE_RECIPES.filter((recipe) => recipe.machine === "assembler");
+const PROCESSOR_MACHINE_KEYS = {
+    [ELECTRIC_FURNACE]: "furnace",
+    [CRUSHER]: "crusher",
+    [SAWMILL]: "sawmill",
+    [ALLOY_SMELTER]: "alloy_smelter",
+};
+
+function recipesForMachine(blockType) {
+    const machine = PROCESSOR_MACHINE_KEYS[blockType];
+    return machine ? MACHINE_RECIPES.filter((recipe) => recipe.machine === machine) : [];
+}
 
 function warn(...args) {
     try { console.warn("[Cogworks]", ...args); } catch { /* ignore */ }
@@ -212,6 +222,10 @@ function connectable(block) {
         || block.typeId === STORAGE_CORE
         || block.typeId === STORAGE_EXTENSION
         || block.typeId === ASSEMBLER
+        || block.typeId === ELECTRIC_FURNACE
+        || block.typeId === CRUSHER
+        || block.typeId === SAWMILL
+        || block.typeId === ALLOY_SMELTER
         || block.typeId === GENERATOR;
 }
 
@@ -530,7 +544,7 @@ async function openStorage(player, block, query = "", terminal = false) {
         .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw or craft directly from the network." : "Use a Storage Extractor to pull items onto belts."}`);
     form.button("Search items");
     form.button("Deposit held item");
-    if (terminal) form.button("Craft from storage");
+    if (terminal) form.button("Recipe Terminal");
     if (!entries.length) form.button(needle ? "No matching items" : "No stored items");
     for (const [typeId, count] of entries) {
         form.button(`${formatName(typeId)}  x${count}`);
@@ -566,7 +580,7 @@ async function openStorage(player, block, query = "", terminal = false) {
     }
     const entryStart = terminal ? 3 : 2;
     if (terminal && response.selection === 2) {
-        later(() => openCraftingTerminal(player, block));
+        later(() => openRecipeTerminal(player, block));
         return;
     }
     const [typeId, count] = entries[response.selection - entryStart] || [];
@@ -680,38 +694,70 @@ function storageHas(core, recipe) {
     return true;
 }
 
-function openCraftingTerminal(player, core) {
+function openRecipeTerminal(player, core) {
+    const queue = readJson(core, "queue", []);
     const form = new ActionFormData()
-        .title("Storage Terminal — Crafting")
-        .body("Craft from items stored in the connected network. Missing ingredients are marked.");
-    for (const recipe of ASSEMBLER_RECIPES) {
-        const ready = storageHas(core, recipe);
-        const missing = Object.entries(recipe.input)
-            .filter(([typeId, count]) => Number(storageInfo(core).items[typeId] || 0) < count)
-            .map(([typeId]) => formatName(typeId));
-        form.button(`${recipe.name}${ready ? " — ready" : ` — need ${missing.join(", ")}`}`);
+        .title("Storage Terminal — Recipe Queue")
+        .body(`Queued jobs: ${queue.length}\nSelect a machine recipe to append it to the queue. The terminal consumes stored ingredients and returns results to storage.`);
+    for (const recipe of MACHINE_RECIPES) {
+        form.button(`${recipe.name} [${recipe.machine}]`);
     }
+    form.button("Clear queue");
     form.button("Back");
     form.show(player).then((response) => {
         if (!response || response.canceled) return;
-        if (response.selection >= ASSEMBLER_RECIPES.length) {
+        if (response.selection === MACHINE_RECIPES.length) {
+            writeJson(core, "queue", []);
+            action(player, "Recipe queue cleared.");
+            return;
+        }
+        if (response.selection > MACHINE_RECIPES.length) {
             later(() => openStorage(player, core, "", true));
             return;
         }
-        const recipe = ASSEMBLER_RECIPES[response.selection];
-        if (!storageHas(core, recipe)) {
-            action(player, "Not enough items in storage.");
+        const recipe = MACHINE_RECIPES[response.selection];
+        if (!recipe) return;
+        const next = readJson(core, "queue", []);
+        if (next.length >= 64) {
+            action(player, "The recipe queue is full.");
             return;
         }
-        for (const [typeId, count] of Object.entries(recipe.input)) {
-            takeStorage(core, typeId, count);
-        }
-        for (const [typeId, count] of Object.entries(recipe.output)) {
-            addItem(player, typeId, count);
-        }
-        action(player, `Crafted ${recipe.name}.`);
-        later(() => openStorage(player, core, "", true));
+        next.push(recipe.id);
+        writeJson(core, "queue", next);
+        action(player, `Queued ${recipe.name}.`);
     }).catch(() => {});
+}
+
+function storageCanAccept(core, output) {
+    const info = storageInfo(core);
+    const units = Object.values(info.items).reduce((sum, count) => sum + Number(count || 0), 0);
+    const capacity = info.capacity * 64;
+    const needed = Object.values(output).reduce((sum, count) => sum + Number(count || 0), 0);
+    return units + needed <= capacity;
+}
+
+function tickTerminal(terminal) {
+    const storage = adjacentStorage(terminal);
+    if (!storage) return;
+    const queue = readJson(storage, "queue", []);
+    if (!queue.length) return;
+    const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === queue[0]);
+    if (!recipe) {
+        queue.shift();
+        writeJson(storage, "queue", queue);
+        return;
+    }
+    if (!storageHas(storage, recipe) || !storageCanAccept(storage, recipe.output)) return;
+    const progress = Number(read(storage, "queueProgress", 0));
+    if (progress < Number(recipe.time || 40)) {
+        write(storage, "queueProgress", progress + 1);
+        return;
+    }
+    for (const [typeId, count] of Object.entries(recipe.input)) takeStorage(storage, typeId, count);
+    for (const [typeId, count] of Object.entries(recipe.output)) insertStorage(storage, typeId, count);
+    queue.shift();
+    writeJson(storage, "queue", queue);
+    write(storage, "queueProgress", 0);
 }
 
 function insertAssembler(assembler, typeId, amount) {
@@ -720,6 +766,10 @@ function insertAssembler(assembler, typeId, amount) {
     input[typeId] = Number(input[typeId] || 0) + amount;
     writeJson(assembler, "input", input);
     return amount;
+}
+
+function insertProcessor(processor, typeId, amount) {
+    return insertAssembler(processor, typeId, amount);
 }
 
 function splitterOutputFilters(block) {
@@ -784,6 +834,11 @@ function acceptItem(block, typeId, amount) {
             return insertConveyor(block, typeId, amount);
         case ASSEMBLER:
             return insertAssembler(block, typeId, amount);
+        case ELECTRIC_FURNACE:
+        case CRUSHER:
+        case SAWMILL:
+        case ALLOY_SMELTER:
+            return insertProcessor(block, typeId, amount);
         case GENERATOR:
             return insertGenerator(block, typeId, amount);
         default:
@@ -825,7 +880,7 @@ function energyBlocks(start) {
 function networkEnergy(block) {
     let total = 0;
     for (const part of energyBlocks(block)) {
-        if (part.typeId === BATTERY || part.typeId === GENERATOR) {
+        if (part.typeId === BATTERY || part.typeId === GENERATOR || part.typeId === WIND_TURBINE) {
             total += Number(read(part, "energy", 0));
         }
     }
@@ -833,7 +888,8 @@ function networkEnergy(block) {
 }
 
 function drainEnergy(block, amount) {
-    const parts = energyBlocks(block).filter((part) => part.typeId === BATTERY || part.typeId === GENERATOR);
+    const parts = energyBlocks(block).filter((part) =>
+        part.typeId === BATTERY || part.typeId === GENERATOR || part.typeId === WIND_TURBINE);
     let total = parts.reduce((sum, part) => sum + Number(read(part, "energy", 0)), 0);
     if (total < amount) return false;
     let left = amount;
@@ -873,6 +929,13 @@ function tickGenerator(block) {
     }
     write(block, "energy", Math.max(0, energy));
     markStatus(block, fuel > 0 ? "working" : "idle");
+}
+
+function tickWindTurbine(block) {
+    const current = Number(read(block, "energy", 0));
+    const altitude = Math.max(0, Math.min(12, Math.floor((block.location.y + 64) / 32)));
+    const generated = 4 + altitude;
+    write(block, "energy", Math.min(2000, current + generated));
 }
 
 function storageAdjacent(block) {
@@ -994,6 +1057,48 @@ function tickAssembler(block) {
     markStatus(block, "working");
 }
 
+function tickProcessor(block) {
+    const output = readJson(block, "output", {});
+    for (const [typeId, amount] of Object.entries(output)) {
+        const accepted = outputAdjacent(block, typeId, amount);
+        if (accepted >= amount) delete output[typeId];
+        else output[typeId] = amount - accepted;
+    }
+    writeJson(block, "output", output);
+    const input = readJson(block, "input", {});
+    const recipes = recipesForMachine(block.typeId);
+    const selected = read(block, "recipe", "");
+    const candidates = selected ? recipes.filter((recipe) => recipe.name === selected) : recipes;
+    const recipe = candidates.find((candidate) => hasRecipe(input, candidate));
+    if (!recipe) {
+        write(block, "progress", 0);
+        markStatus(block, Object.keys(input).length ? "blocked" : "idle");
+        return;
+    }
+    const progress = Number(read(block, "progress", 0));
+    if (progress < Number(recipe.time || 40)) {
+        if (!drainEnergy(block, 1)) {
+            markStatus(block, "blocked");
+            return;
+        }
+        write(block, "progress", progress + 1);
+        markStatus(block, "working");
+        return;
+    }
+    if (!drainEnergy(block, recipe.energy)) {
+        markStatus(block, "blocked");
+        return;
+    }
+    consumeRecipe(input, recipe);
+    for (const [typeId, amount] of Object.entries(recipe.output)) {
+        output[typeId] = Number(output[typeId] || 0) + amount;
+    }
+    write(block, "progress", 0);
+    writeJson(block, "input", input);
+    writeJson(block, "output", output);
+    markStatus(block, "working");
+}
+
 function quarryArea(data) {
     const a = data.area;
     if (!a || !a.min || !a.max) return false;
@@ -1108,6 +1213,7 @@ function tickMachine(block) {
     try {
         switch (block.typeId) {
             case GENERATOR: tickGenerator(block); break;
+            case WIND_TURBINE: tickWindTurbine(block); break;
             case CONVEYOR:
             case FILTER:
             case SPLITTER:
@@ -1116,7 +1222,14 @@ function tickMachine(block) {
                 tickConveyor(block);
                 break;
             case ASSEMBLER: tickAssembler(block); break;
+            case ELECTRIC_FURNACE:
+            case CRUSHER:
+            case SAWMILL:
+            case ALLOY_SMELTER:
+                tickProcessor(block);
+                break;
             case STORAGE_PORT: tickStoragePort(block); break;
+            case STORAGE_TERMINAL: tickTerminal(block); break;
             case QUARRY: tickQuarry(block); break;
         }
     } catch (error) {
@@ -1373,6 +1486,18 @@ function toggleQuarryFilter(player, block, typeId) {
     writeJson(block, "data", data);
 }
 
+function openProcessor(player, block) {
+    const input = readJson(block, "input", {});
+    const output = readJson(block, "output", {});
+    const recipes = recipesForMachine(block.typeId);
+    const lines = recipes.map((recipe) => `${recipe.name} (${recipe.energy} E, ${recipe.time} ticks)`);
+    const form = new ActionFormData()
+        .title(formatName(block.typeId))
+        .body(`Status: ${read(block, "status", "idle")}\nProgress: ${Number(read(block, "progress", 0))}\nInput: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}\n\nRecipes:\n${lines.join("\n")}`);
+    form.button("Close");
+    form.show(player).catch(() => {});
+}
+
 function openMachine(player, block) {
     if (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION) {
         void openStorage(player, block);
@@ -1380,6 +1505,25 @@ function openMachine(player, block) {
     }
     if (block.typeId === STORAGE_TERMINAL) {
         openTerminal(player, block);
+        return;
+    }
+    if (block.typeId === WIND_TURBINE) {
+        const energy = Number(read(block, "energy", 0));
+        const form = new ActionFormData().title("Wind Turbine")
+            .body(`Energy: ${Math.floor(energy)}/2000\nNetwork: ${networkEnergy(block)}\nHeight: Y ${block.location.y}`);
+        form.button("Close");
+        form.show(player).catch(() => {});
+        return;
+    }
+    if (block.typeId === ENERGY_METER) {
+        const form = new ActionFormData().title("Energy Meter")
+            .body(`Network energy: ${networkEnergy(block)}\n\nConnect the meter to the same cable network as generators, batteries and machines.`);
+        form.button("Close");
+        form.show(player).catch(() => {});
+        return;
+    }
+    if (PROCESSOR_TYPES.has(block.typeId)) {
+        openProcessor(player, block);
         return;
     }
     if (block.typeId === STORAGE_PORT) {
@@ -1518,8 +1662,27 @@ function interact(event) {
         return;
     }
 
+    if (PROCESSOR_TYPES.has(block.typeId)) {
+        if (item) {
+            const accepted = insertProcessor(block, item.typeId, item.amount);
+            if (accepted > 0) {
+                takeHeld(player, item.typeId, accepted);
+                action(player, `Inserted ${accepted} ${formatName(item.typeId)}.`);
+            } else {
+                action(player, "The machine input is full.");
+            }
+        } else {
+            later(() => openMachine(player, block));
+        }
+        return;
+    }
+
     if (block.typeId === STORAGE_TERMINAL) {
         later(() => openTerminal(player, block));
+        return;
+    }
+    if (block.typeId === WIND_TURBINE || block.typeId === ENERGY_METER) {
+        later(() => openMachine(player, block));
         return;
     }
     if (block.typeId === STORAGE_PORT) {

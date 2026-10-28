@@ -316,6 +316,12 @@ def build_recipes() -> None:
         "storage_extension": shaped("cw:storage_extension_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "B": "minecraft:barrel"}, "cw:storage_extension", 1),
         "storage_terminal": shaped("cw:storage_terminal_recipe", ["IGI", "CBC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_terminal", 1),
         "storage_port": shaped("cw:storage_port_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_port", 1),
+        "electric_furnace": shaped("cw:electric_furnace_recipe", ["ICI", "CFC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "F": "minecraft:furnace"}, "cw:electric_furnace", 1),
+        "crusher": shaped("cw:crusher_recipe", ["IGI", "GMG", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:crusher", 1),
+        "sawmill": shaped("cw:sawmill_recipe", ["IGI", "CMC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "M": "cw:motor"}, "cw:sawmill", 1),
+        "alloy_smelter": shaped("cw:alloy_smelter_recipe", ["IMI", "GFG", "IMI"], {"I": "minecraft:iron_ingot", "M": "cw:motor", "G": "cw:gear", "F": "minecraft:blast_furnace"}, "cw:alloy_smelter", 1),
+        "wind_turbine": shaped("cw:wind_turbine_recipe", ["IGI", "CMC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "minecraft:copper_ingot", "M": "cw:motor"}, "cw:wind_turbine", 1),
+        "energy_meter": shaped("cw:energy_meter_recipe", ["ICI", "CGC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "G": "cw:circuit"}, "cw:energy_meter", 1),
         "quarry": shaped("cw:quarry_recipe", ["IMI", "GQG", "IMI"], {"I": "minecraft:iron_block", "M": "cw:motor", "G": "cw:gear", "Q": "cw:circuit"}, "cw:quarry", 1),
         "drill": shaped("cw:drill_recipe", [" I ", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:drill", 1),
         "chainsaw": shaped("cw:chainsaw_recipe", [" II", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:chainsaw", 1),
@@ -417,7 +423,14 @@ def build_packs():
     write_json(BP / "manifest.json", bp_manifest)
     write_json(RP / "manifest.json", rp_manifest)
     (BP / "scripts").mkdir(parents=True, exist_ok=True)
-    shutil.copy2(TOOLS / "main.js", BP / "scripts" / "main.js")
+    script = (TOOLS / "main.js").read_text(encoding="utf-8")
+    recipes = json.loads((TOOLS / "recipes.json").read_text(encoding="utf-8"))
+    script = script.replace(
+        "/*__MACHINE_RECIPES__*/[]",
+        json.dumps(recipes, ensure_ascii=False, separators=(",", ":")),
+        1,
+    )
+    (BP / "scripts" / "main.js").write_text(script, encoding="utf-8")
 
 
 def build_blocks():

@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.3.0 | [Cogworks-1.3.0.mcaddon](cogworks/Cogworks-1.3.0.mcaddon) |
+| **Cogworks** | Add-on | 1.4.0 | [Cogworks-1.4.0.mcaddon](cogworks/Cogworks-1.4.0.mcaddon) |
 
 ## Install
 
@@ -165,26 +165,29 @@ network, visible stacks ride conveyors through filters/splitters/mergers, an
 automated assembler crafts, and a surveyor-defined quarry excavates all the way
 to bedrock into expandable storage.
 
-- 14 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
-  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
-  Storage Port, Crafting Assembler, Storage Core, Storage Extension and Quarry
+- 20 custom blocks: Coal Generator, Wind Turbine, Copper Cable, Battery Bank,
+  Energy Meter, Conveyor Belt, Item Filter, Belt Splitter, Belt Merger, Storage
+  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher, Sawmill,
+  Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension and Quarry
   Controller.
 - 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
   Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
 - All seven items have 3D Blockbench attachable models that render in the
   player's hand in first and third person.
-- Generator burns coal, charcoal or coal blocks; batteries store 5,000 E;
-  machines draw from the connected cable network.
+- Generator burns coal, charcoal or coal blocks; wind turbines add renewable
+  energy; batteries store 5,000 E; the Energy Meter reports network totals.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
   route them between machines; belt corners are selected automatically from
   adjacent connections, with no separate corner item.
 - Storage Core holds 8 item stacks; each connected Storage Extension adds 8
-  more. The storage form includes search. The Storage Terminal adds crafting
-  from the network; the Storage Port bridges chests, barrels and hoppers.
+  more. The storage form includes search. The Storage Terminal queues machine
+  recipes from the network; the Storage Port bridges chests, barrels and
+  hoppers.
 - The Storage Extractor supports per-item filters, allow/deny modes and three
   priority levels.
-- Assembler recipes can be selected manually or left on automatic. Machines
-  raise their status light and pulse when working, blocked or idle.
+- Data-driven recipes power the Electric Furnace, Crusher, Sawmill, Alloy
+  Smelter and Crafting Assembler. Machines raise their status light and pulse
+  when working, blocked or idle.
 - Quarry Surveyor sets a 32×32 footprint; the quarry digs down to the dimension
   floor (bedrock in the Overworld), reports progress and filters outputs.
 - Powered Drill cuts a 3×3 face of stone/ore; Powered Chainsaw fells a vertical
@@ -194,7 +197,7 @@ to bedrock into expandable storage.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
-[block model sheet](cogworks/previews/models.png) shows all fourteen blocks,
+[block model sheet](cogworks/previews/models.png) shows all twenty blocks,
 the [item model sheet](cogworks/previews/tools.png) shows all seven held items,
 and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
 corner variants.
@@ -276,3 +279,4 @@ details and the Blockbench source.
 - [Cogworks 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.1.0)
 - [Cogworks 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.2.0)
 - [Cogworks 1.3.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.3.0)
+- [Cogworks 1.4.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.4.0)

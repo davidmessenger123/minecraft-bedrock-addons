@@ -1,0 +1,495 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "bedrock",
+    "box_uv": false
+  },
+  "name": "Cogworks energy meter",
+  "resolution": {
+    "width": 128,
+    "height": 128
+  },
+  "elements": [
+    {
+      "name": "body_0",
+      "from": [
+        -7.0,
+        0.0,
+        -7.0
+      ],
+      "to": [
+        7.0,
+        2.0,
+        7.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "37932e0e-8ff1-476c-9601-5c3c3c690feb"
+    },
+    {
+      "name": "body_1",
+      "from": [
+        -6.0,
+        2.0,
+        -6.0
+      ],
+      "to": [
+        6.0,
+        9.0,
+        6.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            48,
+            0,
+            64,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "8c9e902c-edd7-45e2-a7fc-95e6a95f85d7"
+    },
+    {
+      "name": "body_2",
+      "from": [
+        -5.0,
+        3.0,
+        -7.0
+      ],
+      "to": [
+        5.0,
+        7.0,
+        -6.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            64,
+            0,
+            80,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "d5d9547c-cb51-48e2-8587-59f5d6eb821b"
+    },
+    {
+      "name": "body_3",
+      "from": [
+        -4.0,
+        9.0,
+        -4.0
+      ],
+      "to": [
+        4.0,
+        10.0,
+        4.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "6f0cc8d8-02a1-4470-8a93-fbcf22de339c"
+    },
+    {
+      "name": "body_4",
+      "from": [
+        -3.0,
+        10.0,
+        -3.0
+      ],
+      "to": [
+        3.0,
+        12.0,
+        3.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            32,
+            0,
+            48,
+            16
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "fa643a7c-01e2-41a0-8fca-b3a649ee23f1"
+    },
+    {
+      "name": "body_5",
+      "from": [
+        -2.0,
+        12.0,
+        -2.0
+      ],
+      "to": [
+        2.0,
+        13.0,
+        2.0
+      ],
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        },
+        "south": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        },
+        "east": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        },
+        "west": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        },
+        "up": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        },
+        "down": {
+          "uv": [
+            16,
+            16,
+            32,
+            32
+          ],
+          "texture": 0
+        }
+      },
+      "type": "cube",
+      "uuid": "9a0172a5-0fe7-486d-a258-386a0b945dec"
+    }
+  ],
+  "outliner": [
+    {
+      "name": "body",
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "uuid": "c7b74174-df79-43b0-a1b5-bb5f538b9e86",
+      "children": [
+        "37932e0e-8ff1-476c-9601-5c3c3c690feb",
+        "8c9e902c-edd7-45e2-a7fc-95e6a95f85d7",
+        "d5d9547c-cb51-48e2-8587-59f5d6eb821b",
+        "6f0cc8d8-02a1-4470-8a93-fbcf22de339c",
+        "fa643a7c-01e2-41a0-8fca-b3a649ee23f1",
+        "9a0172a5-0fe7-486d-a258-386a0b945dec"
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Cogworks energy meter",
+      "source": "data:image/png;base64,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P2eqtd63UI2S+K2XuMpCui+REBERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERjcP/AOfcYNjO22ZrAAAAAElFTkSuQmCC"
+    }
+  ]
+}

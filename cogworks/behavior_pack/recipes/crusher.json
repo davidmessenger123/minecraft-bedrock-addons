@@ -1,0 +1,31 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:crusher_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "IGI",
+      "GMG",
+      "IGI"
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "G": {
+        "item": "cw:gear"
+      },
+      "M": {
+        "item": "cw:motor"
+      }
+    },
+    "result": {
+      "item": "cw:crusher",
+      "count": 1
+    }
+  }
+}

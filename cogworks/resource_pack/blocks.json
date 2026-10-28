@@ -38,6 +38,24 @@
   "cw:storage_port": {
     "sound": "metal"
   },
+  "cw:electric_furnace": {
+    "sound": "metal"
+  },
+  "cw:crusher": {
+    "sound": "metal"
+  },
+  "cw:sawmill": {
+    "sound": "metal"
+  },
+  "cw:alloy_smelter": {
+    "sound": "metal"
+  },
+  "cw:wind_turbine": {
+    "sound": "metal"
+  },
+  "cw:energy_meter": {
+    "sound": "metal"
+  },
   "cw:quarry": {
     "sound": "metal"
   }

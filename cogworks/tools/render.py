@@ -44,6 +44,12 @@ CAPTIONS = {
     "storage_extension": ("Storage Extension", "+8 slots"),
     "storage_terminal": ("Storage Terminal", "search + crafting"),
     "storage_port": ("Storage Port", "chest/hopper bridge"),
+    "electric_furnace": ("Electric Furnace", "smelting / energy"),
+    "crusher": ("Crusher", "ore doubling / crushing"),
+    "sawmill": ("Sawmill", "logs into planks"),
+    "alloy_smelter": ("Alloy Smelter", "netherite alloy"),
+    "wind_turbine": ("Wind Turbine", "renewable energy"),
+    "energy_meter": ("Energy Meter", "network diagnostics"),
     "quarry": ("Quarry Controller", "surveyor-defined excavation"),
 }
 

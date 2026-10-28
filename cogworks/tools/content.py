@@ -386,6 +386,87 @@ def storage_port_geo() -> dict:
     ], (1.1, 1.2, (0, 0.6, 0)))
 
 
+def electric_furnace_geo() -> dict:
+    return block_geo("geometry.cw.electric_furnace", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 8, 12], DARK),
+        cube([-4, 3, -8], [8, 4, 1], WARNING),
+        cube([-3, 4, -8.2], [6, 2, 1], LIGHT),
+        cube([-5, 10, -5], [10, 2, 10], STEEL),
+        cube([-2, 12, -2], [4, 3, 4], COPPER),
+        cube([-4, 15, -3], [8, 1, 6], BRASS),
+        cube([-7, 5, -7], [1, 4, 14], STEEL),
+        cube([6, 5, -7], [1, 4, 14], STEEL),
+    ], (1.1, 1.4, (0, 0.7, 0)))
+
+
+def crusher_geo() -> dict:
+    return block_geo("geometry.cw.crusher", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 8, 12], DARK),
+        cube([-5, 10, -5], [10, 2, 10], STEEL),
+        cube([-4, 12, -4], [3, 4, 8], COPPER),
+        cube([1, 12, -4], [3, 4, 8], COPPER),
+        cube([-2, 12, -5], [4, 2, 10], BRASS),
+        cube([-7, 4, -7], [1, 5, 14], STEEL),
+        cube([6, 4, -7], [1, 5, 14], STEEL),
+        cube([-3, 3, -8], [6, 3, 1], ENERGY),
+    ], (1.2, 1.4, (0, 0.7, 0)))
+
+
+def sawmill_geo() -> dict:
+    return block_geo("geometry.cw.sawmill", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 6, 12], DARK),
+        cube([-5, 8, -5], [10, 2, 10], STEEL),
+        cube([-1, 10, -5], [2, 5, 10], LIGHT),
+        cube([-3, 10, -6], [6, 1, 1], BRASS),
+        cube([-3, 14, -6], [6, 1, 1], BRASS),
+        cube([-7, 4, -7], [1, 4, 14], STEEL),
+        cube([6, 4, -7], [1, 4, 14], STEEL),
+        cube([-4, 3, -8], [8, 3, 1], ENERGY),
+    ], (1.2, 1.4, (0, 0.7, 0)))
+
+
+def alloy_smelter_geo() -> dict:
+    return block_geo("geometry.cw.alloy_smelter", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 7, 12], DARK),
+        cube([-5, 9, -5], [10, 2, 10], COPPER),
+        cube([-3, 11, -3], [6, 3, 6], STEEL),
+        cube([-2, 14, -2], [4, 1, 4], BRASS),
+        cube([-4, 4, -8], [8, 4, 1], WARNING),
+        cube([-2, 5, -8.2], [4, 2, 1], LIGHT),
+        cube([-7, 5, -7], [1, 5, 14], STEEL),
+        cube([6, 5, -7], [1, 5, 14], STEEL),
+    ], (1.2, 1.5, (0, 0.75, 0)))
+
+
+def wind_turbine_geo() -> dict:
+    return block_geo("geometry.cw.wind_turbine", [
+        cube([-7, 0, -7], [14, 3, 14], STEEL),
+        cube([-2, 3, -2], [4, 14, 4], COPPER),
+        cube([-3, 17, -3], [6, 3, 6], STEEL),
+        cube([-1, 20, -1], [2, 2, 2], BRASS),
+        cube([-8, 19, -1], [7, 1, 2], BRASS),
+        cube([1, 19, -1], [7, 1, 2], BRASS),
+        cube([-1, 21, -8], [2, 1, 7], COPPER),
+        cube([-1, 21, 1], [2, 1, 7], COPPER),
+        cube([-1, 22, -1], [2, 4, 2], BRASS),
+    ], (1.2, 1.8, (0, 0.9, 0)))
+
+
+def energy_meter_geo() -> dict:
+    return block_geo("geometry.cw.energy_meter", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 7, 12], DARK),
+        cube([-5, 3, -7], [10, 4, 1], ENERGY),
+        cube([-4, 9, -4], [8, 1, 8], STEEL),
+        cube([-3, 10, -3], [6, 2, 6], BRASS),
+        cube([-2, 12, -2], [4, 1, 4], LIGHT),
+    ], (1.0, 1.1, (0, 0.55, 0)))
+
+
 def block_geometries() -> dict[str, dict]:
     return {
         "generator": generator_geo(),
@@ -401,6 +482,12 @@ def block_geometries() -> dict[str, dict]:
         "storage_extension": storage_geo(True),
         "storage_terminal": storage_terminal_geo(),
         "storage_port": storage_port_geo(),
+        "electric_furnace": electric_furnace_geo(),
+        "crusher": crusher_geo(),
+        "sawmill": sawmill_geo(),
+        "alloy_smelter": alloy_smelter_geo(),
+        "wind_turbine": wind_turbine_geo(),
+        "energy_meter": energy_meter_geo(),
         "quarry": quarry_geo(),
     }
 
@@ -687,8 +774,14 @@ BLOCKS: list[BlockSpec] = [
     BlockSpec("assembler", "Crafting Assembler", "geometry.cw.assembler", 3.0, light=3, machine=True, sound="metal", status_state=True),
     BlockSpec("storage_core", "Storage Core", "geometry.cw.storage_core", 2.0, sound="wood"),
     BlockSpec("storage_extension", "Storage Extension", "geometry.cw.storage_extension", 2.0, sound="wood"),
-    BlockSpec("storage_terminal", "Storage Terminal", "geometry.cw.storage_terminal", 2.5, light=4, sound="metal", dynamic=False),
+    BlockSpec("storage_terminal", "Storage Terminal", "geometry.cw.storage_terminal", 2.5, light=4, machine=True, sound="metal", tick_range=(20, 20)),
     BlockSpec("storage_port", "Storage Port", "geometry.cw.storage_port", 2.5, light=3, machine=True, sound="metal", tick_range=(8, 12)),
+    BlockSpec("electric_furnace", "Electric Furnace", "geometry.cw.electric_furnace", 3.0, light=4, machine=True, sound="metal", status_state=True),
+    BlockSpec("crusher", "Crusher", "geometry.cw.crusher", 3.0, light=3, machine=True, sound="metal", status_state=True),
+    BlockSpec("sawmill", "Sawmill", "geometry.cw.sawmill", 3.0, light=3, machine=True, sound="metal", status_state=True),
+    BlockSpec("alloy_smelter", "Alloy Smelter", "geometry.cw.alloy_smelter", 3.5, light=5, machine=True, sound="metal", status_state=True),
+    BlockSpec("wind_turbine", "Wind Turbine", "geometry.cw.wind_turbine", 3.0, light=0, machine=True, sound="metal", tick_range=(20, 20)),
+    BlockSpec("energy_meter", "Energy Meter", "geometry.cw.energy_meter", 2.0, light=2, sound="metal", dynamic=False),
     BlockSpec("quarry", "Quarry Controller", "geometry.cw.quarry", 4.0, light=5, machine=True, sound="metal", tick_range=(1, 1), status_state=True),
 ]
 
