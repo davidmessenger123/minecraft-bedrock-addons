@@ -20,7 +20,7 @@ petal hills, a mirror lake and three hand-modelled peaceful Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.0.0.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.1.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -74,11 +74,13 @@ curious explorer cannot strand themselves.
 
 ## The island
 
-The island is roughly 480 blocks across (a 240-block radius), with its surface at
-**Y = 64**. The arrival platform sits south of the return Bloomgate: the southern rim
-is about 114 blocks away, the centre about 126 blocks, and the northern rim about 366
-blocks. Terrain, flowers, trees, paths, water and the return gate are all placed once
-and then saved with the world.
+The island is roughly 480 blocks across (a 240-block radius), with its base surface
+at **Y = 64**. Broad grass swells and smaller knolls raise much of the meadow,
+forest and garden by one to four blocks, while paths cut level benches through
+them. The arrival platform sits south of the return Bloomgate: the southern rim
+is about 114 blocks away, the centre about 126 blocks, and the northern rim about
+366 blocks. Terrain, flowers, trees, paths, water and the return gate are all
+placed once and then saved with the world.
 
 The script builds the island in sixteen 8x8-chunk tiles with a one-chunk feature
 margin. Each tile gets its own temporary ticking area, so generation stays inside
@@ -94,9 +96,11 @@ return areas can be probed before the island is marked complete.
 | **Mirror Pool** | West | A still lake, lily blooms, a small central island and a giant skybell |
 | **Bloomlands Edge** | Outer rim | A stone rim, floating islets and the open sky beyond the garden |
 
-The canopy is deliberately solid overhead: when you are under the trees, the leaf
-ceiling blocks the sky. Region fog, action-bar names, particles and ambient colour
-change as you cross between areas.
+The canopy is deliberately solid overhead: old-growth Bloomwoods have 3×3
+trunks, 5×5 ancient trunks, flared roots, branch arms and overlapping rounded
+crowns. When you are under the trees, the leaf ceiling blocks the sky. Region
+fog, action-bar names, particles and ambient colour change as you cross between
+areas.
 
 ## Blocks and recipes
 
@@ -158,7 +162,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.0.0.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.1.0.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources
@@ -173,8 +177,10 @@ The `.bbmodel` files are sources for editing; the shipped add-on uses the export
   engine terrain, portals or multiple biomes for a custom dimension. The island,
   vegetation and themed regions are therefore built and dressed by the script.
 - The first world load does the heavy generation. Later loads reuse the saved
-  blocks and keep only the spawn/return area ticking. Existing 1.0.0 worlds use a
-  fresh generation marker and grow the larger island around the old garden.
+  blocks and keep only the spawn/return area ticking. Existing 1.0.0 and 2.0.0
+  worlds use a fresh generation marker and are rebuilt around the old garden, so
+  they receive the rolling ground and the new old-growth canopy. Rebuilding can
+  overwrite player changes made inside the generated island footprint.
 - If you remove the behavior pack from a world, the saved island blocks remain in
   the dimension data but the portal and scripted mobs stop working.
 - Models, textures and code in this project are original and released under the
