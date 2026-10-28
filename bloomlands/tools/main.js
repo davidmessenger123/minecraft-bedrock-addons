@@ -2246,11 +2246,33 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
         if (!player || !block) return;
 
         if (event.itemStack && event.itemStack.typeId === PORTAL_ITEM) {
-            if (!isFlowerType(block.typeId)) {
+            // Some Bedrock builds report the ground block below a flower
+            // rather than the flower itself.  Resolve that common case so
+            // oxeye daisies and other vanilla flowers work either way.
+            let target = block;
+            if (!isFlowerType(target.typeId)) {
+                const aboveType = typeAt(
+                    player.dimension,
+                    block.location.x,
+                    block.location.y + 1,
+                    block.location.z,
+                );
+                if (isFlowerType(aboveType)) {
+                    target = {
+                        typeId: aboveType,
+                        location: {
+                            x: block.location.x,
+                            y: block.location.y + 1,
+                            z: block.location.z,
+                        },
+                    };
+                }
+            }
+            if (!isFlowerType(target.typeId)) {
                 actionBar(player, "bl.portal.flower_use");
                 return;
             }
-            void buildFlowerPortal(player, block);
+            void buildFlowerPortal(player, target);
         }
     } catch (error) {
         warn("interaction failed", String(error));

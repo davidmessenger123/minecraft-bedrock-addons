@@ -19,6 +19,12 @@ Bloomling mobs.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.1
+
+- Fixed flower targeting when Bedrock reports the ground block under a flower
+  instead of the flower block itself. Oxeye daisies and other vanilla flowers
+  now work from either surface.
+
 ## What changed in 2.2.0
 
 - Replaced the old 7×7 plaza/Bloomheart entrance with a **4×4 flower ritual**:
@@ -32,7 +38,7 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.0.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.1.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -174,7 +180,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.0.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.1.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

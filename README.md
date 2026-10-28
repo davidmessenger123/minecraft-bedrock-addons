@@ -12,7 +12,7 @@ Seven add-ons and two texture packs for **Minecraft Bedrock Edition**:
 | **Petal & Star** | Texture pack | 1.0.0 | [PetalAndStar-1.0.0.mcpack](petal-and-star/PetalAndStar-1.0.0.mcpack) |
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
-| **Bloomlands** | Add-on | 2.2.0 | [Bloomlands-2.2.0.mcaddon](bloomlands/Bloomlands-2.2.0.mcaddon) |
+| **Bloomlands** | Add-on | 2.2.1 | [Bloomlands-2.2.1.mcaddon](bloomlands/Bloomlands-2.2.1.mcaddon) |
 
 ## Install
 
@@ -248,3 +248,4 @@ details and the Blockbench source.
 - [Bloomlands 2.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.0.0)
 - [Bloomlands 2.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.1.0)
 - [Bloomlands 2.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.0)
+- [Bloomlands 2.2.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.1)
