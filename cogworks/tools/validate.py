@@ -176,8 +176,22 @@ def main() -> int:
     sources = list((ROOT / "blockbench" / "blocks").glob("*.bbmodel"))
     if len(sources) != len(block_ids):
         fail(f"Blockbench sources {len(sources)} != blocks {len(block_ids)}")
+    tool_sources = list((ROOT / "blockbench" / "tools").glob("*.bbmodel"))
+    tools = ["drill", "chainsaw", "wrench", "surveyor", "gear", "circuit", "motor"]
+    if len(tool_sources) != len(tools):
+        fail(f"Blockbench tool sources {len(tool_sources)} != tools {len(tools)}")
+    for tool in tools:
+        for folder, suffix in (
+            (RP / "attachables", ".json"),
+            (RP / "animations", ".animation.json"),
+            (RP / "models" / "entity", ".geo.json"),
+        ):
+            if not (folder / f"cw_{tool}{suffix}").is_file():
+                fail(f"missing tool asset {folder / f'cw_{tool}{suffix}'}")
     if not (PREVIEWS / "models.png").is_file():
         fail("previews/models.png is missing")
+    if not (PREVIEWS / "tools.png").is_file():
+        fail("previews/tools.png is missing")
     if not (PREVIEWS / "materials.png").is_file():
         fail("previews/materials.png is missing")
 
@@ -194,7 +208,8 @@ def main() -> int:
     print(f"  blocks: {len(block_ids)}")
     print(f"  items: {len(item_ids)}")
     print(f"  geometries: {len(geo_ids)}")
-    print(f"  Blockbench sources: {len(sources)}")
+    print(f"  Blockbench block sources: {len(sources)}")
+    print(f"  Blockbench tool sources: {len(tool_sources)}")
     print(f"  add-on: {ADDON.name} ({ADDON.stat().st_size if ADDON.exists() else 0} bytes)")
     if notes:
         for note in notes:

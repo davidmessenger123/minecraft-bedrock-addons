@@ -327,6 +327,130 @@ def block_geometries() -> dict[str, dict]:
 
 
 # ---------------------------------------------------------------------------
+# Held-tool attachable models
+# ---------------------------------------------------------------------------
+
+def tool_geo(identifier: str, cubes: list[dict], bounds=(2.0, 2.0, (0, 0, 0))) -> dict:
+    return {
+        "format_version": "1.16.0",
+        "minecraft:geometry": [{
+            "description": {
+                "identifier": identifier,
+                "texture_width": ATLAS,
+                "texture_height": ATLAS,
+                "visible_bounds_width": bounds[0],
+                "visible_bounds_height": bounds[1],
+                "visible_bounds_offset": list(bounds[2]),
+            },
+            "bones": [{
+                "name": "tool",
+                "binding": "q.item_slot_to_bone_name(context.item_slot)",
+                "pivot": [0, 0, 0],
+                "cubes": cubes,
+            }],
+        }],
+    }
+
+
+def drill_geo() -> dict:
+    return tool_geo("geometry.cw.drill", [
+        cube([-2.5, 0, -4], [5, 5, 8], STEEL),
+        cube([-2, 5, -2], [4, 2, 5], COPPER),
+        cube([-1.5, -5, -1], [3, 5, 3], DARK),
+        cube([-1, 1, 4], [2, 2, 5], COPPER),
+        cube([-0.5, 1.5, 9], [1, 1, 2], LIGHT),
+        cube([-2.5, 1, -5], [5, 2, 1], ENERGY),
+        cube([-1.5, -6, -1], [3, 1, 3], BRASS),
+    ], (2.0, 2.0, (0, 0, 0)))
+
+
+def chainsaw_geo() -> dict:
+    teeth = [
+        cube([-1.25, 0.5, z], [0.5, 1, 1], LIGHT)
+        for z in (3.0, 5.0, 7.0, 9.0)
+    ] + [
+        cube([0.75, 0.5, z], [0.5, 1, 1], LIGHT)
+        for z in (3.0, 5.0, 7.0, 9.0)
+    ]
+    return tool_geo("geometry.cw.chainsaw", [
+        cube([-2.5, 0, -3], [5, 5, 6], STEEL),
+        cube([-1, 0.5, 3], [2, 2, 10], DARK),
+        *teeth,
+        cube([-1, -4, -2], [2, 4, 3], WOOD),
+        cube([-2, 5, -2], [4, 1, 4], COPPER),
+        cube([-2.5, 1, -4], [5, 2, 1], ENERGY),
+        cube([-2.5, 1, 2], [5, 1, 1], BRASS),
+    ], (2.2, 2.0, (0, 0, 0)))
+
+
+def wrench_geo() -> dict:
+    return tool_geo("geometry.cw.wrench", [
+        cube([-1, -9, -1], [2, 12, 2], STEEL),
+        cube([-1, -1, -1], [2, 3, 2], COPPER),
+        cube([-3, 2, -1], [6, 2, 2], BRASS),
+        cube([-3, 4, -1], [2, 2, 2], BRASS),
+        cube([1, 4, -1], [2, 2, 2], BRASS),
+        cube([-3, 3, -1], [1, 1, 2], ENERGY),
+        cube([-1.5, -10, -1.5], [3, 1, 3], DARK),
+    ], (1.8, 2.0, (0, 0, 0)))
+
+
+def surveyor_geo() -> dict:
+    return tool_geo("geometry.cw.surveyor", [
+        cube([-1, -10, -1], [2, 18, 2], WOOD),
+        cube([-1, 8, -1], [2, 4, 2], COPPER),
+        cube([-3, 10, -1], [6, 3, 2], STEEL),
+        cube([-2, 11, -1], [2, 2, 1], ENERGY),
+        cube([-1, 13, -1], [2, 1, 2], BRASS),
+        cube([-1.5, -11, -1.5], [3, 1, 3], DARK),
+    ], (1.8, 2.0, (0, 0, 0)))
+
+
+def gear_geo() -> dict:
+    teeth = []
+    for x, z in ((-3, -1), (2, -1), (-1, -3), (-1, 2)):
+        teeth.append(cube([x, -1, z], [2, 2, 2], BRASS))
+    return tool_geo("geometry.cw.gear", [
+        cube([-3, -3, -1], [6, 6, 2], STEEL),
+        cube([-2, -2, 1], [4, 4, 1], BRASS),
+        cube([-1, -1, 1.8], [2, 2, 1], ENERGY),
+        *teeth,
+    ], (1.6, 1.6, (0, 0, 0)))
+
+
+def circuit_geo() -> dict:
+    return tool_geo("geometry.cw.circuit", [
+        cube([-4, -3, -1], [8, 6, 1], DARK),
+        cube([-3, -2, 0], [3, 2, 1], ENERGY),
+        cube([1, -2, 0], [2, 2, 1], BRASS),
+        cube([-2, 1, 0], [3, 1, 1], COPPER),
+        cube([2, 1, 0], [1, 1, 1], WARNING),
+    ], (1.6, 1.4, (0, 0, 0)))
+
+
+def motor_geo() -> dict:
+    return tool_geo("geometry.cw.motor", [
+        cube([-3, -3, -3], [6, 6, 6], STEEL),
+        cube([-2, -2, -4], [4, 4, 1], COPPER),
+        cube([-2, -2, 3], [4, 4, 2], BRASS),
+        cube([-1, -1, 5], [2, 2, 1], DARK),
+        cube([-4, -1, -1], [1, 2, 2], BRASS),
+    ], (1.6, 1.6, (0, 0, 0)))
+
+
+def tool_geometries() -> dict[str, dict]:
+    return {
+        "drill": drill_geo(),
+        "chainsaw": chainsaw_geo(),
+        "wrench": wrench_geo(),
+        "surveyor": surveyor_geo(),
+        "gear": gear_geo(),
+        "circuit": circuit_geo(),
+        "motor": motor_geo(),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Item icons
 # ---------------------------------------------------------------------------
 

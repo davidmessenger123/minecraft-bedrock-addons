@@ -45,6 +45,16 @@ CAPTIONS = {
     "quarry": ("Quarry Controller", "surveyor-defined excavation"),
 }
 
+TOOL_CAPTIONS = {
+    "drill": ("Powered Drill", "3D held tool / attachable"),
+    "chainsaw": ("Powered Chainsaw", "3D held tool / attachable"),
+    "wrench": ("Cogworks Wrench", "3D held tool / attachable"),
+    "surveyor": ("Quarry Surveyor", "3D held tool / attachable"),
+    "gear": ("Cogwork Gear", "3D component / attachable"),
+    "circuit": ("Control Circuit", "3D component / attachable"),
+    "motor": ("Electric Motor", "3D component / attachable"),
+}
+
 
 def font(size: int, bold: bool = False):
     names = [
@@ -207,6 +217,34 @@ def build_model_sheet(path: Path) -> None:
     draw.text((20, 56), "Rendered from the shipped Bedrock geometry and shared industrial atlas.",
               font=font(13), fill=MUTED)
     draw.text((20, 76), "Place conveyors and machines next to a powered cable network; connect storage extensions for capacity.",
+              font=font(12), fill=MUTED)
+    for index, (label, caption, tile) in enumerate(tiles):
+        col, row = index % columns, index // columns
+        x = 14 + col * cell_w
+        y = 104 + row * cell_h
+        image.paste(tile, (x, y), tile)
+        draw.text((x + 4, y + tile.height + 7), label, font=font(12, True), fill=INK)
+        draw.text((x + 4, y + tile.height + 23), caption, font=font(10), fill=MUTED)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path, "PNG")
+
+
+def build_tool_sheet(path: Path) -> None:
+    atlas = content.block_atlas()
+    tiles = []
+    for key, geo in content.tool_geometries().items():
+        label, caption = TOOL_CAPTIONS.get(key, (key.replace("_", " ").title(), ""))
+        tiles.append((label, caption, model_image(geo, atlas, label, caption, size=250)))
+
+    columns = 2
+    cell_w, cell_h = 280, 315
+    rows = math.ceil(len(tiles) / columns)
+    image = Image.new("RGB", (columns * cell_w + 28, rows * cell_h + 108), BG)
+    draw = ImageDraw.Draw(image)
+    draw.text((20, 18), "Cogworks held-tool models", font=font(28, True), fill=INK)
+    draw.text((20, 56), "3D attachable models rendered from the shipped Bedrock geometry.",
+              font=font(13), fill=MUTED)
+    draw.text((20, 76), "These models replace the flat inventory sprite when held in first or third person.",
               font=font(12), fill=MUTED)
     for index, (label, caption, tile) in enumerate(tiles):
         col, row = index % columns, index // columns

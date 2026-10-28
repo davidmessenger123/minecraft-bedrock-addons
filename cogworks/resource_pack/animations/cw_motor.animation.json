@@ -1,0 +1,41 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.cw.motor.hold_first_person": {
+      "loop": true,
+      "bones": {
+        "tool": {
+          "position": [
+            2,
+            25,
+            -1
+          ],
+          "rotation": [
+            58,
+            -48,
+            -44
+          ],
+          "scale": 0.8
+        }
+      }
+    },
+    "animation.cw.motor.hold_third_person": {
+      "loop": true,
+      "bones": {
+        "tool": {
+          "position": [
+            1,
+            22,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 0.9
+        }
+      }
+    }
+  }
+}

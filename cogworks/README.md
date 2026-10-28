@@ -4,13 +4,16 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.1.0.mcaddon](Cogworks-1.1.0.mcaddon)
+**Download:** [Cogworks-1.2.0.mcaddon](Cogworks-1.2.0.mcaddon)
 
 - **Blocks:** Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
   Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Crafting
   Assembler, Storage Core, Storage Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry Surveyor,
   Cogwork Gear, Control Circuit and Electric Motor.
+- **Held items:** all seven custom items — drill, chainsaw, wrench, surveyor,
+  gear, circuit and motor — have 3D attachable models that render in the
+  player's hand in first and third person. Their inventory icons remain.
 - **Power:** coal/charcoal/coal-block generation, 5,000 E batteries, copper
   cable networks and machine energy costs.
 - **Visible transport:** item stacks now ride on belts as display entities.
@@ -30,11 +33,25 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   run of logs; the wrench rotates conveyors, filters, splitters, mergers and
   extractors.
 
+### Held item models
+
+All seven custom items use Bedrock attachables:
+
+- `resource_pack/models/entity/cw_drill.geo.json`
+- `resource_pack/attachables/cw_drill.json`
+- `resource_pack/animations/cw_drill.animation.json`
+
+The same pattern is used for `chainsaw`, `wrench`, `surveyor`, `gear`, `circuit`
+and `motor`. Their root bone is bound with
+`q.item_slot_to_bone_name(context.item_slot)`, so the model follows the player's
+hand. The attachable animations select separate first- and third-person poses.
+Their Blockbench sources are in `blockbench/tools/`.
+
 Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.1.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.2.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -120,17 +137,19 @@ Output is buffered until an adjacent storage block or conveyor accepts it.
 
 ## Models and source
 
-The block models are generated from `tools/content.py`; the editable Blockbench
-sources live in `blockbench/blocks/`. The shipped add-on uses the exported
-`.geo.json` models and the shared `cw_blocks` texture atlas. The
-[model sheet](previews/models.png) shows all twelve blocks, and
+The block and held-item models are generated from `tools/content.py`; the
+editable Blockbench sources live in `blockbench/blocks/` and
+`blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
+the shared `cw_blocks` texture atlas. The
+[block model sheet](previews/models.png) shows all twelve blocks, the
+[item model sheet](previews/tools.png) shows all seven held items, and
 [previews/materials.png](previews/materials.png) shows the industrial palette.
 
 ```text
 cogworks/
   behavior_pack/   blocks, items, recipes, loot, scripts, language, manifest
   resource_pack/   geometry, terrain/item atlases, texture, language, manifest
-  blockbench/      editable block .bbmodel sources
+  blockbench/      editable block and held-tool .bbmodel sources
   tools/           content.py, generate.py, main.js, render.py, validate.py, VERSION
 ```
 
@@ -147,6 +166,8 @@ node --check cogworks/behavior_pack/scripts/main.js
 - Item transport and storage are script-driven virtual inventories. Visible
   belt stacks are display entities and cannot be picked up by players; the
   actual authoritative stack is still in the belt/machine data.
+- The four held tools are Bedrock attachables. The geometry is editable, but
+  first/third-person grip tuning is best checked in a live world.
 - The add-on is static-validated here. Live Bedrock testing is still needed for
   the custom block tick component, display entities, UI forms, energy/conveyor
-  behavior and the new quarry depth.
+  behavior, the new quarry depth and attachable rendering.

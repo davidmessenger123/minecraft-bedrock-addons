@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.1.0 | [Cogworks-1.1.0.mcaddon](cogworks/Cogworks-1.1.0.mcaddon) |
+| **Cogworks** | Add-on | 1.2.0 | [Cogworks-1.2.0.mcaddon](cogworks/Cogworks-1.2.0.mcaddon) |
 
 ## Install
 
@@ -170,6 +170,8 @@ to bedrock into expandable storage.
   Assembler, Storage Core, Storage Extension and Quarry Controller.
 - 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
   Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
+- All seven items have 3D Blockbench attachable models that render in the
+  player's hand in first and third person.
 - Generator burns coal, charcoal or coal blocks; batteries store 5,000 E;
   machines draw from the connected cable network.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
@@ -188,8 +190,8 @@ to bedrock into expandable storage.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
-[model sheet](cogworks/previews/models.png) shows all twelve Blockbench block
-models.
+[block model sheet](cogworks/previews/models.png) shows all twelve blocks and
+the [item model sheet](cogworks/previews/tools.png) shows all seven held items.
 
 ## R2-D2 Droid
 
@@ -238,7 +240,7 @@ details and the Blockbench source.
 | `candyland/` | Candyland resource pack, `.mcpack`, full texture pipeline, validator and preview renders |
 | `r2-d2/` | R2-D2 droid add-on, `.mcaddon`, Blockbench model, sounds and validation tools |
 | `bloomlands/` | Bloomlands custom dimension add-on, `.mcaddon`, block/mob models, previews and build/validation tools |
-| `cogworks/` | Cogworks automation add-on, `.mcaddon`, Blockbench block sources, model sheet and build/validation tools |
+| `cogworks/` | Cogworks automation add-on, `.mcaddon`, Blockbench block/item sources, model sheets and build/validation tools |
 
 ## Releases
 
@@ -266,3 +268,4 @@ details and the Blockbench source.
 - [Bloomlands 2.2.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.3)
 - [Cogworks 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.0.0)
 - [Cogworks 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.1.0)
+- [Cogworks 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.2.0)

@@ -67,11 +67,83 @@ def geometry_index():
 
 
 def write_geometry():
+    texture = content.block_atlas()
     for key, geo in geometry_index().items():
         write_json(RP / "models" / "blocks" / f"{key}.geo.json", geo)
-        texture = content.block_atlas()
         bb = content.to_bbmodel(geo, texture, f"Cogworks {key.replace('_', ' ')}")
         write_json(BLOCKBENCH / "blocks" / f"{key}.bbmodel", bb)
+
+
+def attachable_json(key: str, geometry: str) -> dict:
+    animation = f"animation.cw.{key}"
+    return {
+        "format_version": "1.10.0",
+        "minecraft:attachable": {
+            "description": {
+                "identifier": f"cw:{key}",
+                "materials": {
+                    "default": "entity_alphatest",
+                    "enchanted": "entity_alphatest_glint",
+                },
+                "textures": {
+                    "default": "textures/blocks/cw_blocks",
+                    "enchanted": "textures/misc/enchanted_item_glint",
+                },
+                "geometry": {"default": geometry},
+                "animations": {
+                    "hold_first_person": f"{animation}.hold_first_person",
+                    "hold_third_person": f"{animation}.hold_third_person",
+                },
+                "scripts": {
+                    "animate": [
+                        {"hold_first_person": "context.is_first_person == 1.0"},
+                        {"hold_third_person": "context.is_first_person == 0.0"},
+                    ]
+                },
+                "render_controllers": ["controller.render.item_default"],
+            }
+        },
+    }
+
+
+def tool_animation(key: str) -> dict:
+    animation = f"animation.cw.{key}"
+    return {
+        "format_version": "1.10.0",
+        "animations": {
+            f"{animation}.hold_first_person": {
+                "loop": True,
+                "bones": {
+                    "tool": {
+                        "position": [2, 25, -1],
+                        "rotation": [58, -48, -44],
+                        "scale": 0.8,
+                    }
+                },
+            },
+            f"{animation}.hold_third_person": {
+                "loop": True,
+                "bones": {
+                    "tool": {
+                        "position": [1, 22, 0],
+                        "rotation": [0, 0, 0],
+                        "scale": 0.9,
+                    }
+                },
+            },
+        },
+    }
+
+
+def write_tool_attachables():
+    texture = content.block_atlas()
+    for key, geo in content.tool_geometries().items():
+        write_json(RP / "models" / "entity" / f"cw_{key}.geo.json", geo)
+        write_json(RP / "attachables" / f"cw_{key}.json",
+                   attachable_json(key, geo["minecraft:geometry"][0]["description"]["identifier"]))
+        write_json(RP / "animations" / f"cw_{key}.animation.json", tool_animation(key))
+        bb = content.to_bbmodel(geo, texture, f"Cogworks {key}")
+        write_json(BLOCKBENCH / "tools" / f"{key}.bbmodel", bb)
 
 
 def block_json(spec: content.BlockSpec) -> dict:
@@ -375,6 +447,7 @@ def build_resources():
     ])
     write_json(RP / "blocks.json", {f"cw:{spec.key}": {"sound": spec.sound} for spec in content.BLOCKS})
     write_geometry()
+    write_tool_attachables()
 
 
 def build_extras():
@@ -399,6 +472,7 @@ def build_extras():
         draw.text((x, y + 104), name, fill=(184, 194, 202))
     save_png(PREVIEWS / "materials.png", sheet)
     render.build_model_sheet(PREVIEWS / "models.png")
+    render.build_tool_sheet(PREVIEWS / "tools.png")
 
 
 def build_addon():
