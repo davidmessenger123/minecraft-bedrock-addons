@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:merger_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "IGI",
+      "G G",
+      "IGI"
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:copper_ingot"
+      },
+      "G": {
+        "item": "cw:gear"
+      }
+    },
+    "result": {
+      "item": "cw:merger",
+      "count": 1
+    }
+  }
+}

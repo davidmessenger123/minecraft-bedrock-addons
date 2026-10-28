@@ -207,8 +207,8 @@ def battery_geo() -> dict:
     ], (1.0, 1.0, (0, 0.5, 0)))
 
 
-def conveyor_geo() -> dict:
-    return block_geo("geometry.cw.conveyor", [
+def conveyor_cubes() -> list[dict]:
+    return [
         cube([-8, 0, -7], [1, 9, 14], STEEL),
         cube([7, 0, -7], [1, 9, 14], STEEL),
         cube([-7, 8, -7], [14, 1, 14], BELT),
@@ -220,7 +220,47 @@ def conveyor_geo() -> dict:
         cube([4, 1, -6], [2, 6, 2], COPPER),
         cube([-6, 1, 4], [2, 6, 2], COPPER),
         cube([4, 1, 4], [2, 6, 2], COPPER),
-    ], (1.0, 0.7, (0, 0.35, 0)))
+    ]
+
+
+def conveyor_geo() -> dict:
+    return block_geo("geometry.cw.conveyor", conveyor_cubes(),
+                     (1.0, 0.7, (0, 0.35, 0)))
+
+
+def logistics_geo(kind: str) -> dict:
+    """Small, distinct control heads on the same conveyor base."""
+    cubes = conveyor_cubes()
+    if kind == "filter":
+        cubes += [
+            cube([-3, 9, -8], [6, 3, 1], ENERGY),
+            cube([-2, 10, -7], [4, 1, 3], COPPER),
+            cube([-1, 11, -6], [2, 1, 2], LIGHT),
+        ]
+    elif kind == "splitter":
+        cubes += [
+            cube([-8, 3, -2], [2, 4, 4], COPPER),
+            cube([6, 3, -2], [2, 4, 4], COPPER),
+            cube([-2, 9, -2], [4, 1, 4], BRASS),
+            cube([-1, 10, -1], [2, 1, 2], LIGHT),
+        ]
+    elif kind == "merger":
+        cubes += [
+            cube([-4, 3, 7], [8, 3, 1], COPPER),
+            cube([-8, 3, -1], [1, 3, 3], COPPER),
+            cube([7, 3, -1], [1, 3, 3], COPPER),
+            cube([-2, 9, -2], [4, 1, 4], BRASS),
+            cube([-1, 10, -1], [2, 1, 2], ENERGY),
+        ]
+    else:  # extractor
+        cubes += [
+            cube([-4, 3, 7], [8, 4, 1], STEEL),
+            cube([-2, 7, 6], [4, 3, 2], COPPER),
+            cube([-4, 10, 6], [8, 1, 3], BRASS),
+            cube([-2, 11, 7], [4, 1, 1], ENERGY),
+        ]
+    return block_geo(f"geometry.cw.{kind}", cubes, (1.0, 0.8, (0, 0.4, 0)))
+
 
 
 def assembler_geo() -> dict:
@@ -275,6 +315,10 @@ def block_geometries() -> dict[str, dict]:
         "cable": cable_geo(),
         "battery": battery_geo(),
         "conveyor": conveyor_geo(),
+        "filter": logistics_geo("filter"),
+        "splitter": logistics_geo("splitter"),
+        "merger": logistics_geo("merger"),
+        "extractor": logistics_geo("extractor"),
         "assembler": assembler_geo(),
         "storage_core": storage_geo(False),
         "storage_extension": storage_geo(True),
@@ -423,17 +467,23 @@ class BlockSpec:
     state: bool = False
     dynamic: bool = True
     fuel: bool = False
+    tick_range: tuple[int, int] = (10, 20)
+    status_state: bool = False
 
 
 BLOCKS: list[BlockSpec] = [
-    BlockSpec("generator", "Coal Generator", "geometry.cw.generator", 3.0, light=8, machine=True, fuel=True, sound="metal"),
+    BlockSpec("generator", "Coal Generator", "geometry.cw.generator", 3.0, light=8, machine=True, fuel=True, sound="metal", status_state=True),
     BlockSpec("cable", "Copper Cable", "geometry.cw.cable", 1.0, collision={"origin": [-5, 0, -5], "size": [10, 8, 10]}, sound="metal"),
     BlockSpec("battery", "Battery Bank", "geometry.cw.battery", 2.5, light=4, collision={"origin": [-8, 0, -8], "size": [16, 12, 16]}, sound="metal"),
-    BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal"),
-    BlockSpec("assembler", "Crafting Assembler", "geometry.cw.assembler", 3.0, light=3, machine=True, sound="metal"),
+    BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("filter", "Item Filter", "geometry.cw.filter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("splitter", "Belt Splitter", "geometry.cw.splitter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("merger", "Belt Merger", "geometry.cw.merger", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("extractor", "Storage Extractor", "geometry.cw.extractor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
+    BlockSpec("assembler", "Crafting Assembler", "geometry.cw.assembler", 3.0, light=3, machine=True, sound="metal", status_state=True),
     BlockSpec("storage_core", "Storage Core", "geometry.cw.storage_core", 2.0, sound="wood"),
     BlockSpec("storage_extension", "Storage Extension", "geometry.cw.storage_extension", 2.0, sound="wood"),
-    BlockSpec("quarry", "Quarry Controller", "geometry.cw.quarry", 4.0, light=5, machine=True, sound="metal"),
+    BlockSpec("quarry", "Quarry Controller", "geometry.cw.quarry", 4.0, light=5, machine=True, sound="metal", tick_range=(1, 1), status_state=True),
 ]
 
 ITEMS = {

@@ -81,6 +81,8 @@ def block_json(spec: content.BlockSpec) -> dict:
     }
     if spec.state:
         description["states"] = {"cw:facing": ["north", "east", "south", "west"]}
+    if spec.status_state:
+        description.setdefault("states", {})["cw:status"] = ["idle", "working", "blocked"]
 
     materials = {
         "*": {
@@ -108,7 +110,10 @@ def block_json(spec: content.BlockSpec) -> dict:
         components["minecraft:block_entity"] = {"dynamic_properties": True}
     if spec.machine:
         components["cw:machine"] = {}
-        components["minecraft:tick"] = {"interval_range": [10, 20], "looping": True}
+        components["minecraft:tick"] = {
+            "interval_range": list(spec.tick_range),
+            "looping": True,
+        }
     if spec.state:
         components["minecraft:transformation"] = {"rotation": [0, 0, 0]}
 
@@ -119,8 +124,9 @@ def block_json(spec: content.BlockSpec) -> dict:
             "components": components,
         },
     }
+    permutations = []
     if spec.state:
-        data["minecraft:block"]["permutations"] = [
+        permutations.extend([
             {
                 "condition": "q.block_state('cw:facing') == 'east'",
                 "components": {"minecraft:transformation": {"rotation": [0, 90, 0]}},
@@ -133,7 +139,20 @@ def block_json(spec: content.BlockSpec) -> dict:
                 "condition": "q.block_state('cw:facing') == 'west'",
                 "components": {"minecraft:transformation": {"rotation": [0, 270, 0]}},
             },
-        ]
+        ])
+    if spec.status_state:
+        permutations.extend([
+            {
+                "condition": "q.block_state('cw:status') == 'working'",
+                "components": {"minecraft:light_emission": 15},
+            },
+            {
+                "condition": "q.block_state('cw:status') == 'blocked'",
+                "components": {"minecraft:light_emission": 8},
+            },
+        ])
+    if permutations:
+        data["minecraft:block"]["permutations"] = permutations
     return data
 
 
@@ -196,6 +215,10 @@ def build_recipes() -> None:
         "motor": shapeless("cw:motor_recipe", ["cw:gear", "cw:gear", "cw:circuit", "minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:copper_ingot"], "cw:motor", 1),
         "generator": shaped("cw:generator_recipe", ["ICI", "IFI", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "F": "minecraft:furnace"}, "cw:generator", 1),
         "conveyor": shaped("cw:conveyor_recipe", ["IGI", "GRG", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "R": "minecraft:redstone"}, "cw:conveyor", 4),
+        "filter": shaped("cw:filter_recipe", ["IGI", "GCG", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit"}, "cw:filter", 1),
+        "splitter": shaped("cw:splitter_recipe", ["IGI", "G G", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear"}, "cw:splitter", 1),
+        "merger": shaped("cw:merger_recipe", ["IGI", "G G", "IGI"], {"I": "minecraft:copper_ingot", "G": "cw:gear"}, "cw:merger", 1),
+        "extractor": shaped("cw:extractor_recipe", ["ICI", "GBG", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "G": "cw:gear", "B": "minecraft:barrel"}, "cw:extractor", 1),
         "assembler": shaped("cw:assembler_recipe", ["IGI", "CTC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "T": "minecraft:crafting_table"}, "cw:assembler", 1),
         "cable": shaped("cw:cable_recipe", ["CCC", "C C", "CCC"], {"C": "minecraft:copper_ingot"}, "cw:cable", 8),
         "battery": shaped("cw:battery_recipe", ["CRC", "RGR", "CRC"], {"C": "minecraft:copper_ingot", "R": "minecraft:redstone", "G": "cw:gear"}, "cw:battery", 1),

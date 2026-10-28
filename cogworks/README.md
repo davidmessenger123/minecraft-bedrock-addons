@@ -4,30 +4,37 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.0.0.mcaddon](Cogworks-1.0.0.mcaddon)
+**Download:** [Cogworks-1.1.0.mcaddon](Cogworks-1.1.0.mcaddon)
 
 - **Blocks:** Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
-  Crafting Assembler, Storage Core, Storage Extension, Quarry Controller.
+  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Crafting
+  Assembler, Storage Core, Storage Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry Surveyor,
-  Cogwork Gear, Control Circuit, Electric Motor.
-- **Power:** the generator burns coal/charcoal/coal blocks; batteries buffer
-  energy; copper cables connect machines.
-- **Transport:** conveyors move virtual stacks between machines and storage.
+  Cogwork Gear, Control Circuit and Electric Motor.
+- **Power:** coal/charcoal/coal-block generation, 5,000 E batteries, copper
+  cable networks and machine energy costs.
+- **Visible transport:** item stacks now ride on belts as display entities.
+  Filter pass-lists, three-way splitters and three-input mergers let you build
+  real routing lines.
 - **Storage:** a core supports 8 item stacks; every connected Storage Extension
-  adds another 8. Use the Storage Core form to deposit or withdraw.
-- **Automation:** the assembler processes a recipe when its input contains the
-  ingredients and the network has enough energy.
-- **Quarry:** use the Quarry Surveyor on two corners, then on the Quarry
-  Controller. It mines the selected volume and sends drops to connected storage
-  or conveyors.
+  adds another 8. The storage form has search; a Storage Extractor pulls the
+  selected items back out onto a belt.
+- **Automation:** the assembler has selectable recipes and automatic mode. Working
+  machines raise their status light to level 15 and pulse teal; blocked/idle
+  machines pulse orange/blue.
+- **Quarry:** survey two corners, install the area on the controller, and it
+  digs from the top of the surveyed footprint all the way down to the
+  dimension floor (bedrock in the Overworld). It reports progress, supports
+  output filters, and pushes drops to storage or belts.
 - **Tools:** the drill breaks a 3×3 stone/ore face; the chainsaw fells a vertical
-  run of logs; the wrench rotates conveyors.
+  run of logs; the wrench rotates conveyors, filters, splitters, mergers and
+  extractors.
 
 Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.0.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.1.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -42,7 +49,9 @@ and **Storage Core**:
 - **Motor:** two gears + circuit + four copper ingots.
 - **Generator:** iron, copper and a furnace.
 - **Conveyor:** iron, gears and redstone.
+- **Filter / splitter / merger:** iron, gears, circuit and redstone.
 - **Storage Core / Extension:** iron, copper/circuit and a barrel.
+- **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
 - **Drill / Chainsaw:** iron, gear and motor.
 - **Quarry:** iron blocks, gears, a motor and a circuit.
@@ -53,20 +62,32 @@ on the same network. Right-click a generator with coal to fuel it.
 ### Conveyor setup
 
 Place conveyors facing the direction the player is looking. Use the **Cogworks
-Wrench** to cycle a conveyor's direction. A conveyor carries one stack at a time
-and passes it to a storage block, assembler, generator or the next conveyor.
+Wrench** to cycle a machine's direction. A belt carries one visible stack at a
+time and passes it to a storage block, assembler, generator, filter or the next
+belt.
+
+Right-click a belt with an item to add or remove it from that belt's pass-list.
+Empty-hand interact to see its buffer and filters. The **Item Filter** rejects
+items that are not on its list; **Belt Splitter** cycles items between front,
+left and right outputs; **Belt Merger** accepts from its sides and outputs
+forward.
 
 ### Storage
 
 A **Storage Core** starts with 8 slots. Place **Storage Extensions** next to it
 (or in a connected chain) to add 8 slots each. Interact empty-handed to open the
-storage form; hold an item and interact to deposit it. Conveyors can deposit
-directly into a core or extension.
+storage form, search by item name or ID, withdraw an item, or deposit the item
+in your main hand. Conveyors can deposit directly into a core or extension.
+
+Place a **Storage Extractor** beside storage and point it at a belt to pull
+items out. The extractor has its own pass-list and uses the same wrench
+rotation as a belt.
 
 ### Assembler
 
 The **Crafting Assembler** accepts items from a conveyor or by right-clicking
-with an item. It automatically runs the first available recipe:
+with an item. Interact empty-handed to open its status and choose **Select
+recipe** or **Use automatic recipe**. It can run:
 
 - oak logs → oak planks
 - oak planks → sticks
@@ -78,32 +99,39 @@ with an item. It automatically runs the first available recipe:
 - gears + circuit + copper → electric motors
 
 Each recipe costs energy. Output is pushed to an adjacent conveyor or storage.
+Working machines pulse teal; blocked or waiting machines pulse orange/blue.
 
 ### Quarry
 
-1. Right-click two blocks with the **Quarry Surveyor** to set opposite corners.
+1. Right-click two blocks with the **Quarry Surveyor** to set the X/Z footprint.
 2. Right-click a **Quarry Controller** with the surveyor to install the area.
-3. Connect a Storage Core or conveyor and a powered cable network.
+3. Connect a Storage Core or conveyor, a Storage Extractor and a powered cable
+   network.
 4. Interact empty-handed with the quarry to start or pause it.
 
-The quarry is limited to **32×32×32** and skips air, fluids, bedrock and
-Cogworks machines. Drops are buffered until an adjacent storage block or
-conveyor accepts them.
+The quarry's footprint is limited to **32×32**, but its depth is the full
+dimension height from the top surveyed Y down to the dimension floor. In the
+Overworld this reaches **bedrock at Y=-64**. It skips air, fluids, bedrock and
+Cogworks machines, reports scanned/mined progress, and can filter which drops
+are collected. Right-click the quarry with an item to toggle that item as an
+output filter; use **Clear output filters** in its form.
+
+Output is buffered until an adjacent storage block or conveyor accepts it.
 
 ## Models and source
 
 The block models are generated from `tools/content.py`; the editable Blockbench
 sources live in `blockbench/blocks/`. The shipped add-on uses the exported
 `.geo.json` models and the shared `cw_blocks` texture atlas. The
-[model sheet](previews/models.png) shows all eight blocks, and
+[model sheet](previews/models.png) shows all twelve blocks, and
 [previews/materials.png](previews/materials.png) shows the industrial palette.
 
 ```text
 cogworks/
-  behavior_pack/   blocks, items, recipes, scripts, language, manifest
+  behavior_pack/   blocks, items, recipes, loot, scripts, language, manifest
   resource_pack/   geometry, terrain/item atlases, texture, language, manifest
   blockbench/      editable block .bbmodel sources
-  tools/           content.py, generate.py, main.js, validate.py, VERSION
+  tools/           content.py, generate.py, main.js, render.py, validate.py, VERSION
 ```
 
 Rebuild:
@@ -111,12 +139,14 @@ Rebuild:
 ```bash
 /tmp/opencode/bloom-venv/bin/python cogworks/tools/generate.py
 node --check cogworks/behavior_pack/scripts/main.js
+/tmp/opencode/bloom-venv/bin/python cogworks/tools/validate.py
 ```
 
 ## Notes
 
-- This is a first release. Machine state is stored in block-entity dynamic
-  properties; item transport and storage are virtual rather than native chest
-  inventories, so the forms are the primary player interface.
+- Item transport and storage are script-driven virtual inventories. Visible
+  belt stacks are display entities and cannot be picked up by players; the
+  actual authoritative stack is still in the belt/machine data.
 - The add-on is static-validated here. Live Bedrock testing is still needed for
-  the custom block tick component, UI forms and energy/conveyor behavior.
+  the custom block tick component, display entities, UI forms, energy/conveyor
+  behavior and the new quarry depth.

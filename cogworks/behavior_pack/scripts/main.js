@@ -13,14 +13,19 @@ import {
     BlockPermutation,
     ItemStack,
     EquipmentSlot,
+    MolangVariableMap,
 } from "@minecraft/server";
-import { ActionFormData } from "@minecraft/server-ui";
+import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 
 const NS = "cw:";
 const GENERATOR = "cw:generator";
 const CABLE = "cw:cable";
 const BATTERY = "cw:battery";
 const CONVEYOR = "cw:conveyor";
+const FILTER = "cw:filter";
+const SPLITTER = "cw:splitter";
+const MERGER = "cw:merger";
+const EXTRACTOR = "cw:extractor";
 const ASSEMBLER = "cw:assembler";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
@@ -32,7 +37,11 @@ const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
 
 const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY]);
+const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
+const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const FACINGS = ["north", "east", "south", "west"];
+const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
+const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
 const DIRECTIONS = {
     north: { x: 0, y: 0, z: -1 },
     south: { x: 0, y: 0, z: 1 },
@@ -164,7 +173,7 @@ function facing(block) {
 
 function setFacing(block, value) {
     try {
-        block.setPermutation(BlockPermutation.resolve(CONVEYOR, { "cw:facing": value }));
+        block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:facing": value }));
     } catch {
         // It may be a removed block during a tick.
     }
@@ -193,6 +202,114 @@ function later(callback) {
         }
     });
 }
+
+function markStatus(block, status) {
+    const previous = read(block, "status", "idle");
+    const pulse = Number(read(block, "statusPulse", 0)) + 1;
+    write(block, "status", status);
+    write(block, "statusPulse", pulse % 1000);
+    try {
+        if (block.permutation.getState("cw:status") !== status) {
+            block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:status": status }));
+        }
+    } catch {
+        // Status is also shown by the form and particle pulse.
+    }
+    if (previous === status && !(status === "working" && pulse % 4 === 0)) return;
+    const color = status === "working"
+        ? { red: 0.25, green: 0.95, blue: 0.78 }
+        : status === "blocked"
+            ? { red: 1.0, green: 0.35, blue: 0.12 }
+            : { red: 0.35, green: 0.65, blue: 1.0 };
+    try {
+        const map = new MolangVariableMap();
+        map.setColorRGB("variable.color", color);
+        block.dimension.spawnParticle(
+            "minecraft:colored_flame_particle",
+            { x: block.location.x + 0.5, y: block.location.y + 1.18, z: block.location.z + 0.5 },
+            map,
+        );
+    } catch {
+        // Particles are cosmetic; never let one stop a machine tick.
+    }
+}
+
+function displayLocation(block) {
+    return { x: block.location.x + 0.5, y: block.location.y + 0.92, z: block.location.z + 0.5 };
+}
+
+function displayKey(block) {
+    return `${block.location.x},${block.location.y},${block.location.z}`;
+}
+
+function removeDisplay(block) {
+    const id = read(block, "displayId", undefined);
+    if (typeof id === "string") {
+        try { world.getEntity(id)?.remove(); } catch { /* already gone */ }
+    }
+    write(block, "displayId", undefined);
+    write(block, "displaySignature", undefined);
+}
+
+function syncDisplay(block) {
+    const item = readJson(block, "item", null);
+    if (!item || item.amount < 1) {
+        removeDisplay(block);
+        return;
+    }
+    const signature = JSON.stringify(item);
+    let display;
+    const id = read(block, "displayId", undefined);
+    if (typeof id === "string") {
+        try { display = world.getEntity(id); } catch { display = undefined; }
+    }
+    if (!display) {
+        // Recover a display entity if the block's ID was lost during a reload.
+        try {
+            for (const entity of block.dimension.getEntitiesAtBlockLocation(block.location)) {
+                if (entity.getDynamicProperty("cw:display") === true
+                    && entity.getDynamicProperty("cw:displayBelt") === displayKey(block)) {
+                    display = entity;
+                    write(block, "displayId", entity.id);
+                    break;
+                }
+            }
+        } catch {
+            // Chunk may be unloading.
+        }
+    }
+    if (display && read(block, "displaySignature", "") !== signature) {
+        try { display.remove(); } catch { /* already gone */ }
+        display = undefined;
+    }
+    try {
+        if (!display) {
+            display = block.dimension.spawnItem(
+                new ItemStack(item.id, 1),
+                displayLocation(block),
+            );
+            display.setDynamicProperty("cw:display", true);
+            display.setDynamicProperty("cw:displayBelt", displayKey(block));
+            write(block, "displayId", display.id);
+            write(block, "displaySignature", signature);
+        } else {
+            display.clearVelocity();
+            display.teleport(displayLocation(block));
+        }
+    } catch {
+        // The next tick will retry.
+    }
+}
+
+world.beforeEvents.entityItemPickup?.subscribe((event) => {
+    try {
+        if (event.item?.getDynamicProperty("cw:display") === true) {
+            event.cancel = true;
+        }
+    } catch {
+        // Ignore transient item entities.
+    }
+});
 
 function addItem(player, typeId, count) {
     if (!count || count < 1) return;
@@ -324,18 +441,25 @@ function storageInfo(start) {
     };
 }
 
-async function openStorage(player, block) {
+async function openStorage(player, block, query = "") {
     const info = storageInfo(block);
     if (!info.core) {
         player.sendMessage("Connect a Storage Extension to a Storage Core first.");
         return;
     }
-    const entries = Object.entries(info.items).sort(([a], [b]) => a.localeCompare(b));
+    const needle = String(query || "").trim().toLowerCase();
+    const entries = Object.entries(info.items)
+        .filter(([typeId]) => !needle
+            || typeId.toLowerCase().includes(needle)
+            || formatName(typeId).toLowerCase().includes(needle))
+        .sort(([a], [b]) => a.localeCompare(b));
     const used = Object.values(info.items).reduce((sum, count) => sum + Math.ceil(Number(count || 0) / 64), 0);
     const form = new ActionFormData()
         .title("Storage Core")
-        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}`);
+        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}Use a Storage Extractor to pull items onto belts.`);
+    form.button("Search items");
     form.button("Deposit held item");
+    if (!entries.length) form.button(needle ? "No matching items" : "No stored items");
     for (const [typeId, count] of entries) {
         form.button(`${formatName(typeId)}  x${count}`);
     }
@@ -343,6 +467,17 @@ async function openStorage(player, block) {
     try { response = await form.show(player); } catch { return; }
     if (response.canceled) return;
     if (response.selection === 0) {
+        const search = new ModalFormData()
+            .title("Search Storage")
+            .textField("Item name or identifier", "e.g. iron or minecraft:coal", { defaultValue: query });
+        let result;
+        try { result = await search.show(player); } catch { return; }
+        if (result.canceled) return;
+        const nextQuery = String(result.formValues?.[0] || "");
+        later(() => openStorage(player, block, nextQuery));
+        return;
+    }
+    if (response.selection === 1) {
         const item = heldItem(player);
         if (!item) {
             action(player, "Hold an item to deposit it.");
@@ -357,7 +492,7 @@ async function openStorage(player, block) {
         action(player, `Deposited ${accepted} ${formatName(item.typeId)}.`);
         return;
     }
-    const [typeId, count] = entries[response.selection - 1] || [];
+    const [typeId, count] = entries[response.selection - 2] || [];
     if (!typeId) return;
     const take = Math.min(64, count);
     const taken = takeStorage(block, typeId, take);
@@ -373,7 +508,17 @@ function insertAssembler(assembler, typeId, amount) {
     return amount;
 }
 
+function beltFilters(block) {
+    return readJson(block, "filters", {});
+}
+
+function beltAllows(block, typeId) {
+    const filters = beltFilters(block);
+    return Object.keys(filters).length === 0 || filters[typeId] === true;
+}
+
 function insertConveyor(conveyor, typeId, amount) {
+    if (!beltAllows(conveyor, typeId)) return 0;
     const current = readJson(conveyor, "item", null);
     if (!current) {
         writeJson(conveyor, "item", { id: typeId, amount });
@@ -402,6 +547,9 @@ function acceptItem(block, typeId, amount) {
         case STORAGE_EXTENSION:
             return insertStorage(block, typeId, amount);
         case CONVEYOR:
+        case FILTER:
+        case SPLITTER:
+        case MERGER:
             return insertConveyor(block, typeId, amount);
         case ASSEMBLER:
             return insertAssembler(block, typeId, amount);
@@ -474,7 +622,7 @@ function tickGenerator(block) {
     if (fuel > 0 && energy < 2000) {
         const burn = Math.min(fuel, 10);
         fuel -= burn;
-        energy = Math.min(2000, energy + burn * 2);
+        energy = Math.min(2000, energy + burn * 10);
         write(block, "fuel", fuel);
     }
     // Push generated energy into connected batteries so a bank can buffer the
@@ -493,19 +641,67 @@ function tickGenerator(block) {
         }
     }
     write(block, "energy", Math.max(0, energy));
+    markStatus(block, fuel > 0 ? "working" : "idle");
+}
+
+function storageAdjacent(block) {
+    for (const next of allNeighbors(block)) {
+        if (next && (next.typeId === STORAGE_CORE || next.typeId === STORAGE_EXTENSION)) return next;
+    }
+    return undefined;
+}
+
+function pullFromStorage(extractor) {
+    const source = storageAdjacent(extractor);
+    if (!source) return;
+    const info = storageInfo(source);
+    const filters = beltFilters(extractor);
+    const entry = Object.entries(info.items).find(([typeId]) =>
+        Object.keys(filters).length === 0 || filters[typeId] === true);
+    if (!entry) return;
+    const [typeId, count] = entry;
+    const take = takeStorage(source, typeId, Math.min(64, count));
+    if (take > 0) writeJson(extractor, "item", { id: typeId, amount: take });
+}
+
+function moveBeltItem(block, item, direction) {
+    const next = neighbor(block, direction);
+    if (!next) return 0;
+    return acceptItem(next, item.id, item.amount);
 }
 
 function tickConveyor(block) {
-    const item = readJson(block, "item", null);
-    if (!item || item.amount < 1) return;
-    const next = neighbor(block, facing(block));
-    if (!next) return;
-    const accepted = acceptItem(next, item.id, item.amount);
-    if (accepted >= item.amount) writeJson(block, "item", null);
-    else if (accepted > 0) {
+    syncDisplay(block);
+    if (block.typeId === EXTRACTOR) pullFromStorage(block);
+    let item = readJson(block, "item", null);
+    if (!item || item.amount < 1) {
+        syncDisplay(block);
+        return;
+    }
+
+    let accepted = 0;
+    if (block.typeId === SPLITTER) {
+        const order = [facing(block), LEFT_OF[facing(block)], RIGHT_OF[facing(block)]];
+        const start = Number(read(block, "splitIndex", 0)) % order.length;
+        for (let step = 0; step < order.length; step++) {
+            const index = (start + step) % order.length;
+            accepted = moveBeltItem(block, item, order[index]);
+            if (accepted > 0) {
+                write(block, "splitIndex", (index + 1) % order.length);
+                break;
+            }
+        }
+    } else {
+        accepted = moveBeltItem(block, item, facing(block));
+    }
+
+    if (accepted >= item.amount) {
+        writeJson(block, "item", null);
+    } else if (accepted > 0) {
         item.amount -= accepted;
         writeJson(block, "item", item);
     }
+    syncDisplay(block);
 }
 
 function hasRecipe(input, recipe) {
@@ -531,23 +727,45 @@ function tickAssembler(block) {
     }
     writeJson(block, "output", output);
     const input = readJson(block, "input", {});
-    for (const recipe of ASSEMBLER_RECIPES) {
-        if (!hasRecipe(input, recipe)) continue;
-        if (!drainEnergy(block, recipe.energy)) return;
-        consumeRecipe(input, recipe);
-        for (const [typeId, amount] of Object.entries(recipe.output)) {
-            output[typeId] = Number(output[typeId] || 0) + amount;
-        }
-        writeJson(block, "input", input);
-        writeJson(block, "output", output);
+    const selected = read(block, "recipe", "");
+    const recipes = selected
+        ? ASSEMBLER_RECIPES.filter((recipe) => recipe.name === selected)
+        : ASSEMBLER_RECIPES;
+    const recipe = recipes.find((candidate) => hasRecipe(input, candidate));
+    if (!recipe) {
+        markStatus(block, Object.keys(input).length ? "blocked" : "idle");
         return;
     }
+    if (!drainEnergy(block, recipe.energy)) {
+        markStatus(block, "blocked");
+        return;
+    }
+    consumeRecipe(input, recipe);
+    for (const [typeId, amount] of Object.entries(recipe.output)) {
+        output[typeId] = Number(output[typeId] || 0) + amount;
+    }
+    writeJson(block, "input", input);
+    writeJson(block, "output", output);
+    markStatus(block, "working");
 }
 
 function quarryArea(data) {
     const a = data.area;
     if (!a || !a.min || !a.max) return false;
     return true;
+}
+
+function dimensionBottom(block) {
+    try {
+        return Math.floor(block.dimension.heightRange.min);
+    } catch {
+        return -64;
+    }
+}
+
+function quarryAllows(data, drop) {
+    const filters = data.filters || {};
+    return Object.keys(filters).length === 0 || filters[drop] === true;
 }
 
 function mineable(block) {
@@ -567,26 +785,43 @@ function dropFor(typeId) {
 function tickQuarry(block) {
     const data = readJson(block, "data", { buffer: {} });
     data.buffer = data.buffer || {};
+    if (data.area) {
+        const bottom = dimensionBottom(block);
+        if (data.area.min.y > bottom) {
+            data.area.min.y = bottom;
+            data.total = (data.area.max.x - data.area.min.x + 1)
+                * (data.area.max.z - data.area.min.z + 1)
+                * (data.area.max.y - data.area.min.y + 1);
+        }
+    }
     for (const [typeId, amount] of Object.entries(data.buffer)) {
         const accepted = outputAdjacent(block, typeId, amount);
         if (accepted >= amount) delete data.buffer[typeId];
         else data.buffer[typeId] = amount - accepted;
     }
     if (!data.active || !quarryArea(data)) {
+        markStatus(block, data.active ? "blocked" : "idle");
         writeJson(block, "data", data);
         return;
     }
+
     let mined = 0;
-    while (mined < 3) {
+    let attempts = 0;
+    let blocked = false;
+    while (mined < 8 && attempts < 64) {
+        attempts++;
         const cursor = data.cursor;
         if (!cursor) {
             data.active = false;
+            data.complete = true;
             break;
         }
         const a = data.area;
         const x = cursor.x, y = cursor.y, z = cursor.z;
         if (y < a.min.y) {
             data.active = false;
+            data.complete = true;
+            data.cursor = undefined;
             break;
         }
         const target = block.dimension.getBlock({ x, y, z });
@@ -604,16 +839,22 @@ function tickQuarry(block) {
         } else {
             data.cursor = { x: nextX, y, z: nextZ };
         }
+        data.scanned = Number(data.scanned || 0) + 1;
         if (!target || !mineable(target)) continue;
-        if (!drainEnergy(block, 8)) {
+        if (!drainEnergy(block, 2)) {
             data.active = false;
+            blocked = true;
             break;
         }
         const drop = dropFor(target.typeId);
         target.setType("minecraft:air");
-        data.buffer[drop] = Number(data.buffer[drop] || 0) + 1;
+        data.mined = Number(data.mined || 0) + 1;
+        if (quarryAllows(data, drop)) {
+            data.buffer[drop] = Number(data.buffer[drop] || 0) + 1;
+        }
         mined++;
     }
+    markStatus(block, blocked ? "blocked" : data.active ? "working" : "idle");
     writeJson(block, "data", data);
 }
 
@@ -622,7 +863,13 @@ function tickMachine(block) {
     try {
         switch (block.typeId) {
             case GENERATOR: tickGenerator(block); break;
-            case CONVEYOR: tickConveyor(block); break;
+            case CONVEYOR:
+            case FILTER:
+            case SPLITTER:
+            case MERGER:
+            case EXTRACTOR:
+                tickConveyor(block);
+                break;
             case ASSEMBLER: tickAssembler(block); break;
             case QUARRY: tickQuarry(block); break;
         }
@@ -639,19 +886,39 @@ system.beforeEvents.startup.subscribe((init) => {
 });
 
 function setQuarryArea(player, quarry, a, b) {
-    const min = { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), z: Math.min(a.z, b.z) };
-    const max = { x: Math.max(a.x, b.x), y: Math.max(a.y, b.y), z: Math.max(a.z, b.z) };
-    if (max.x - min.x > 31 || max.y - min.y > 31 || max.z - min.z > 31) {
-        action(player, "The quarry area is too large (max 32x32x32).");
+    const minX = Math.min(a.x, b.x);
+    const maxX = Math.max(a.x, b.x);
+    const minZ = Math.min(a.z, b.z);
+    const maxZ = Math.max(a.z, b.z);
+    const minY = dimensionBottom(quarry);
+    let maxY;
+    try {
+        maxY = Math.min(quarry.dimension.heightRange.max, Math.max(a.y, b.y));
+    } catch {
+        maxY = Math.max(a.y, b.y);
+    }
+    if (maxX - minX > 31 || maxZ - minZ > 31) {
+        action(player, "The quarry footprint is too large (max 32x32).");
         return;
     }
+    if (maxY < minY) {
+        action(player, "The quarry corners are below this dimension's floor.");
+        return;
+    }
+    const min = { x: minX, y: minY, z: minZ };
+    const max = { x: maxX, y: maxY, z: maxZ };
     const data = readJson(quarry, "data", { buffer: {} });
     data.area = { min, max };
     data.cursor = { x: min.x, y: max.y, z: min.z };
     data.active = false;
+    data.complete = false;
+    data.scanned = 0;
+    data.mined = 0;
+    data.total = (maxX - minX + 1) * (maxZ - minZ + 1) * (maxY - minY + 1);
+    data.filters = data.filters || {};
     data.buffer = data.buffer || {};
     writeJson(quarry, "data", data);
-    action(player, "Quarry area set. Connect storage and power.");
+    action(player, `Quarry area set (${maxX - minX + 1}x${maxZ - minZ + 1}, to bedrock). Connect storage and power.`);
 }
 
 function surveyorUse(player, block) {
@@ -755,16 +1022,81 @@ function rotateConveyor(block) {
     return next;
 }
 
+function openRecipePicker(player, block) {
+    const form = new ActionFormData()
+        .title("Assembler Recipe")
+        .body("Choose a fixed recipe, or let the assembler use the first available recipe.");
+    form.button("Auto — first available");
+    for (const recipe of ASSEMBLER_RECIPES) form.button(recipe.name);
+    form.button("Cancel");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            write(block, "recipe", "");
+            action(player, "Assembler set to automatic recipe.");
+            return;
+        }
+        const recipe = ASSEMBLER_RECIPES[response.selection - 1];
+        if (!recipe) return;
+        write(block, "recipe", recipe.name);
+        action(player, `Assembler recipe: ${recipe.name}.`);
+    }).catch(() => {});
+}
+
+function openLogistics(player, block) {
+    const item = readJson(block, "item", null);
+    const filters = Object.keys(beltFilters(block));
+    const form = new ActionFormData()
+        .title(formatName(block.typeId))
+        .body(`Facing: ${facing(block)}\nBuffer: ${item ? `${formatName(item.id)} x${item.amount}` : "empty"}\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (pass all)"}\n\nRight-click with an item to toggle it as a filter. Use the wrench to rotate.`);
+    form.button("Clear filters");
+    form.button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled || response.selection !== 0) return;
+        writeJson(block, "filters", {});
+        action(player, "Filters cleared.");
+    }).catch(() => {});
+}
+
+function toggleBeltFilter(player, block, typeId) {
+    const filters = beltFilters(block);
+    if (filters[typeId]) {
+        delete filters[typeId];
+        action(player, `Removed filter: ${formatName(typeId)}.`);
+    } else {
+        filters[typeId] = true;
+        action(player, `Added filter: ${formatName(typeId)}.`);
+    }
+    writeJson(block, "filters", filters);
+}
+
+function toggleQuarryFilter(player, block, typeId) {
+    const data = readJson(block, "data", {});
+    data.filters = data.filters || {};
+    if (data.filters[typeId]) {
+        delete data.filters[typeId];
+        action(player, `Removed quarry filter: ${formatName(typeId)}.`);
+    } else {
+        data.filters[typeId] = true;
+        action(player, `Added quarry filter: ${formatName(typeId)}.`);
+    }
+    writeJson(block, "data", data);
+}
+
 function openMachine(player, block) {
     if (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION) {
         void openStorage(player, block);
+        return;
+    }
+    if (BELT_TYPES.has(block.typeId)) {
+        openLogistics(player, block);
         return;
     }
     if (block.typeId === GENERATOR) {
         const fuel = Number(read(block, "fuel", 0));
         const energy = Number(read(block, "energy", 0));
         const form = new ActionFormData().title("Coal Generator")
-            .body(`Fuel: ${Math.floor(fuel)}\nEnergy: ${Math.floor(energy)}/2000\nNetwork: ${networkEnergy(block)}`);
+            .body(`Status: ${read(block, "status", "idle")}\nFuel: ${Math.floor(fuel)}\nEnergy: ${Math.floor(energy)}/2000\nNetwork: ${networkEnergy(block)}`);
         form.button("Close");
         void form.show(player).catch(() => {});
         return;
@@ -780,28 +1112,55 @@ function openMachine(player, block) {
     if (block.typeId === ASSEMBLER) {
         const input = readJson(block, "input", {});
         const output = readJson(block, "output", {});
-        const lines = [];
-        for (const recipe of ASSEMBLER_RECIPES) lines.push(`${recipe.name} (${recipe.energy} E)`);
+        const selected = read(block, "recipe", "");
         const form = new ActionFormData().title("Crafting Assembler")
-            .body(`Input: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}\n\n${lines.join("\n")}`);
-        form.button("Close");
-        void form.show(player).catch(() => {});
+            .body(`Status: ${read(block, "status", "idle")}\nRecipe: ${selected || "Auto — first available"}\nInput: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}`)
+            .button("Select recipe")
+            .button("Use automatic recipe")
+            .button("Close");
+        form.show(player).then((response) => {
+            if (!response || response.canceled) return;
+            if (response.selection === 0) {
+                later(() => openRecipePicker(player, block));
+            } else if (response.selection === 1) {
+                write(block, "recipe", "");
+                action(player, "Assembler set to automatic recipe.");
+            }
+        }).catch(() => {});
         return;
     }
     if (block.typeId === QUARRY) {
         const data = readJson(block, "data", {});
-        const area = data.area ? `${data.area.min.x},${data.area.min.y},${data.area.min.z} -> ${data.area.max.x},${data.area.max.y},${data.area.max.z}` : "not set";
+        const area = data.area
+            ? `${data.area.min.x},${data.area.min.y},${data.area.min.z} -> ${data.area.max.x},${data.area.max.y},${data.area.max.z}`
+            : "not set";
+        const total = Math.max(1, Number(data.total || 0));
+        const scanned = Number(data.scanned || 0);
+        const percent = Math.min(100, Math.floor(scanned / total * 100));
+        const filters = Object.keys(data.filters || {});
         const form = new ActionFormData().title("Quarry Controller")
-            .body(`Status: ${data.active ? "active" : "paused"}\nArea: ${area}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
+            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
             .button(data.active ? "Pause quarry" : "Start quarry")
+            .button("Clear output filters")
             .button("Close");
-        void form.show(player).then((response) => {
-            if (response.canceled || response.selection !== 0) return;
-            data.active = !data.active;
-            if (data.active && !quarryArea(data)) {
+        form.show(player).then((response) => {
+            if (!response || response.canceled) return;
+            if (response.selection === 1) {
+                data.filters = {};
+                writeJson(block, "data", data);
+                action(player, "Quarry output filters cleared.");
+                return;
+            }
+            if (response.selection !== 0) return;
+            if (!quarryArea(data)) {
                 action(player, "Use the Quarry Surveyor on two corners first.");
                 return;
             }
+            if (data.complete) {
+                action(player, "This quarry area is complete. Survey a new area.");
+                return;
+            }
+            data.active = !data.active;
             writeJson(block, "data", data);
             action(player, data.active ? "Quarry started." : "Quarry paused.");
         }).catch(() => {});
@@ -815,7 +1174,7 @@ function interact(event) {
     const item = event.itemStack;
     if (!player || !block) return;
 
-    if (item?.typeId === WRENCH && block.typeId === CONVEYOR) {
+    if (item?.typeId === WRENCH && BELT_TYPES.has(block.typeId)) {
         const direction = rotateConveyor(block);
         damageHeld(player, item);
         action(player, `Conveyor direction: ${direction}`);
@@ -831,6 +1190,23 @@ function interact(event) {
     }
     if (item?.typeId === CHAINSAW) {
         if (chainsaw(player, block)) damageHeld(player, item);
+        return;
+    }
+
+    if (block.typeId === QUARRY) {
+        if (item) {
+            toggleQuarryFilter(player, block, item.typeId);
+        } else {
+            later(() => openMachine(player, block));
+        }
+        return;
+    }
+    if (BELT_TYPES.has(block.typeId)) {
+        if (item) {
+            toggleBeltFilter(player, block, item.typeId);
+        } else {
+            later(() => openMachine(player, block));
+        }
         return;
     }
 
@@ -876,7 +1252,7 @@ function interact(event) {
         }
         return;
     }
-    if (block.typeId === BATTERY || block.typeId === QUARRY) {
+    if (block.typeId === BATTERY) {
         later(() => openMachine(player, block));
     }
 }
@@ -887,12 +1263,26 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
 
 world.afterEvents.playerPlaceBlock.subscribe((event) => {
     try {
-        if (event.block.typeId !== CONVEYOR) return;
+        if (!BELT_TYPES.has(event.block.typeId)) return;
         const yaw = event.player.getRotation().y;
         const index = Math.round(((yaw % 360) + 360) % 360 / 90) % 4;
         setFacing(event.block, ["south", "west", "north", "east"][index]);
     } catch {
         // Ignore placement orientation failures.
+    }
+});
+
+world.beforeEvents.playerBreakBlock?.subscribe((event) => {
+    try {
+        if (!BELT_TYPES.has(event.block.typeId)) return;
+        const id = read(event.block, "displayId", undefined);
+        if (typeof id === "string") {
+            system.run(() => {
+                try { world.getEntity(id)?.remove(); } catch { /* already gone */ }
+            });
+        }
+    } catch {
+        // Ignore.
     }
 });
 

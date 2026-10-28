@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.0.0 | [Cogworks-1.0.0.mcaddon](cogworks/Cogworks-1.0.0.mcaddon) |
+| **Cogworks** | Add-on | 1.1.0 | [Cogworks-1.1.0.mcaddon](cogworks/Cogworks-1.1.0.mcaddon) |
 
 ## Install
 
@@ -161,29 +161,35 @@ notes, controls, mob details and build instructions. The
 ## Cogworks
 
 A powered automation add-on: coal generators and batteries energise a cable
-network, conveyors route virtual stacks, an automated assembler crafts, and a
-surveyor-defined quarry excavates a volume into expandable storage.
+network, visible stacks ride conveyors through filters/splitters/mergers, an
+automated assembler crafts, and a surveyor-defined quarry excavates all the way
+to bedrock into expandable storage.
 
-- 8 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
-  Crafting Assembler, Storage Core, Storage Extension and Quarry Controller.
+- 12 custom blocks: Coal Generator, Copper Cable, Battery Bank, Conveyor Belt,
+  Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Crafting
+  Assembler, Storage Core, Storage Extension and Quarry Controller.
 - 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
   Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
 - Generator burns coal, charcoal or coal blocks; batteries store 5,000 E;
   machines draw from the connected cable network.
-- Crafting Assembler processes planks, sticks, iron, gold, copper, gears,
-  circuits and motors when its input and the network have enough energy.
+- Item stacks are visible on belts. Filters, three-way splitters and mergers
+  route them between machines; the Storage Extractor pulls items back out of
+  storage.
 - Storage Core holds 8 item stacks; each connected Storage Extension adds 8
-  more. Deposit with a held item or open the storage form empty-handed.
-- Quarry Surveyor sets two corners; use it on the Quarry Controller to install
-  an area up to 32×32×32. The quarry sends drops to adjacent storage or belts.
+  more. The storage form includes search.
+- Assembler recipes can be selected manually or left on automatic. Machines
+  raise their status light and pulse when working, blocked or idle.
+- Quarry Surveyor sets a 32×32 footprint; the quarry digs down to the dimension
+  floor (bedrock in the Overworld), reports progress and filters outputs.
 - Powered Drill cuts a 3×3 face of stone/ore; Powered Chainsaw fells a vertical
-  run of logs; Cogworks Wrench rotates conveyors.
+  run of logs; Cogworks Wrench rotates belts and logistics blocks.
 - Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
   `@minecraft/server-ui` **2.0.0**.
 
-See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, quarry
-controls and build instructions. The [model sheet](cogworks/previews/models.png)
-shows all eight Blockbench block models.
+See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
+search, conveyor routing, quarry controls and build instructions. The
+[model sheet](cogworks/previews/models.png) shows all twelve Blockbench block
+models.
 
 ## R2-D2 Droid
 
@@ -259,3 +265,4 @@ details and the Blockbench source.
 - [Bloomlands 2.2.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.2)
 - [Bloomlands 2.2.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.3)
 - [Cogworks 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.0.0)
+- [Cogworks 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.1.0)

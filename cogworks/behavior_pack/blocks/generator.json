@@ -5,6 +5,13 @@
       "identifier": "cw:generator",
       "menu_category": {
         "category": "construction"
+      },
+      "states": {
+        "cw:status": [
+          "idle",
+          "working",
+          "blocked"
+        ]
       }
     },
     "components": {
@@ -50,6 +57,20 @@
         ],
         "looping": true
       }
-    }
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('cw:status') == 'working'",
+        "components": {
+          "minecraft:light_emission": 15
+        }
+      },
+      {
+        "condition": "q.block_state('cw:status') == 'blocked'",
+        "components": {
+          "minecraft:light_emission": 8
+        }
+      }
+    ]
   }
 }

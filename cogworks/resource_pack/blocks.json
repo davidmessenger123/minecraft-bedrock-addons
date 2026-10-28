@@ -11,6 +11,18 @@
   "cw:conveyor": {
     "sound": "metal"
   },
+  "cw:filter": {
+    "sound": "metal"
+  },
+  "cw:splitter": {
+    "sound": "metal"
+  },
+  "cw:merger": {
+    "sound": "metal"
+  },
+  "cw:extractor": {
+    "sound": "metal"
+  },
   "cw:assembler": {
     "sound": "metal"
   },
