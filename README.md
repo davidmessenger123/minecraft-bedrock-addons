@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.7.0 | [Cogworks-1.7.0.mcaddon](cogworks/Cogworks-1.7.0.mcaddon) |
+| **Cogworks** | Add-on | 1.7.1 | [Cogworks-1.7.1.mcaddon](cogworks/Cogworks-1.7.1.mcaddon) |
 
 ## Install
 
@@ -170,10 +170,12 @@ to bedrock into expandable storage.
   Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
   Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting
   Assembler, Storage Core, Storage Extension and Quarry Controller.
-- 7 custom items: Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry
-  Surveyor, Cogwork Gear, Control Circuit and Electric Motor.
-- All seven items have 3D Blockbench attachable models that render in the
-  player's hand in first and third person.
+- 9 custom items: Powered Drill, Powered Chainsaw, Battery Drill, Battery
+  Chainsaw, Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and
+  Electric Motor.
+- All nine items have 3D Blockbench attachable models that render in the
+  player's hand; battery tools reuse the drill/chainsaw geometry. Hold and
+  swing animations are included for first and third person.
 - Coal generation is joined by wind, solar and water generation; a Power
   Transformer buffers 10,000 E; the Energy Meter reports network totals.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
@@ -181,9 +183,11 @@ to bedrock into expandable storage.
   adjacent connections, with no separate corner item.
 - Storage Core holds 8 item stacks; each connected Storage Extension adds 8
   more. The storage form includes search, and storage networks use
-  copper/iron/gold/amethyst channels. The Storage Terminal queues machine
-  recipes with running/queued states, progress, cancel and rotate controls; the
-  Storage Port bridges chests, barrels and hoppers.
+  copper/iron/gold/amethyst channels. Networks can be claimed and shared with
+  named players; Storage Terminals can link to remote cores. The Storage
+  Terminal queues machine recipes with running/queued states, progress, cancel
+  and rotate controls, protected by a multiplayer job lease. The Storage Port
+  bridges chests, barrels and hoppers.
 - The Storage Extractor supports per-item filters, allow/deny modes and three
   priority levels.
 - Data-driven recipes power the Electric Furnace, Crusher, Sawmill, Alloy
@@ -194,16 +198,19 @@ to bedrock into expandable storage.
   Fortune/Silk Touch and ores-only mode, displays area markers and loads its
   area while active.
 - Powered Drill supports 1×1, 3×3 and 3×3×3 modes; Powered Chainsaw fells a
-  connected tree; Cogworks Wrench rotates belts and logistics blocks.
-- **1.7 start:** wrench blueprints copy/paste machine settings; storage networks
-  are separated by copper/iron/gold/amethyst channels.
+  connected tree; Cogworks Wrench rotates belts and logistics blocks. Battery
+  Drill and Battery Chainsaw hold 500 charge and recharge from a Battery Bank.
+- **1.7 complete:** wrench blueprints copy/paste filters, recipes, modes,
+  processor modules and quarry settings; storage networks are separated by
+  copper/iron/gold/amethyst channels, support remote terminals and player
+  access lists, and use multiplayer-safe recipe-job leases.
 - Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
   `@minecraft/server-ui` **2.0.0**.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
 [block model sheet](cogworks/previews/models.png) shows all twenty-three blocks,
-the [item model sheet](cogworks/previews/tools.png) shows all seven held items,
+the [item model sheet](cogworks/previews/tools.png) shows all nine held items,
 and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
 corner variants.
 
@@ -288,3 +295,4 @@ details and the Blockbench source.
 - [Cogworks 1.5.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.5.0)
 - [Cogworks 1.6.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.6.0)
 - [Cogworks 1.7.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.7.0)
+- [Cogworks 1.7.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.7.1)

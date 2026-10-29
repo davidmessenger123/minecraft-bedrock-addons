@@ -1,0 +1,26 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "cw:battery_drill_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "ingredients": [
+      {
+        "item": "cw:drill"
+      },
+      {
+        "item": "cw:battery"
+      },
+      {
+        "item": "cw:circuit"
+      }
+    ],
+    "result": {
+      "item": "cw:battery_drill",
+      "count": 1
+    }
+  }
+}

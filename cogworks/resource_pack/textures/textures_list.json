@@ -5,6 +5,8 @@
   "textures/items/cw_motor",
   "textures/items/cw_drill",
   "textures/items/cw_chainsaw",
+  "textures/items/cw_battery_drill",
+  "textures/items/cw_battery_chainsaw",
   "textures/items/cw_wrench",
   "textures/items/cw_surveyor"
 ]

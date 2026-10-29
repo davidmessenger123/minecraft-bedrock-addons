@@ -17,6 +17,12 @@
     "cw_chainsaw": {
       "textures": "textures/items/cw_chainsaw"
     },
+    "cw_battery_drill": {
+      "textures": "textures/items/cw_battery_drill"
+    },
+    "cw_battery_chainsaw": {
+      "textures": "textures/items/cw_battery_chainsaw"
+    },
     "cw_wrench": {
       "textures": "textures/items/cw_wrench"
     },

@@ -59,6 +59,8 @@ CAPTIONS = {
 TOOL_CAPTIONS = {
     "drill": ("Powered Drill", "3D held tool / attachable"),
     "chainsaw": ("Powered Chainsaw", "3D held tool / attachable"),
+    "battery_drill": ("Battery Drill", "rechargeable 3D tool"),
+    "battery_chainsaw": ("Battery Chainsaw", "rechargeable 3D tool"),
     "wrench": ("Cogworks Wrench", "3D held tool / attachable"),
     "surveyor": ("Quarry Surveyor", "3D held tool / attachable"),
     "gear": ("Cogwork Gear", "3D component / attachable"),
@@ -248,6 +250,10 @@ def build_tool_sheet(path: Path) -> None:
     tiles = []
     for key, geo in content.tool_geometries().items():
         label, caption = TOOL_CAPTIONS.get(key, (key.replace("_", " ").title(), ""))
+        tiles.append((label, caption, model_image(geo, atlas, label, caption, size=250)))
+    for key, base in (("battery_drill", "drill"), ("battery_chainsaw", "chainsaw")):
+        label, caption = TOOL_CAPTIONS.get(key, (key.replace("_", " ").title(), ""))
+        geo = content.tool_geometries()[base]
         tiles.append((label, caption, model_image(geo, atlas, label, caption, size=250)))
 
     columns = 2

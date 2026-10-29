@@ -211,6 +211,9 @@ def main() -> int:
         ):
             if not (folder / f"cw_{tool}{suffix}").is_file():
                 fail(f"missing tool asset {folder / f'cw_{tool}{suffix}'}")
+    for variant in ("battery_drill", "battery_chainsaw"):
+        if not (RP / "attachables" / f"cw_{variant}.json").is_file():
+            fail(f"missing battery tool attachable cw_{variant}.json")
     if not (PREVIEWS / "models.png").is_file():
         fail("previews/models.png is missing")
     if not (PREVIEWS / "tools.png").is_file():

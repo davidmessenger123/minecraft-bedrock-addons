@@ -43,6 +43,10 @@ const STORAGE_PORT = "cw:storage_port";
 const QUARRY = "cw:quarry";
 const DRILL = "cw:drill";
 const CHAINSAW = "cw:chainsaw";
+const BATTERY_DRILL = "cw:battery_drill";
+const BATTERY_CHAINSAW = "cw:battery_chainsaw";
+const BATTERY_TOOLS = new Set([BATTERY_DRILL, BATTERY_CHAINSAW]);
+const BATTERY_TOOL_MAX = 500;
 const WRENCH = "cw:wrench";
 const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
@@ -463,6 +467,53 @@ function damageHeld(player, item, amount = 1) {
     }
 }
 
+function batteryCharge(item) {
+    try {
+        const value = item.getDynamicProperty("cw:charge");
+        if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.min(BATTERY_TOOL_MAX, value));
+    } catch {
+        // Older items start at a full charge.
+    }
+    return BATTERY_TOOL_MAX;
+}
+
+function setBatteryCharge(player, item, charge) {
+    try {
+        item.setDynamicProperty("cw:charge", Math.max(0, Math.min(BATTERY_TOOL_MAX, charge)));
+        player.getComponent("minecraft:equippable")?.setEquipment(EquipmentSlot.Mainhand, item);
+    } catch {
+        // The player may have changed slot.
+    }
+}
+
+function consumeBatteryTool(player, item) {
+    const charge = batteryCharge(item);
+    if (charge <= 0) {
+        action(player, "Battery empty. Right-click a Battery Bank to recharge.");
+        return false;
+    }
+    setBatteryCharge(player, item, charge - 1);
+    action(player, `Battery: ${Math.max(0, charge - 1)}/${BATTERY_TOOL_MAX}`);
+    return true;
+}
+
+function rechargeBatteryTool(player, block, item) {
+    const charge = batteryCharge(item);
+    if (charge >= BATTERY_TOOL_MAX) {
+        action(player, "Battery tool is already full.");
+        return;
+    }
+    const need = BATTERY_TOOL_MAX - charge;
+    const available = networkEnergy(block);
+    const energy = Math.min(need, available);
+    if (energy < 1 || !drainEnergy(block, energy)) {
+        action(player, "The network has no energy available.");
+        return;
+    }
+    setBatteryCharge(player, item, charge + energy);
+    action(player, `Recharged battery tool to ${charge + energy}/${BATTERY_TOOL_MAX}.`);
+}
+
 function takeHeld(player, typeId, count) {
     try {
         const inventory = player.getComponent("minecraft:inventory");
@@ -590,10 +641,217 @@ function storageInfo(start) {
     };
 }
 
+function storageOwner(core) {
+    return core ? String(read(core, "owner", "") || "") : "";
+}
+
+function storageMembers(core) {
+    return core ? readJson(core, "members", []) : [];
+}
+
+function canAccessStorage(core, player) {
+    if (!core || !player) return false;
+    const owner = storageOwner(core);
+    if (!owner) return true;
+    return owner === player.name
+        || storageMembers(core).includes(player.name)
+        || (typeof player.hasTag === "function" && player.hasTag("cw:admin"));
+}
+
+function isStorageAdmin(core, player) {
+    const owner = storageOwner(core);
+    return !owner || owner === player.name
+        || (typeof player.hasTag === "function" && player.hasTag("cw:admin"));
+}
+
+function claimStorage(player, core) {
+    const owner = storageOwner(core);
+    if (owner && owner !== player.name && !(typeof player.hasTag === "function" && player.hasTag("cw:admin"))) {
+        action(player, "This storage network already has an owner.");
+        return;
+    }
+    write(core, "owner", player.name);
+    const members = new Set(storageMembers(core));
+    members.add(player.name);
+    writeJson(core, "members", [...members]);
+    action(player, `Storage network claimed by ${player.name}.`);
+}
+
+function addStorageMember(player, core, name) {
+    if (!isStorageAdmin(core, player)) {
+        action(player, "Only the network owner can manage members.");
+        return;
+    }
+    const target = String(name || "").trim();
+    if (!target) return;
+    const members = new Set(storageMembers(core));
+    members.add(target);
+    writeJson(core, "members", [...members]);
+    action(player, `Added ${target} to the storage network.`);
+}
+
+function removeStorageMember(player, core, name) {
+    if (!isStorageAdmin(core, player)) {
+        action(player, "Only the network owner can manage members.");
+        return;
+    }
+    const target = String(name || "").trim();
+    const owner = storageOwner(core);
+    if (!target || target === owner) {
+        action(player, "The network owner cannot be removed.");
+        return;
+    }
+    writeJson(core, "members", storageMembers(core).filter((member) => member !== target));
+    action(player, `Removed ${target} from the storage network.`);
+}
+
+function releaseStorage(player, core) {
+    if (!isStorageAdmin(core, player)) {
+        action(player, "Only the network owner can release it.");
+        return;
+    }
+    write(core, "owner", "");
+    writeJson(core, "members", []);
+    action(player, "Storage network released to public access.");
+}
+
+function openAccessForm(player, core) {
+    const form = new ActionFormData()
+        .title("Storage Network Access")
+        .body(`Owner: ${storageOwner(core) || "unclaimed"}\nMembers: ${storageMembers(core).join(", ") || "none"}\n\nOnly the owner or members can open this network. Tags with cw:admin bypass the lock.`)
+        .button("Claim network")
+        .button("Add member")
+        .button("Remove member")
+        .button("Release network")
+        .button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            claimStorage(player, core);
+            return;
+        }
+        if (response.selection === 1 || response.selection === 2) {
+            const modal = new ModalFormData()
+                .title(response.selection === 1 ? "Add Storage Member" : "Remove Storage Member")
+                .textField("Player name", "exact player name");
+            modal.show(player).then((result) => {
+                if (!result || result.canceled) return;
+                const name = String(result.formValues?.[0] || "");
+                if (response.selection === 1) addStorageMember(player, core, name);
+                else removeStorageMember(player, core, name);
+            }).catch(() => {});
+            return;
+        }
+        if (response.selection === 3) releaseStorage(player, core);
+    }).catch(() => {});
+}
+
+function linkedStorage(terminal) {
+    const link = readJson(terminal, "linked", null);
+    if (!link || typeof link.x !== "number") return undefined;
+    try {
+        const dimension = link.dimension ? world.getDimension(link.dimension) : terminal.dimension;
+        const block = dimension.getBlock({ x: link.x, y: link.y, z: link.z });
+        if (block && (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION)) return block;
+    } catch {
+        // Chunk unloaded or link is invalid.
+    }
+    return undefined;
+}
+
+function terminalStorage(terminal) {
+    return adjacentStorage(terminal) || linkedStorage(terminal);
+}
+
+function copyStorageLink(player, block) {
+    const core = storageInfo(block).core || block;
+    if (!canAccessStorage(core, player)) {
+        action(player, "This storage network is private.");
+        return;
+    }
+    player.setDynamicProperty("cw:storage_link", JSON.stringify({
+        x: block.location.x,
+        y: block.location.y,
+        z: block.location.z,
+        dimension: block.dimension.id,
+        channel: channelOf(block),
+    }));
+    action(player, "Storage link copied. Use the wrench on a Storage Terminal to bind it.");
+}
+
+function remoteChunkName(terminal) {
+    const dimension = String(terminal.dimension.id || "minecraft:overworld").replace(/[^a-z0-9]/gi, "");
+    return `cw_remote_${dimension}_${terminal.location.x}_${terminal.location.y}_${terminal.location.z}`;
+}
+
+function releaseRemoteChunk(terminal) {
+    const name = remoteChunkName(terminal);
+    try {
+        const manager = world.tickingAreaManager;
+        if (manager?.hasTickingArea(name)) manager.removeTickingArea(name);
+    } catch {
+        // Fall through to the command.
+    }
+    try {
+        terminal.dimension.runCommand(`tickingarea remove ${name}`);
+    } catch {
+        // It may not exist.
+    }
+}
+
+function ensureRemoteChunk(terminal, link) {
+    if (!link || typeof link.x !== "number") return;
+    let dimension;
+    try { dimension = link.dimension ? world.getDimension(link.dimension) : terminal.dimension; } catch { return; }
+    const name = remoteChunkName(terminal);
+    const from = { x: link.x - 16, y: Math.max(-64, link.y - 16), z: link.z - 16 };
+    const to = { x: link.x + 16, y: Math.min(320, link.y + 16), z: link.z + 16 };
+    try {
+        const manager = world.tickingAreaManager;
+        if (manager?.hasTickingArea(name)) return;
+        if (manager && (!manager.hasCapacity || manager.hasCapacity({ dimension, from, to }))) {
+            const pending = manager.createTickingArea(name, { dimension, from, to });
+            if (pending?.catch) pending.catch(() => {});
+            return;
+        }
+    } catch {
+        // Fall through to the command.
+    }
+    try {
+        dimension.runCommand(`tickingarea add ${from.x} ${from.y} ${from.z} ${to.x} ${to.y} ${to.z} ${name}`);
+    } catch {
+        // Already exists or area capacity is full.
+    }
+}
+
+function applyStorageLink(player, terminal) {
+    const raw = player.getDynamicProperty("cw:storage_link");
+    if (typeof raw !== "string") return false;
+    try {
+        const link = JSON.parse(raw);
+        releaseRemoteChunk(terminal);
+        writeJson(terminal, "linked", link);
+        ensureRemoteChunk(terminal, link);
+        action(player, `Storage Terminal linked to ${link.x},${link.y},${link.z}.`);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function terminalKey(terminal) {
+    const dimension = String(terminal.dimension.id || "minecraft:overworld").replace(/[^a-z0-9]/gi, "");
+    return `cw_term_${dimension}_${terminal.location.x}_${terminal.location.y}_${terminal.location.z}`;
+}
+
 async function openStorage(player, block, query = "", terminal = false) {
     const info = storageInfo(block);
     if (!info.core) {
         player.sendMessage("Connect a Storage Extension to a Storage Core first.");
+        return;
+    }
+    if (!canAccessStorage(info.core, player)) {
+        action(player, "This storage network is private. Ask the owner for access.");
         return;
     }
     const needle = String(query || "").trim().toLowerCase();
@@ -605,10 +863,12 @@ async function openStorage(player, block, query = "", terminal = false) {
     const used = Object.values(info.items).reduce((sum, count) => sum + Math.ceil(Number(count || 0) / 64), 0);
     const form = new ActionFormData()
         .title(terminal ? "Storage Terminal" : "Storage Core")
-        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nChannel: ${channelOf(block)}\nEnergy: ${networkEnergy(block)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw or craft directly from the network." : "Use a Storage Extractor to pull items onto belts."}`);
+        .body(`Capacity: ${used}/${info.capacity} slots\nConnected blocks: ${info.capacity / 8}\nChannel: ${channelOf(info.core)}\nOwner: ${storageOwner(info.core) || "unclaimed"}\nEnergy: ${networkEnergy(info.core)}\n${needle ? `Search: ${query}\n` : ""}${terminal ? "Search, withdraw, craft or manage access." : "Use a Storage Extractor to pull items onto belts."}`);
     form.button("Search items");
     form.button("Deposit held item");
     if (terminal) form.button("Recipe Terminal");
+    form.button("Network access");
+    const entryStart = terminal ? 4 : 3;
     if (!entries.length) form.button(needle ? "No matching items" : "No stored items");
     for (const [typeId, count] of entries) {
         form.button(`${formatName(typeId)}  x${count}`);
@@ -642,9 +902,12 @@ async function openStorage(player, block, query = "", terminal = false) {
         action(player, `Deposited ${accepted} ${formatName(item.typeId)}.`);
         return;
     }
-    const entryStart = terminal ? 3 : 2;
     if (terminal && response.selection === 2) {
-        later(() => openRecipeTerminal(player, block));
+        later(() => openRecipeTerminal(player, info.core));
+        return;
+    }
+    if (response.selection === (terminal ? 3 : 2)) {
+        later(() => openAccessForm(player, info.core));
         return;
     }
     const [typeId, count] = entries[response.selection - entryStart] || [];
@@ -722,6 +985,11 @@ function tickStoragePort(port) {
 
 function openPort(player, block) {
     const storage = adjacentStorage(block, channelOf(block));
+    const core = storage ? storageInfo(storage).core : undefined;
+    if (core && !canAccessStorage(core, player)) {
+        action(player, "This storage network is private.");
+        return;
+    }
     const native = adjacentNativeContainer(block);
     const form = new ActionFormData()
         .title("Storage Port")
@@ -743,9 +1011,16 @@ function openPort(player, block) {
 }
 
 function openTerminal(player, terminal) {
-    const storage = adjacentStorage(terminal);
+    const link = readJson(terminal, "linked", null);
+    if (link) ensureRemoteChunk(terminal, link);
+    const storage = terminalStorage(terminal);
     if (!storage) {
-        action(player, "Place the Storage Terminal beside a Storage Core or Extension.");
+        action(player, "Place the Storage Terminal beside storage, or bind a remote Storage Core with the wrench.");
+        return;
+    }
+    const core = storageInfo(storage).core || storage;
+    if (!canAccessStorage(core, player)) {
+        action(player, "This storage network is private.");
         return;
     }
     void openStorage(player, storage, "", true);
@@ -760,6 +1035,10 @@ function storageHas(core, recipe) {
 }
 
 function openRecipeTerminal(player, core) {
+    if (!canAccessStorage(core, player)) {
+        action(player, "This storage network is private.");
+        return;
+    }
     const queue = readJson(core, "queue", []);
     const current = MACHINE_RECIPES.find((recipe) => recipe.id === queue[0]);
     const progress = Number(read(core, "queueProgress", 0));
@@ -837,27 +1116,48 @@ function storageCanAccept(core, output) {
 }
 
 function tickTerminal(terminal) {
-    const storage = adjacentStorage(terminal);
+    const link = readJson(terminal, "linked", null);
+    if (link) ensureRemoteChunk(terminal, link);
+    const storage = terminalStorage(terminal);
     if (!storage) return;
-    const queue = readJson(storage, "queue", []);
-    if (!queue.length) return;
+    const core = storageInfo(storage).core || storage;
+    const key = terminalKey(terminal);
+    const now = Number(system.currentTick || 0);
+    const owner = String(read(core, "queueOwner", "") || "");
+    const lease = Number(read(core, "queueLease", 0));
+    if (owner && owner !== key && now < lease) return;
+    if (!owner || owner !== key || lease < now) {
+        write(core, "queueOwner", key);
+        write(core, "queueLease", now + 200);
+    }
+    const queue = readJson(core, "queue", []);
+    if (!queue.length) {
+        write(core, "queueOwner", "");
+        write(core, "queueLease", 0);
+        return;
+    }
     const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === queue[0]);
     if (!recipe) {
         queue.shift();
-        writeJson(storage, "queue", queue);
+        writeJson(core, "queue", queue);
         return;
     }
-    if (!storageHas(storage, recipe) || !storageCanAccept(storage, recipe.output)) return;
-    const progress = Number(read(storage, "queueProgress", 0));
+    if (!storageHas(core, recipe) || !storageCanAccept(core, recipe.output)) return;
+    const progress = Number(read(core, "queueProgress", 0));
     if (progress < Number(recipe.time || 40)) {
-        write(storage, "queueProgress", progress + 1);
+        write(core, "queueProgress", progress + 1);
         return;
     }
-    for (const [typeId, count] of Object.entries(recipe.input)) takeStorage(storage, typeId, count);
-    for (const [typeId, count] of Object.entries(recipe.output)) insertStorage(storage, typeId, count);
+    for (const [typeId, count] of Object.entries(recipe.input)) takeStorage(core, typeId, count);
+    for (const [typeId, count] of Object.entries(recipe.output)) insertStorage(core, typeId, count);
     queue.shift();
-    writeJson(storage, "queue", queue);
-    write(storage, "queueProgress", 0);
+    writeJson(core, "queue", queue);
+    write(core, "queueProgress", 0);
+    write(core, "queueLease", now + 200);
+    if (!queue.length) {
+        write(core, "queueOwner", "");
+        write(core, "queueLease", 0);
+    }
 }
 
 function insertAssembler(assembler, typeId, amount) {
@@ -1644,7 +1944,7 @@ function chainsaw(player, block) {
 }
 
 function copyBlueprint(player, block) {
-    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode"];
+    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode", "mode", "speed", "efficiency", "parallel"];
     const dataKeys = ["filters", "fortune", "silk", "oreOnly"];
     const values = {};
     for (const key of keys) {
@@ -1660,6 +1960,7 @@ function copyBlueprint(player, block) {
     }
     player.setDynamicProperty("cw:blueprint", JSON.stringify({
         typeId: block.typeId,
+        channel: channelOf(block),
         values,
         data: nested,
     }));
@@ -1677,6 +1978,16 @@ function applyBlueprint(player, block) {
     }
     for (const [key, value] of Object.entries(blueprint.values || {})) {
         write(block, key, value);
+    }
+    if (blueprint.channel) {
+        try {
+            const current = block.permutation.getState("cw:channel");
+            if (typeof current === "string") {
+                block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:channel": blueprint.channel }));
+            }
+        } catch {
+            // The destination may not have channels.
+        }
     }
     if (blueprint.data && Object.keys(blueprint.data).length) {
         const data = readJson(block, "data", {});
@@ -1973,9 +2284,28 @@ function interact(event) {
     const item = event.itemStack;
     if (!player || !block) return;
 
-    if (item?.typeId === WRENCH && [STORAGE_CORE, STORAGE_EXTENSION, STORAGE_PORT].includes(block.typeId)) {
+    if (item?.typeId === WRENCH && [STORAGE_CORE, STORAGE_EXTENSION].includes(block.typeId)) {
+        if (player.isSneaking) {
+            copyStorageLink(player, block);
+        } else {
+            const channel = cycleStorageChannel(block);
+            action(player, `Storage channel: ${channel}.`);
+        }
+        return;
+    }
+    if (item?.typeId === WRENCH && block.typeId === STORAGE_PORT) {
         const channel = cycleStorageChannel(block);
         action(player, `Storage channel: ${channel}.`);
+        return;
+    }
+    if (item?.typeId === WRENCH && block.typeId === STORAGE_TERMINAL) {
+        if (player.isSneaking) {
+            releaseRemoteChunk(block);
+            writeJson(block, "linked", null);
+            action(player, "Storage Terminal remote link cleared.");
+        } else if (!applyStorageLink(player, block)) {
+            action(player, "Sneak-use the wrench on a Storage Core to copy a remote link.");
+        }
         return;
     }
     if (item?.typeId === WRENCH) {
@@ -1996,6 +2326,25 @@ function interact(event) {
     }
     if (item?.typeId === SURVEYOR) {
         surveyorUse(player, block);
+        return;
+    }
+    if (block.typeId === BATTERY && item && BATTERY_TOOLS.has(item.typeId)) {
+        rechargeBatteryTool(player, block, item);
+        return;
+    }
+    if (item?.typeId === BATTERY_DRILL || item?.typeId === BATTERY_CHAINSAW) {
+        const isDrill = item.typeId === BATTERY_DRILL;
+        if (isDrill && player.isSneaking) {
+            const next = (Number(player.getDynamicProperty("cw:drill_mode") ?? 1) + 1) % DRILL_MODES.length;
+            player.setDynamicProperty("cw:drill_mode", next);
+            action(player, `Drill mode: ${DRILL_MODES[next]}.`);
+            return;
+        }
+        const mode = Number(player.getDynamicProperty("cw:drill_mode") ?? 1);
+        const worked = isDrill
+            ? drill(player, block, event.blockFace, mode)
+            : chainsaw(player, block);
+        if (worked) consumeBatteryTool(player, item);
         return;
     }
     if (item?.typeId === DRILL) {
@@ -2071,6 +2420,11 @@ function interact(event) {
     }
 
     if (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION) {
+        const core = storageInfo(block).core;
+        if (!canAccessStorage(core, player)) {
+            action(player, "This storage network is private.");
+            return;
+        }
         if (item) {
             const accepted = insertStorage(block, item.typeId, item.amount);
             if (accepted > 0) {
@@ -2148,6 +2502,15 @@ world.beforeEvents.playerBreakBlock?.subscribe((event) => {
         if (event.block.typeId === QUARRY) {
             const data = readJson(event.block, "data", {});
             if (data.chunkArea) releaseQuarryChunks(event.block, data);
+        }
+        if (event.block.typeId === STORAGE_TERMINAL) {
+            releaseRemoteChunk(event.block);
+            const storage = terminalStorage(event.block);
+            const core = storage ? (storageInfo(storage).core || storage) : undefined;
+            if (core && read(core, "queueOwner", "") === terminalKey(event.block)) {
+                write(core, "queueOwner", "");
+                write(core, "queueLease", 0);
+            }
         }
     } catch {
         // Ignore.

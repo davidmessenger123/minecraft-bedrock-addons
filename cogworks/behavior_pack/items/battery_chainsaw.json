@@ -1,0 +1,40 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:item": {
+    "description": {
+      "identifier": "cw:battery_chainsaw",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "cw_battery_chainsaw"
+        }
+      },
+      "minecraft:display_name": {
+        "value": "item.cw:battery_chainsaw.name"
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:hand_equipped": true,
+      "minecraft:digger": {
+        "use_efficiency": true,
+        "destroy_speeds": [
+          {
+            "block": {
+              "tags": "query.any_tag('stone')"
+            },
+            "speed": 2
+          },
+          {
+            "block": {
+              "tags": "query.any_tag('wood')"
+            },
+            "speed": 14
+          }
+        ]
+      }
+    }
+  }
+}

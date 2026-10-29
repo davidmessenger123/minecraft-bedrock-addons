@@ -709,6 +709,15 @@ def drill_icon() -> Image.Image:
     return img
 
 
+def battery_drill_icon() -> Image.Image:
+    img = drill_icon()
+    d = ImageDraw.Draw(img)
+    d.rectangle((5, 18, 12, 28), fill=(30, 65, 58, 255), outline=(91, 65, 36, 255), width=1)
+    d.rectangle((7, 21, 10, 25), fill=(95, 241, 211, 255))
+    d.rectangle((8, 27, 9, 29), fill=(232, 174, 71, 255))
+    return img
+
+
 def chainsaw_icon() -> Image.Image:
     img = _icon_base(); d = ImageDraw.Draw(img)
     d.rectangle((4, 14, 19, 20), fill=(214, 164, 75, 255), outline=(58, 40, 23, 255), width=2)
@@ -717,6 +726,15 @@ def chainsaw_icon() -> Image.Image:
         d.point((x, 16), fill=(226, 238, 240, 255))
     d.rectangle((11, 10, 17, 14), fill=(170, 96, 49, 255))
     d.rectangle((2, 15, 5, 18), fill=(88, 96, 106, 255))
+    return img
+
+
+def battery_chainsaw_icon() -> Image.Image:
+    img = chainsaw_icon()
+    d = ImageDraw.Draw(img)
+    d.rectangle((10, 20, 17, 30), fill=(30, 65, 58, 255), outline=(91, 65, 36, 255), width=1)
+    d.rectangle((12, 23, 15, 27), fill=(95, 241, 211, 255))
+    d.rectangle((13, 29, 14, 31), fill=(232, 174, 71, 255))
     return img
 
 
@@ -749,6 +767,10 @@ def component_icon(kind: str) -> Image.Image:
         return drill_icon()
     if kind == "chainsaw":
         return chainsaw_icon()
+    if kind == "battery_drill":
+        return battery_drill_icon()
+    if kind == "battery_chainsaw":
+        return battery_chainsaw_icon()
     if kind == "wrench":
         return wrench_icon()
     return surveyor_icon()
@@ -761,6 +783,8 @@ def item_icons() -> dict[str, Image.Image]:
         "motor": motor_icon(),
         "drill": drill_icon(),
         "chainsaw": chainsaw_icon(),
+        "battery_drill": battery_drill_icon(),
+        "battery_chainsaw": battery_chainsaw_icon(),
         "wrench": wrench_icon(),
         "surveyor": surveyor_icon(),
     }
@@ -840,12 +864,15 @@ ITEMS = {
     "motor": ("Electric Motor", "items"),
     "drill": ("Powered Drill", "equipment"),
     "chainsaw": ("Powered Chainsaw", "equipment"),
+    "battery_drill": ("Battery Drill", "equipment"),
+    "battery_chainsaw": ("Battery Chainsaw", "equipment"),
     "wrench": ("Cogworks Wrench", "equipment"),
     "surveyor": ("Quarry Surveyor", "equipment"),
 }
 
 ITEM_SIZE = {"gear": (32, 32), "circuit": (32, 32), "motor": (32, 32),
-             "drill": (32, 32), "chainsaw": (32, 32), "wrench": (32, 32),
+             "drill": (32, 32), "chainsaw": (32, 32), "battery_drill": (32, 32),
+             "battery_chainsaw": (32, 32), "wrench": (32, 32),
              "surveyor": (32, 32)}
 
 

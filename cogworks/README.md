@@ -4,18 +4,20 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.7.0.mcaddon](Cogworks-1.7.0.mcaddon)
+**Download:** [Cogworks-1.7.1.mcaddon](Cogworks-1.7.1.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, Battery Bank, Energy Meter, Conveyor Belt, Item
   Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
   Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting
   Assembler, Storage Core, Storage Extension and Quarry Controller.
-- **Items:** Powered Drill, Powered Chainsaw, Cogworks Wrench, Quarry Surveyor,
-  Cogwork Gear, Control Circuit and Electric Motor.
-- **Held items:** all seven custom items — drill, chainsaw, wrench, surveyor,
-  gear, circuit and motor — have 3D attachable models that render in the
-  player's hand in first and third person. Their inventory icons remain.
+- **Items:** Powered Drill, Powered Chainsaw, Battery Drill, Battery Chainsaw,
+  Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and Electric
+  Motor.
+- **Held items:** all nine custom items have 3D attachable models that render
+  in the player's hand. The Battery Drill and Battery Chainsaw reuse the drill
+  and chainsaw geometry with their own rechargeable item behavior. First- and
+  third-person hold and swing animations are included.
 - **Power:** coal/charcoal/coal-block generation, wind, daylight solar and water
   wheels, a 10,000 E Power Transformer buffer, 5,000 E batteries, copper cable
   networks and machine energy costs.
@@ -32,11 +34,14 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   adds another 8. Use the wrench on storage blocks and ports to cycle a
   copper/iron/gold/amethyst channel; only matching channels connect. The
   storage form has search; a Storage Extractor pulls selected items back onto
-  belts with priority and allow/deny filter modes.
-- **Terminal and native bridge:** the Storage Terminal adds search, withdrawal
-  and a persistent recipe queue with running/queued states, progress, cancel
-  and rotate controls. The Storage Port bridges an adjacent chest, barrel or
-  hopper into the virtual storage network for vanilla-style input/output.
+  belts with priority and allow/deny filter modes. Networks can be claimed by
+  a player and shared with named members.
+- **Terminal and native bridge:** the Storage Terminal adds search, withdrawal,
+  remote links and a persistent recipe queue with running/queued states,
+  progress, cancel and rotate controls. Queue execution uses a multiplayer
+  lease so only one terminal processes a job at a time. The Storage Port bridges
+  an adjacent chest, barrel or hopper into the virtual storage network for
+  vanilla-style input/output.
 - **Processing:** Electric Furnace, Crusher, Sawmill and Alloy Smelter use
   data-driven recipes from `tools/recipes.json`, with per-recipe energy and
   processing time. Crusher doubles ore output; Sawmill cuts logs; Alloy Smelter
@@ -44,8 +49,9 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
 - **Power:** Wind Turbine, Solar Panel and Water Wheel add renewable
   generation; the Power Transformer buffers 10,000 E and the Energy Meter shows
   the connected network total.
-- **Blueprint preview (1.7 start):** sneak-use the Cogworks Wrench on a machine
-  to copy settings; use it normally on the same machine type to paste them.
+- **Blueprints:** sneak-use the Cogworks Wrench on a machine to copy its
+  settings; use it normally on the same machine type to paste filters, recipes,
+  modes, processor modules, quarry options and storage channel.
 - **Automation:** the assembler has selectable recipes and automatic mode. Working
   machines raise their status light to level 15 and pulse teal; blocked/idle
   machines pulse orange/blue.
@@ -56,27 +62,30 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   and chunk loading, and pushes drops to storage or belts.
 - **Tools:** the drill supports 1×1, 3×3 and 3×3×3 modes (sneak-use to cycle);
   the chainsaw fells the connected tree; the wrench rotates conveyors, filters,
-  splitters, mergers and extractors.
+  splitters, mergers and extractors. Battery Drill and Battery Chainsaw store
+  500 charge; right-click a connected Battery Bank to recharge them.
 
 ### Held item models
 
-All seven custom items use Bedrock attachables:
+All nine custom items use Bedrock attachables:
 
 - `resource_pack/models/entity/cw_drill.geo.json`
 - `resource_pack/attachables/cw_drill.json`
 - `resource_pack/animations/cw_drill.animation.json`
 
-The same pattern is used for `chainsaw`, `wrench`, `surveyor`, `gear`, `circuit`
-and `motor`. Their root bone is bound with
+The same pattern is used for `chainsaw`, `wrench`, `surveyor`, `gear`,
+`circuit` and `motor`. `cw_battery_drill.json` and `cw_battery_chainsaw.json`
+reuse the drill/chainsaw geometry and animations. Their root bone is bound with
 `q.item_slot_to_bone_name(context.item_slot)`, so the model follows the player's
-hand. The attachable animations select separate first- and third-person poses.
-Their Blockbench sources are in `blockbench/tools/`.
+hand. The attachable definitions include separate first/third-person hold
+poses and swing/use poses driven by `variable.attack_time` and
+`query.is_using_item`. Their Blockbench sources are in `blockbench/tools/`.
 
 Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.7.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.7.1.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -100,6 +109,9 @@ and **Storage Core**:
 - **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
 - **Drill / Chainsaw:** iron, gear and motor.
+- **Battery Drill / Battery Chainsaw:** the matching powered tool, a Battery
+  Bank and a Control Circuit. Right-click a connected Battery Bank with a
+  battery tool to recharge it.
 - **Quarry:** iron blocks, gears, a motor and a circuit.
 
 Place a generator next to a cable network, add a battery, then place machines
@@ -138,6 +150,21 @@ mode. Higher-priority extractors on the same storage are serviced first.
 Storage networks have four channels: **copper, iron, gold and amethyst**. Use
 the wrench on a Storage Core, Extension or Port to cycle its channel. Only
 storage blocks and ports on the same channel share a network.
+
+### Remote terminals, access and job leases
+
+- **Remote link:** sneak-use the wrench on a Storage Core or Extension to copy
+  its coordinates, then use the wrench normally on a Storage Terminal to bind
+  that terminal to the remote network. The terminal keeps the linked storage
+  area loaded while bound. Sneak-use the terminal with the wrench to clear the
+  link.
+- **Team access:** open a Storage Core or Terminal and choose **Network access**
+  to claim the network, add or remove named players, or release it. The owner
+  and listed members can open the network; players with the `cw:admin` tag
+  bypass the lock.
+- **Multiplayer queue:** recipe jobs carry a terminal lease on the storage
+  core. Only one terminal processes a queue at a time; a broken or unloaded
+  terminal's lease expires so another terminal can take over.
 
 A **Storage Terminal** placed beside storage opens the same search form plus a
 **Recipe Terminal** page. It shows the running job and progress, with cancel,
@@ -190,11 +217,13 @@ water. The **Power Transformer** pulls from nearby generation/batteries into a
 10,000 E high-capacity buffer. All connect to the same cable network. The
 **Energy Meter** shows total stored network energy.
 
-### Blueprints — start of 1.7
+### Blueprints
 
 Sneak-use the **Cogworks Wrench** on a machine to copy its settings. Use the
-wrench normally on another block of the same type to paste those settings. This
-previews the 1.7 factory-control work.
+wrench normally on another block of the same type to paste those settings.
+Blueprints cover recipes, filters, splitter outputs, modes, priorities,
+processor modules, quarry Fortune/Silk/ores-only options and the storage
+channel.
 
 ### Quarry
 
@@ -221,7 +250,7 @@ editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
 [block model sheet](previews/models.png) shows all twenty-three blocks, the
-[item model sheet](previews/tools.png) shows all seven held items, and
+[item model sheet](previews/tools.png) shows all nine held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial
 palette.
@@ -247,11 +276,13 @@ node --check cogworks/behavior_pack/scripts/main.js
 - Item transport and storage are script-driven virtual inventories. Visible
   belt stacks are display entities and cannot be picked up by players; the
   actual authoritative stack is still in the belt/machine data.
-- The seven held items are Bedrock attachables. The geometry is editable, but
-  first/third-person grip tuning is best checked in a live world.
+- The nine held items are Bedrock attachables. The geometry is editable, but
+  first/third-person grip and swing tuning is best checked in a live world.
+  The battery tools share the drill/chainsaw geometry.
 - Native hopper support is provided through the Storage Port and an adjacent
   chest, barrel or hopper, because custom block containers still require an
   experimental Bedrock feature.
 - The add-on is static-validated here. Live Bedrock testing is still needed for
   the custom block tick component, display entities, UI forms, energy/conveyor
-  behavior, the new quarry depth and attachable rendering.
+  behavior, quarry depth, attachable rendering and swing animations, remote
+  terminal links, storage access lists and battery-tool charge behavior.

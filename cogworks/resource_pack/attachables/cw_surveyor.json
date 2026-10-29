@@ -16,15 +16,23 @@
       },
       "animations": {
         "hold_first_person": "animation.cw.surveyor.hold_first_person",
-        "hold_third_person": "animation.cw.surveyor.hold_third_person"
+        "hold_third_person": "animation.cw.surveyor.hold_third_person",
+        "use_first_person": "animation.cw.surveyor.use_first_person",
+        "use_third_person": "animation.cw.surveyor.use_third_person"
       },
       "scripts": {
         "animate": [
           {
-            "hold_first_person": "context.is_first_person == 1.0"
+            "hold_first_person": "context.is_first_person == 1.0 && !(query.is_using_item || variable.attack_time > 0.0)"
           },
           {
-            "hold_third_person": "context.is_first_person == 0.0"
+            "hold_third_person": "context.is_first_person == 0.0 && !(query.is_using_item || variable.attack_time > 0.0)"
+          },
+          {
+            "use_first_person": "context.is_first_person == 1.0 && (query.is_using_item || variable.attack_time > 0.0)"
+          },
+          {
+            "use_third_person": "context.is_first_person == 0.0 && (query.is_using_item || variable.attack_time > 0.0)"
           }
         ]
       },

@@ -1,0 +1,44 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "cw:battery_chainsaw",
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/blocks/cw_blocks",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.cw.chainsaw"
+      },
+      "animations": {
+        "hold_first_person": "animation.cw.chainsaw.hold_first_person",
+        "hold_third_person": "animation.cw.chainsaw.hold_third_person",
+        "use_first_person": "animation.cw.chainsaw.use_first_person",
+        "use_third_person": "animation.cw.chainsaw.use_third_person"
+      },
+      "scripts": {
+        "animate": [
+          {
+            "hold_first_person": "context.is_first_person == 1.0 && !(query.is_using_item || variable.attack_time > 0.0)"
+          },
+          {
+            "hold_third_person": "context.is_first_person == 0.0 && !(query.is_using_item || variable.attack_time > 0.0)"
+          },
+          {
+            "use_first_person": "context.is_first_person == 1.0 && (query.is_using_item || variable.attack_time > 0.0)"
+          },
+          {
+            "use_third_person": "context.is_first_person == 0.0 && (query.is_using_item || variable.attack_time > 0.0)"
+          }
+        ]
+      },
+      "render_controllers": [
+        "controller.render.item_default"
+      ]
+    }
+  }
+}

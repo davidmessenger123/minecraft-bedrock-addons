@@ -74,8 +74,9 @@ def write_geometry():
         write_json(BLOCKBENCH / "blocks" / f"{key}.bbmodel", bb)
 
 
-def attachable_json(key: str, geometry: str) -> dict:
-    animation = f"animation.cw.{key}"
+def attachable_json(key: str, geometry: str, animation_key: str | None = None) -> dict:
+    animation = f"animation.cw.{animation_key or key}"
+    use_condition = "(query.is_using_item || variable.attack_time > 0.0)"
     return {
         "format_version": "1.10.0",
         "minecraft:attachable": {
@@ -93,11 +94,15 @@ def attachable_json(key: str, geometry: str) -> dict:
                 "animations": {
                     "hold_first_person": f"{animation}.hold_first_person",
                     "hold_third_person": f"{animation}.hold_third_person",
+                    "use_first_person": f"{animation}.use_first_person",
+                    "use_third_person": f"{animation}.use_third_person",
                 },
                 "scripts": {
                     "animate": [
-                        {"hold_first_person": "context.is_first_person == 1.0"},
-                        {"hold_third_person": "context.is_first_person == 0.0"},
+                        {"hold_first_person": f"context.is_first_person == 1.0 && !{use_condition}"},
+                        {"hold_third_person": f"context.is_first_person == 0.0 && !{use_condition}"},
+                        {"use_first_person": f"context.is_first_person == 1.0 && {use_condition}"},
+                        {"use_third_person": f"context.is_first_person == 0.0 && {use_condition}"},
                     ]
                 },
                 "render_controllers": ["controller.render.item_default"],
@@ -131,6 +136,48 @@ def tool_animation(key: str) -> dict:
                     }
                 },
             },
+            f"{animation}.use_first_person": {
+                "loop": False,
+                "animation_length": 0.55,
+                "bones": {
+                    "tool": {
+                        "position": {
+                            "0.0": [2, 25, -1],
+                            "0.12": [2, 22, 0],
+                            "0.30": [2, 28, 1],
+                            "0.55": [2, 25, -1],
+                        },
+                        "rotation": {
+                            "0.0": [58, -48, -44],
+                            "0.12": [32, -38, -22],
+                            "0.30": [68, -56, -54],
+                            "0.55": [58, -48, -44],
+                        },
+                        "scale": 0.8,
+                    }
+                },
+            },
+            f"{animation}.use_third_person": {
+                "loop": False,
+                "animation_length": 0.55,
+                "bones": {
+                    "tool": {
+                        "position": {
+                            "0.0": [1, 22, 0],
+                            "0.12": [1, 20, 1],
+                            "0.30": [1, 24, 1],
+                            "0.55": [1, 22, 0],
+                        },
+                        "rotation": {
+                            "0.0": [0, 0, 0],
+                            "0.12": [28, -12, -8],
+                            "0.30": [-8, 6, 4],
+                            "0.55": [0, 0, 0],
+                        },
+                        "scale": 0.9,
+                    }
+                },
+            },
         },
     }
 
@@ -139,11 +186,15 @@ def write_tool_attachables():
     texture = content.block_atlas()
     for key, geo in content.tool_geometries().items():
         write_json(RP / "models" / "entity" / f"cw_{key}.geo.json", geo)
-        write_json(RP / "attachables" / f"cw_{key}.json",
-                   attachable_json(key, geo["minecraft:geometry"][0]["description"]["identifier"]))
+        geometry = geo["minecraft:geometry"][0]["description"]["identifier"]
+        write_json(RP / "attachables" / f"cw_{key}.json", attachable_json(key, geometry))
         write_json(RP / "animations" / f"cw_{key}.animation.json", tool_animation(key))
         bb = content.to_bbmodel(geo, texture, f"Cogworks {key}")
         write_json(BLOCKBENCH / "tools" / f"{key}.bbmodel", bb)
+    for variant, base in (("battery_drill", "drill"), ("battery_chainsaw", "chainsaw")):
+        geo = content.tool_geometries()[base]
+        geometry = geo["minecraft:geometry"][0]["description"]["identifier"]
+        write_json(RP / "attachables" / f"cw_{variant}.json", attachable_json(variant, geometry, base))
 
 
 def block_json(spec: content.BlockSpec) -> dict:
@@ -249,6 +300,7 @@ def block_json(spec: content.BlockSpec) -> dict:
 
 
 def item_json(key, label, menu):
+    battery_tool = key in ("battery_drill", "battery_chainsaw")
     components = {
         "minecraft:icon": {"textures": {"default": f"cw_{key}"}},
         "minecraft:display_name": {"value": f"item.cw:{key}.name"},
@@ -257,13 +309,14 @@ def item_json(key, label, menu):
     if menu == "equipment":
         components["minecraft:max_stack_size"] = 1
         components["minecraft:hand_equipped"] = True
-        components["minecraft:durability"] = {"max_durability": 1200 if key in ("drill", "chainsaw") else 400}
-    if key in ("drill", "chainsaw"):
+        if not battery_tool:
+            components["minecraft:durability"] = {"max_durability": 1200 if key in ("drill", "chainsaw") else 400}
+    if key in ("drill", "chainsaw", "battery_drill", "battery_chainsaw"):
         components["minecraft:digger"] = {
             "use_efficiency": True,
             "destroy_speeds": [
-                {"block": {"tags": "query.any_tag('stone')"}, "speed": 12 if key == "drill" else 2},
-                {"block": {"tags": "query.any_tag('wood')"}, "speed": 2 if key == "drill" else 14},
+                {"block": {"tags": "query.any_tag('stone')"}, "speed": 12 if "drill" in key else 2},
+                {"block": {"tags": "query.any_tag('wood')"}, "speed": 2 if "drill" in key else 14},
             ],
         }
     return {
@@ -330,6 +383,8 @@ def build_recipes() -> None:
         "quarry": shaped("cw:quarry_recipe", ["IMI", "GQG", "IMI"], {"I": "minecraft:iron_block", "M": "cw:motor", "G": "cw:gear", "Q": "cw:circuit"}, "cw:quarry", 1),
         "drill": shaped("cw:drill_recipe", [" I ", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:drill", 1),
         "chainsaw": shaped("cw:chainsaw_recipe", [" II", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:chainsaw", 1),
+        "battery_drill": shapeless("cw:battery_drill_recipe", ["cw:drill", "cw:battery", "cw:circuit"], "cw:battery_drill", 1),
+        "battery_chainsaw": shapeless("cw:battery_chainsaw_recipe", ["cw:chainsaw", "cw:battery", "cw:circuit"], "cw:battery_chainsaw", 1),
         "wrench": shaped("cw:wrench_recipe", ["I I", " C ", " I "], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot"}, "cw:wrench", 1),
         "surveyor": shapeless("cw:surveyor_recipe", ["minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:redstone", "minecraft:stick"], "cw:surveyor", 1),
     }
