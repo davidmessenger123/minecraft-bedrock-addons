@@ -1247,20 +1247,94 @@ function storageHas(core, recipe) {
     return true;
 }
 
+function normalizeRecipeJob(job) {
+    if (typeof job === "string") {
+        const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === job);
+        const target = recipe ? Object.keys(recipe.output)[0] : "";
+        const amount = recipe && target ? Number(recipe.output[target] || 1) : 1;
+        return { id: job, target, remaining: amount, requested: amount };
+    }
+    if (!job || typeof job.id !== "string") return null;
+    const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === job.id);
+    const target = job.target || (recipe ? Object.keys(recipe.output)[0] : "");
+    const amount = Number(job.remaining ?? (recipe && target ? recipe.output[target] : 1)) || 1;
+    return {
+        id: job.id,
+        target,
+        remaining: Math.max(1, Math.floor(amount)),
+        requested: Math.max(1, Math.floor(Number(job.requested ?? amount) || amount)),
+    };
+}
+
+function recipeForOutput(typeId) {
+    return MACHINE_RECIPES.find((recipe) => Object.prototype.hasOwnProperty.call(recipe.output, typeId));
+}
+
+function planCraftJobs(core, recipe, quantity, seen = new Set()) {
+    const outputType = Object.keys(recipe.output)[0];
+    if (!outputType) return [];
+    const perCraft = Math.max(1, Number(recipe.output[outputType] || 1));
+    const crafts = Math.max(1, Math.ceil(quantity / perCraft));
+    const items = storageInfo(core).items;
+    const jobs = [];
+    for (const [typeId, count] of Object.entries(recipe.input)) {
+        const needed = Number(count) * crafts;
+        const have = Number(items[typeId] || 0);
+        if (have >= needed) continue;
+        if (seen.has(typeId)) continue;
+        const subRecipe = recipeForOutput(typeId);
+        if (!subRecipe || subRecipe.id === recipe.id) continue;
+        const childJobs = planCraftJobs(core, subRecipe, needed - have, new Set([...seen, outputType]));
+        jobs.push(...childJobs);
+    }
+    jobs.push({
+        id: recipe.id,
+        target: outputType,
+        remaining: Math.max(1, Math.floor(quantity)),
+        requested: Math.max(1, Math.floor(quantity)),
+    });
+    return jobs;
+}
+
+function enqueueCraftRequest(core, recipe, quantity, player) {
+    const amount = Math.max(1, Math.min(4096, Math.floor(Number(quantity) || 1)));
+    const jobs = planCraftJobs(core, recipe, amount);
+    const queue = readJson(core, "queue", []).map(normalizeRecipeJob).filter(Boolean);
+    if (queue.length + jobs.length > 128) {
+        action(player, "The recipe queue is full.");
+        return;
+    }
+    queue.push(...jobs);
+    writeJson(core, "queue", queue);
+    write(core, "queueProgress", 0);
+    action(player, `Requested ${amount} ${formatName(jobTarget(recipe))}; added ${jobs.length} job${jobs.length === 1 ? "" : "s"}.`);
+}
+
+function jobTarget(recipe) {
+    return Object.keys(recipe.output)[0] || "item";
+}
+
+function jobLabel(job) {
+    const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === job.id);
+    return recipe ? `${recipe.name} x${job.remaining}` : job.id;
+}
+
 function openRecipeTerminal(player, core) {
     if (!canAccessStorage(core, player)) {
         action(player, "This storage network is private.");
         return;
     }
-    const queue = readJson(core, "queue", []);
-    const current = MACHINE_RECIPES.find((recipe) => recipe.id === queue[0]);
+    const queue = readJson(core, "queue", []).map(normalizeRecipeJob).filter(Boolean);
+    const current = queue[0];
+    const currentRecipe = current ? MACHINE_RECIPES.find((recipe) => recipe.id === current.id) : undefined;
     const progress = Number(read(core, "queueProgress", 0));
-    const currentText = current
-        ? `Running: ${current.name} ${progress}/${Number(current.time || 40)}`
+    const currentText = currentRecipe
+        ? `Running: ${currentRecipe.name} — ${current.remaining} remaining (${progress}/${Number(currentRecipe.time || 40)})`
         : "No active job";
+    const queuedText = queue.slice(1, 7).map((job) => `• ${jobLabel(job)}`).join("\n");
     const form = new ActionFormData()
         .title("Storage Terminal — Recipe Queue")
-        .body(`${currentText}\nQueued jobs: ${queue.length}\nSelect a machine recipe to append it to the queue. The terminal consumes stored ingredients and returns results to storage.`);
+        .body(`${currentText}\nQueued jobs: ${queue.length}\n${queuedText ? `${queuedText}\n` : ""}\nSelect a recipe to request a quantity. Requests recursively add missing sub-crafts.`);
     let index = 0;
     let cancelIndex = -1;
     let rotateIndex = -1;
@@ -1282,7 +1356,7 @@ function openRecipeTerminal(player, core) {
     form.show(player).then((response) => {
         if (!response || response.canceled) return;
         if (response.selection === cancelIndex) {
-            const next = readJson(core, "queue", []);
+            const next = readJson(core, "queue", []).map(normalizeRecipeJob).filter(Boolean);
             next.shift();
             writeJson(core, "queue", next);
             write(core, "queueProgress", 0);
@@ -1290,7 +1364,7 @@ function openRecipeTerminal(player, core) {
             return;
         }
         if (response.selection === rotateIndex) {
-            const next = readJson(core, "queue", []);
+            const next = readJson(core, "queue", []).map(normalizeRecipeJob).filter(Boolean);
             next.push(next.shift());
             writeJson(core, "queue", next);
             write(core, "queueProgress", 0);
@@ -1309,14 +1383,13 @@ function openRecipeTerminal(player, core) {
         }
         const recipe = MACHINE_RECIPES[response.selection - recipeStart];
         if (!recipe) return;
-        const next = readJson(core, "queue", []);
-        if (next.length >= 64) {
-            action(player, "The recipe queue is full.");
-            return;
-        }
-        next.push(recipe.id);
-        writeJson(core, "queue", next);
-        action(player, `Queued ${recipe.name}.`);
+        const modal = new ModalFormData()
+            .title(`Request ${recipe.name}`)
+            .textField("Quantity", "output item count", { defaultValue: "1" });
+        modal.show(player).then((result) => {
+            if (!result || result.canceled) return;
+            enqueueCraftRequest(core, recipe, String(result.formValues?.[0] || "1"), player);
+        }).catch(() => {});
     }).catch(() => {});
 }
 
@@ -1343,13 +1416,15 @@ function tickTerminal(terminal) {
         write(core, "queueOwner", key);
         write(core, "queueLease", now + 200);
     }
-    const queue = readJson(core, "queue", []);
+    const queue = readJson(core, "queue", []).map(normalizeRecipeJob).filter(Boolean);
     if (!queue.length) {
+        writeJson(core, "queue", []);
         write(core, "queueOwner", "");
         write(core, "queueLease", 0);
         return;
     }
-    const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === queue[0]);
+    const job = queue[0];
+    const recipe = MACHINE_RECIPES.find((candidate) => candidate.id === job.id);
     if (!recipe) {
         queue.shift();
         writeJson(core, "queue", queue);
@@ -1363,7 +1438,11 @@ function tickTerminal(terminal) {
     }
     for (const [typeId, count] of Object.entries(recipe.input)) takeStorage(core, typeId, count);
     for (const [typeId, count] of Object.entries(recipe.output)) insertStorage(core, typeId, count);
-    queue.shift();
+    const target = recipe.output[job.target] !== undefined ? job.target : Object.keys(recipe.output)[0];
+    const produced = Math.max(1, Number(recipe.output[target] || 1));
+    job.remaining = Number(job.remaining || 1) - produced;
+    if (job.remaining <= 0) queue.shift();
+    else queue[0] = job;
     writeJson(core, "queue", queue);
     write(core, "queueProgress", 0);
     write(core, "queueLease", now + 200);
@@ -2289,8 +2368,8 @@ function chainsaw(player, block) {
     return mined > 0;
 }
 
-function copyBlueprint(player, block) {
-    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode", "mode", "speed", "efficiency", "parallel"];
+function blueprintSnapshot(block) {
+    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode", "mode", "speed", "efficiency", "parallel", "autoOutput", "io", "sideFilters"];
     const dataKeys = ["filters", "fortune", "silk", "oreOnly"];
     const values = {};
     for (const key of keys) {
@@ -2304,23 +2383,18 @@ function copyBlueprint(player, block) {
             if (data[key] !== undefined) nested[key] = data[key];
         }
     }
-    player.setDynamicProperty("cw:blueprint", JSON.stringify({
+    return {
         typeId: block.typeId,
         channel: channelOf(block),
         values,
         data: nested,
-    }));
-    action(player, `Blueprint copied from ${formatName(block.typeId)}.`);
+    };
 }
 
-function applyBlueprint(player, block) {
-    const raw = player.getDynamicProperty("cw:blueprint");
-    if (typeof raw !== "string") return false;
-    let blueprint;
-    try { blueprint = JSON.parse(raw); } catch { return false; }
+function applyBlueprintObject(player, block, blueprint) {
     if (!blueprint || blueprint.typeId !== block.typeId) {
         action(player, "The blueprint is for a different machine.");
-        return true;
+        return false;
     }
     for (const [key, value] of Object.entries(blueprint.values || {})) {
         write(block, key, value);
@@ -2343,6 +2417,91 @@ function applyBlueprint(player, block) {
     }
     action(player, `Blueprint applied to ${formatName(block.typeId)}.`);
     return true;
+}
+
+function copyBlueprint(player, block) {
+    player.setDynamicProperty("cw:blueprint", JSON.stringify(blueprintSnapshot(block)));
+    action(player, `Blueprint copied from ${formatName(block.typeId)}.`);
+}
+
+function applyBlueprint(player, block) {
+    const raw = player.getDynamicProperty("cw:blueprint");
+    if (typeof raw !== "string") return false;
+    let blueprint;
+    try { blueprint = JSON.parse(raw); } catch { return false; }
+    return applyBlueprintObject(player, block, blueprint);
+}
+
+function blueprintLibrary(player) {
+    const raw = player.getDynamicProperty("cw:blueprints");
+    if (typeof raw !== "string") return {};
+    try {
+        const library = JSON.parse(raw);
+        return library && typeof library === "object" ? library : {};
+    } catch {
+        return {};
+    }
+}
+
+function saveNamedBlueprint(player, block, name) {
+    const key = String(name || "").trim().slice(0, 32);
+    if (!key) {
+        action(player, "Enter a blueprint name.");
+        return;
+    }
+    const library = blueprintLibrary(player);
+    if (!library[key] && Object.keys(library).length >= 32) {
+        action(player, "The blueprint library is full (32).");
+        return;
+    }
+    library[key] = blueprintSnapshot(block);
+    player.setDynamicProperty("cw:blueprints", JSON.stringify(library));
+    action(player, `Saved blueprint "${key}".`);
+}
+
+function openBlueprintLibrary(player, block) {
+    const library = blueprintLibrary(player);
+    const names = Object.keys(library).sort();
+    const form = new ActionFormData()
+        .title(`Blueprint Library — ${formatName(block.typeId)}`)
+        .body(`${names.length ? names.map((name) => `• ${name} [${formatName(library[name].typeId)}]`).join("\n") : "No saved blueprints."}\n\nApply a matching blueprint, or save the settings from this block.`);
+    for (const name of names) {
+        form.button(`Apply: ${name} [${formatName(library[name].typeId)}]`);
+    }
+    form.button("Save current settings");
+    form.button("Delete saved blueprint");
+    form.button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection < names.length) {
+            const name = names[response.selection];
+            const blueprint = library[name];
+            if (applyBlueprintObject(player, block, blueprint)) {
+                player.setDynamicProperty("cw:blueprint", JSON.stringify(blueprint));
+            }
+            return;
+        }
+        const saveIndex = names.length;
+        const deleteIndex = names.length + 1;
+        if (response.selection === saveIndex || response.selection === deleteIndex) {
+            const modal = new ModalFormData()
+                .title(response.selection === saveIndex ? "Save Blueprint" : "Delete Blueprint")
+                .textField("Blueprint name", "name", { defaultValue: "" });
+            modal.show(player).then((result) => {
+                if (!result || result.canceled) return;
+                const name = String(result.formValues?.[0] || "").trim().slice(0, 32);
+                if (!name) return;
+                if (response.selection === saveIndex) {
+                    saveNamedBlueprint(player, block, name);
+                } else {
+                    const next = blueprintLibrary(player);
+                    delete next[name];
+                    player.setDynamicProperty("cw:blueprints", JSON.stringify(next));
+                    action(player, `Deleted blueprint "${name}".`);
+                }
+            }).catch(() => {});
+        }
+    }).catch(() => {});
 }
 
 function rotateConveyor(block) {
@@ -2815,11 +2974,11 @@ function interact(event) {
     }
     if (item?.typeId === WRENCH) {
         if (player.isSneaking) {
-            copyBlueprint(player, block);
+            openBlueprintLibrary(player, block);
             return;
         }
         if (!BELT_TYPES.has(block.typeId)) {
-            if (!applyBlueprint(player, block)) action(player, "Sneak-use the wrench on a machine to copy its settings.");
+            if (!applyBlueprint(player, block)) action(player, "Use the wrench while sneaking to open the blueprint library.");
             return;
         }
     }

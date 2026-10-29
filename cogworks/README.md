@@ -4,7 +4,7 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.8.1.mcaddon](Cogworks-1.8.1.mcaddon)
+**Download:** [Cogworks-1.9.0.mcaddon](Cogworks-1.9.0.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, Battery Bank, Tool Charger, Energy Meter, Conveyor
@@ -55,10 +55,14 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   a player and shared with named members.
 - **Terminal and native bridge:** the Storage Terminal adds search, withdrawal,
   remote links and a persistent recipe queue with running/queued states,
-  progress, cancel and rotate controls. Queue execution uses a multiplayer
+  progress, cancel and rotate controls. Requests specify an output quantity and
+  recursively queue missing sub-crafts; queue execution uses a multiplayer
   lease so only one terminal processes a job at a time. The Storage Port bridges
   an adjacent chest, barrel or hopper into the virtual storage network for
   vanilla-style input/output.
+- **Request crafting:** select a recipe in the terminal and enter an output
+  quantity. Missing ingredients are planned as child jobs where a Cogworks
+  recipe exists, then the parent job runs when its inputs are ready.
 - **Processing:** Electric Furnace, Crusher, Sawmill and Alloy Smelter use
   data-driven recipes from `tools/recipes.json`, with per-recipe energy and
   processing time. Crusher doubles ore output; Sawmill cuts logs; Alloy Smelter
@@ -66,9 +70,9 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
 - **Power:** Wind Turbine, Solar Panel and Water Wheel add renewable
   generation; the Power Transformer buffers 10,000 E and the Energy Meter shows
   the connected network total.
-- **Blueprints:** sneak-use the Cogworks Wrench on a machine to copy its
-  settings; use it normally on the same machine type to paste filters, recipes,
-  modes, processor modules, quarry options and storage channel.
+- **Blueprints:** sneak-use the Cogworks Wrench on a machine to open a named
+  blueprint library; save settings and apply up to 32 named blueprints. Normal
+  wrench use applies the last blueprint to a matching machine.
 - **Automation:** the assembler has selectable recipes and automatic mode. Working
   machines raise their status light to level 15 and pulse teal; blocked/idle
   machines pulse orange/blue.
@@ -103,7 +107,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.8.1.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.9.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -260,11 +264,15 @@ that network to refill Battery Drill and Battery Chainsaw charge.
 
 ### Blueprints
 
-Sneak-use the **Cogworks Wrench** on a machine to copy its settings. Use the
-wrench normally on another block of the same type to paste those settings.
+Sneak-use the **Cogworks Wrench** on a machine to open the **Blueprint
+Library**. Save the current settings under a name, then apply that named
+blueprint to any machine of the same type. The last applied blueprint also
+remains on the wrench clipboard for normal use on matching machines. Up to 32
+named blueprints are stored per player.
+
 Blueprints cover recipes, filters, splitter outputs, modes, priorities,
-processor modules, quarry Fortune/Silk/ores-only options and the storage
-channel.
+processor modules, side I/O, auto-output, side filters, quarry
+Fortune/Silk/ores-only options and the storage channel.
 
 ### Quarry
 
