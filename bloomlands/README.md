@@ -19,6 +19,18 @@ Bloomling mobs.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.4
+
+- Fixed Bloomgate activation when clicking a grass block. The item now uses a
+  registered `bl:bloomgate` custom component with `onUseOn`/`onUse`, instead of
+  relying only on the block-interaction after-event.
+- The portal builder now searches all 4×4 grass patches around the clicked
+  block. Clicking near the edge of a grass field no longer fails just because
+  the clicked block was treated as the centre.
+- Added fallback view-ray targeting and support for the `minecraft:grass` alias
+  and `bl:petal_grass` in addition to `minecraft:grass_block`.
+- Repeated use is guarded by the existing build/cooldown state.
+
 ## What changed in 2.2.3
 
 - Changed the Bloomgate recipe from grass blocks to dirt. The portal still has
@@ -55,7 +67,7 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.3.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.4.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -83,11 +95,12 @@ F = minecraft:poppy
 A = minecraft:amethyst_block
 ```
 
-Use the Bloomgate while looking at a **grass block** in the Overworld, Nether or
-End. The 4×4 footprint around that block must be entirely grass; stone, sand,
-dirt, podzol and mixed ground are rejected. The item clears small plants and
-builds the 4×4 flower bed automatically, with the flat animated rainbow portal in
-the central 2×2. The area above the bed must be clear of solid blocks.
+Use the Bloomgate while looking at or clicking a **grass block** in the
+Overworld, Nether or End. The builder searches for a valid 4×4 grass patch
+around the clicked block, clears small plants and creates the 4×4 flower bed
+with the flat animated rainbow portal in the central 2×2. Grass-block aliases
+and Bloomlands petal grass are accepted; stone, sand, dirt, podzol and mixed
+ground are rejected. The area above the bed must be clear of solid blocks.
 
 A starter kit is also available:
 
@@ -197,7 +210,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.3.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.4.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

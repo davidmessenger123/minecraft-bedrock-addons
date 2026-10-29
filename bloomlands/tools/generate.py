@@ -304,6 +304,7 @@ def portal_item_json() -> dict:
                 "minecraft:max_stack_size": 16,
                 "minecraft:glint": True,
                 "minecraft:hand_equipped": True,
+                "bl:bloomgate": {},
             },
         },
     }

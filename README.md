@@ -15,7 +15,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Rainbow Garden** | Add-on | 1.0.1 | [RainbowGarden-1.0.1.mcaddon](rainbow-garden/RainbowGarden-1.0.1.mcaddon) |
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
-| **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
+| **Bloomlands** | Add-on | 2.2.4 | [Bloomlands-2.2.4.mcaddon](bloomlands/Bloomlands-2.2.4.mcaddon) |
 | **Cogworks** | Add-on | 1.9.2 | [Cogworks-1.9.2.mcaddon](cogworks/Cogworks-1.9.2.mcaddon) |
 
 ## Install
@@ -309,6 +309,7 @@ details and the Blockbench source.
 - [Bloomlands 2.2.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.1)
 - [Bloomlands 2.2.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.2)
 - [Bloomlands 2.2.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.3)
+- [Bloomlands 2.2.4](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/bloomlands-v2.2.4)
 - [Cogworks 1.0.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.0.0)
 - [Cogworks 1.1.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.1.0)
 - [Cogworks 1.2.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.2.0)
