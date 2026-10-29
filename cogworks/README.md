@@ -4,13 +4,14 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.8.0.mcaddon](Cogworks-1.8.0.mcaddon)
+**Download:** [Cogworks-1.8.1.mcaddon](Cogworks-1.8.1.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, Battery Bank, Tool Charger, Energy Meter, Conveyor
-  Belt, Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage
-  Terminal, Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter,
-  Crafting Assembler, Storage Core, Storage Extension and Quarry Controller.
+  Belt, Conveyor Lift, Item Filter, Belt Splitter, Belt Merger, Storage
+  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher, Sawmill,
+  Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension and Quarry
+  Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Battery Drill, Battery Chainsaw,
   Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and Electric
   Motor.
@@ -28,6 +29,17 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   with an item to toggle that side's filter.
 - **Tool Charger:** a dedicated station that recharges Battery Drill and
   Battery Chainsaw from the connected power network.
+- **Ownership:** processors, assembler, Tool Charger and quarry can be claimed
+  and shared with named players; `cw:admin` bypasses locks.
+- **Vertical transport:** Conveyor Lift moves one stack per block up or down
+  through stacked lift columns. Wrench changes direction; right-click with an
+  item toggles its filter.
+- **Quarry jobs:** save surveyed areas, load queued jobs, auto-start the next
+  job, auto-restart the current area, and send completion notices to the owner,
+  members or nearby players.
+- **Performance:** short-lived energy and storage-network caches reduce repeated
+  BFS scans; caches invalidate on placement, breaking, channel changes and
+  blueprint channel edits.
 - **Visible transport:** item stacks ride on belts as display entities.
   Filter pass-lists, three-way splitters and three-input mergers let you build
   real routing lines. Belts automatically choose straight, left-corner or
@@ -91,7 +103,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.8.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.8.1.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -106,6 +118,7 @@ and **Storage Core**:
 - **Motor:** two gears + circuit + four copper ingots.
 - **Generator:** iron, copper and a furnace.
 - **Conveyor:** iron, gears and redstone.
+- **Conveyor Lift:** iron, gears, a conveyor and a motor.
 - **Filter / splitter / merger:** iron, gears, circuit and redstone.
 - **Electric Furnace / Crusher / Sawmill / Alloy Smelter:** iron, gears,
   motors, circuits and a furnace or blast furnace.
@@ -142,6 +155,11 @@ Filter** rejects items that are not on its list; **Belt Splitter** cycles items
 between front, left and right outputs. Click a splitter's output side with an
 item to give that output its own filter. **Belt Merger** accepts from its sides
 and outputs forward.
+
+A **Conveyor Lift** moves its buffered stack to the block above or below,
+depending on its direction. Stack lifts to form a vertical line; a lift at the
+top can feed a belt or storage. Use the wrench to toggle up/down and
+right-click with an item to toggle its filter.
 
 ### Storage
 
@@ -226,6 +244,11 @@ the side filter applies to both input and output. This lets belts feed a
 machine from the back while it exports from a side or bottom. The default is
 all sides `both`, which preserves the original machine behavior.
 
+Machine access is managed from the side-configuration form. Claim a processor,
+assembler or Tool Charger to make it private, then add named members. Quarry
+access is managed from its controller form. The `cw:admin` tag bypasses machine
+locks.
+
 ### Power
 
 The **Wind Turbine** generates energy based on its height, the **Solar Panel**
@@ -259,6 +282,11 @@ are collected. The controller can toggle **Fortune** and **Silk Touch**, and it
 loads its excavation area while active. Right-click the quarry with an item to
 toggle that item as an output filter; use **Clear output filters** in its form.
 
+The controller's scheduler can **Save current area**, **Load next saved job**,
+**Auto-start next job**, **Auto-restart current** and toggle **Completion
+notices**. Completion messages go to the quarry owner/members, or nearby
+players when the quarry is unclaimed. Claim access from **Machine access**.
+
 Output is buffered until an adjacent storage block or conveyor accepts it.
 
 ## Models and source
@@ -267,7 +295,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all twenty-four blocks, the
+[block model sheet](previews/models.png) shows all twenty-five blocks, the
 [item model sheet](previews/tools.png) shows all nine held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial
@@ -303,5 +331,6 @@ node --check cogworks/behavior_pack/scripts/main.js
 - The add-on is static-validated here. Live Bedrock testing is still needed for
   the custom block tick component, display entities, UI forms, energy/conveyor
   behavior, quarry depth, attachable rendering and swing animations, remote
-  terminal links, storage access lists, battery-tool charge behavior, machine
-  side I/O and Tool Charger energy transfer.
+  terminal links, storage/machine access lists, battery-tool charge behavior,
+  machine side I/O, Tool Charger energy transfer, Conveyor Lift transport,
+  quarry scheduling and network cache invalidation.

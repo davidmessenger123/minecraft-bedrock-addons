@@ -210,6 +210,8 @@ def block_json(spec: content.BlockSpec) -> dict:
         description.setdefault("states", {})["cw:curve"] = ["straight", "left", "right"]
     if spec.channel_state:
         description.setdefault("states", {})["cw:channel"] = ["copper", "iron", "gold", "amethyst"]
+    if spec.lift_state:
+        description.setdefault("states", {})["cw:lift"] = ["up", "down"]
 
     materials = {
         "*": {
@@ -360,6 +362,7 @@ def build_recipes() -> None:
         "motor": shapeless("cw:motor_recipe", ["cw:gear", "cw:gear", "cw:circuit", "minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:copper_ingot", "minecraft:copper_ingot"], "cw:motor", 1),
         "generator": shaped("cw:generator_recipe", ["ICI", "IFI", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "F": "minecraft:furnace"}, "cw:generator", 1),
         "conveyor": shaped("cw:conveyor_recipe", ["IGI", "GRG", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "R": "minecraft:redstone"}, "cw:conveyor", 4),
+        "lift": shaped("cw:lift_recipe", ["IGI", "CMC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:conveyor", "M": "cw:motor"}, "cw:lift", 1),
         "filter": shaped("cw:filter_recipe", ["IGI", "GCG", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit"}, "cw:filter", 1),
         "splitter": shaped("cw:splitter_recipe", ["IGI", "G G", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear"}, "cw:splitter", 1),
         "merger": shaped("cw:merger_recipe", ["IGI", "G G", "IGI"], {"I": "minecraft:copper_ingot", "G": "cw:gear"}, "cw:merger", 1),

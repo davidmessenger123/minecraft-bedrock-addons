@@ -23,6 +23,7 @@ const CABLE = "cw:cable";
 const BATTERY = "cw:battery";
 const TOOL_CHARGER = "cw:tool_charger";
 const CONVEYOR = "cw:conveyor";
+const LIFT = "cw:lift";
 const FILTER = "cw:filter";
 const SPLITTER = "cw:splitter";
 const MERGER = "cw:merger";
@@ -57,6 +58,7 @@ const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
 const MACHINE_IO_TYPES = new Set([ASSEMBLER, ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
+const LOCKABLE_TYPES = new Set([ASSEMBLER, ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER, QUARRY, TOOL_CHARGER]);
 const MACHINE_SIDES = ["north", "east", "south", "west", "up", "down"];
 const SIDE_MODES = ["both", "input", "output", "disabled"];
 const FACINGS = ["north", "east", "south", "west"];
@@ -65,6 +67,8 @@ const OPPOSITE = { north: "south", east: "west", south: "north", west: "east", u
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
 const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
 const DRILL_MODES = ["1x1", "3x3", "3x3x3"];
+const ENERGY_CACHE = new Map();
+const STORAGE_CACHE = new Map();
 const DIRECTIONS = {
     north: { x: 0, y: 0, z: -1 },
     south: { x: 0, y: 0, z: 1 },
@@ -208,6 +212,25 @@ function setFacing(block, value) {
     }
 }
 
+function liftDirection(block) {
+    try {
+        const value = block.permutation.getState("cw:lift");
+        return value === "down" ? "down" : "up";
+    } catch {
+        return "up";
+    }
+}
+
+function cycleLift(block) {
+    const next = liftDirection(block) === "up" ? "down" : "up";
+    try {
+        block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:lift": next }));
+    } catch {
+        // Ignore transient block unloads.
+    }
+    return next;
+}
+
 function channelOf(block) {
     try {
         const value = block.permutation.getState("cw:channel");
@@ -296,6 +319,7 @@ function cycleStorageChannel(block) {
     } catch {
         // Ignore transient block unloads.
     }
+    clearStorageCache();
     return next;
 }
 
@@ -669,16 +693,20 @@ function insertStorage(start, typeId, amount) {
 }
 
 function storageGroup(start) {
+    const channel = channelOf(start);
+    const key = `${start.dimension.id}:${start.location.x},${start.location.y},${start.location.z}:${channel}`;
+    const now = Date.now();
+    const cached = STORAGE_CACHE.get(key);
+    if (cached && now - cached.tick <= 1000) return cached.blocks;
     const queue = [start];
     const seen = new Set();
     const blocks = [];
-    const channel = channelOf(start);
     while (queue.length) {
         const block = queue.shift();
         if (!block) continue;
-        const key = `${block.location.x},${block.location.y},${block.location.z}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
+        const blockKey = `${block.location.x},${block.location.y},${block.location.z}`;
+        if (seen.has(blockKey)) continue;
+        seen.add(blockKey);
         if (block.typeId !== STORAGE_CORE && block.typeId !== STORAGE_EXTENSION) continue;
         if (channelOf(block) !== channel) continue;
         blocks.push(block);
@@ -688,7 +716,13 @@ function storageGroup(start) {
             }
         }
     }
+    if (STORAGE_CACHE.size > 128) STORAGE_CACHE.clear();
+    STORAGE_CACHE.set(key, { tick: now, blocks });
     return blocks;
+}
+
+function clearStorageCache() {
+    STORAGE_CACHE.clear();
 }
 
 function takeStorage(start, typeId, amount) {
@@ -788,6 +822,110 @@ function releaseStorage(player, core) {
     write(core, "owner", "");
     writeJson(core, "members", []);
     action(player, "Storage network released to public access.");
+}
+
+function machineOwner(block) {
+    return String(read(block, "owner", "") || "");
+}
+
+function machineMembers(block) {
+    return readJson(block, "members", []);
+}
+
+function canAccessMachine(block, player) {
+    if (!block || !player) return false;
+    const owner = machineOwner(block);
+    if (!owner) return true;
+    return owner === player.name
+        || machineMembers(block).includes(player.name)
+        || (typeof player.hasTag === "function" && player.hasTag("cw:admin"));
+}
+
+function isMachineAdmin(block, player) {
+    const owner = machineOwner(block);
+    return !owner || owner === player.name
+        || (typeof player.hasTag === "function" && player.hasTag("cw:admin"));
+}
+
+function claimMachine(player, block) {
+    const owner = machineOwner(block);
+    if (owner && owner !== player.name && !(typeof player.hasTag === "function" && player.hasTag("cw:admin"))) {
+        action(player, "This machine already has an owner.");
+        return;
+    }
+    write(block, "owner", player.name);
+    const members = new Set(machineMembers(block));
+    members.add(player.name);
+    writeJson(block, "members", [...members]);
+    action(player, `${formatName(block.typeId)} claimed by ${player.name}.`);
+}
+
+function addMachineMember(player, block, name) {
+    if (!isMachineAdmin(block, player)) {
+        action(player, "Only the machine owner can manage members.");
+        return;
+    }
+    const target = String(name || "").trim();
+    if (!target) return;
+    const members = new Set(machineMembers(block));
+    members.add(target);
+    writeJson(block, "members", [...members]);
+    action(player, `Added ${target} to ${formatName(block.typeId)}.`);
+}
+
+function removeMachineMember(player, block, name) {
+    if (!isMachineAdmin(block, player)) {
+        action(player, "Only the machine owner can manage members.");
+        return;
+    }
+    const target = String(name || "").trim();
+    if (!target || target === machineOwner(block)) {
+        action(player, "The machine owner cannot be removed.");
+        return;
+    }
+    writeJson(block, "members", machineMembers(block).filter((member) => member !== target));
+    action(player, `Removed ${target} from ${formatName(block.typeId)}.`);
+}
+
+function releaseMachine(player, block) {
+    if (!isMachineAdmin(block, player)) {
+        action(player, "Only the machine owner can release it.");
+        return;
+    }
+    write(block, "owner", "");
+    writeJson(block, "members", []);
+    action(player, `${formatName(block.typeId)} released to public access.`);
+}
+
+function openMachineAccessForm(player, block) {
+    const form = new ActionFormData()
+        .title(`Machine Access — ${formatName(block.typeId)}`)
+        .body(`Owner: ${machineOwner(block) || "unclaimed"}\nMembers: ${machineMembers(block).join(", ") || "none"}\n\nOnly the owner or members can use this machine. Tags with cw:admin bypass the lock.`)
+        .button("Claim machine")
+        .button("Add member")
+        .button("Remove member")
+        .button("Release machine")
+        .button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            claimMachine(player, block);
+            return;
+        }
+        if (response.selection === 1 || response.selection === 2) {
+            const modal = new ModalFormData()
+                .title(response.selection === 1 ? "Add Machine Member" : "Remove Machine Member")
+                .textField("Player name", "exact player name");
+            modal.show(player).then((result) => {
+                if (!result || result.canceled) return;
+                const name = String(result.formValues?.[0] || "");
+                if (response.selection === 1) addMachineMember(player, block, name);
+                else removeMachineMember(player, block, name);
+            }).catch(() => {});
+            return;
+        }
+        if (response.selection === 3) releaseMachine(player, block);
+    }).catch(() => {});
 }
 
 function openAccessForm(player, core) {
@@ -1306,6 +1444,7 @@ function acceptItem(block, typeId, amount, fromSide = null) {
         case FILTER:
         case SPLITTER:
         case MERGER:
+        case LIFT:
             return insertConveyor(block, typeId, amount);
         case ASSEMBLER:
             if (fromSide && !machineAcceptsFrom(block, fromSide, typeId)) return 0;
@@ -1336,6 +1475,10 @@ function outputAdjacent(block, typeId, amount) {
 }
 
 function energyBlocks(start) {
+    const key = `${start.dimension.id}:${start.location.x},${start.location.y},${start.location.z}`;
+    const now = Date.now();
+    const cached = ENERGY_CACHE.get(key);
+    if (cached && now - cached.tick <= 1000) return cached.blocks;
     const queue = [];
     const seen = new Set();
     const result = [];
@@ -1345,16 +1488,22 @@ function energyBlocks(start) {
     while (queue.length) {
         const block = queue.shift();
         if (!block) continue;
-        const key = `${block.location.x},${block.location.y},${block.location.z}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
+        const blockKey = `${block.location.x},${block.location.y},${block.location.z}`;
+        if (seen.has(blockKey)) continue;
+        seen.add(blockKey);
         if (!ENERGY_TYPES.has(block.typeId)) continue;
         result.push(block);
         for (const next of allNeighbors(block)) {
             if (next && ENERGY_TYPES.has(next.typeId)) queue.push(next);
         }
     }
+    if (ENERGY_CACHE.size > 128) ENERGY_CACHE.clear();
+    ENERGY_CACHE.set(key, { tick: now, blocks: result });
     return result;
+}
+
+function clearEnergyCache() {
+    ENERGY_CACHE.clear();
 }
 
 function networkEnergy(block) {
@@ -1522,7 +1671,6 @@ function moveBeltItem(block, item, direction) {
 
 function tickConveyor(block) {
     if (block.typeId === CONVEYOR) updateBeltCurve(block);
-    syncDisplay(block);
     if (block.typeId === EXTRACTOR) pullFromStorage(block);
     let item = readJson(block, "item", null);
     if (!item || item.amount < 1) {
@@ -1551,6 +1699,24 @@ function tickConveyor(block) {
     if (accepted >= item.amount) {
         writeJson(block, "item", null);
     } else if (accepted > 0) {
+        item.amount -= accepted;
+        writeJson(block, "item", item);
+    }
+    syncDisplay(block);
+}
+
+function tickLift(block) {
+    const item = readJson(block, "item", null);
+    if (!item || item.amount < 1) {
+        syncDisplay(block);
+        return;
+    }
+    const direction = liftDirection(block);
+    const target = neighbor(block, direction);
+    if (!target) return;
+    const accepted = acceptItem(target, item.id, item.amount, sideToward(target, block));
+    if (accepted >= item.amount) writeJson(block, "item", null);
+    else if (accepted > 0) {
         item.amount -= accepted;
         writeJson(block, "item", item);
     }
@@ -1779,16 +1945,13 @@ function tickQuarry(block) {
         attempts++;
         const cursor = data.cursor;
         if (!cursor) {
-            data.active = false;
-            data.complete = true;
+            finishQuarry(block, data);
             break;
         }
         const a = data.area;
         const x = cursor.x, y = cursor.y, z = cursor.z;
         if (y < a.min.y) {
-            data.active = false;
-            data.complete = true;
-            data.cursor = undefined;
+            finishQuarry(block, data);
             break;
         }
         const target = block.dimension.getBlock({ x, y, z });
@@ -1850,6 +2013,7 @@ function tickMachine(block) {
             case EXTRACTOR:
                 tickConveyor(block);
                 break;
+            case LIFT: tickLift(block); break;
             case ASSEMBLER: tickAssembler(block); break;
             case ELECTRIC_FURNACE:
             case CRUSHER:
@@ -1909,6 +2073,11 @@ function setQuarryArea(player, quarry, a, b) {
     data.silk = Boolean(data.silk);
     data.oreOnly = Boolean(data.oreOnly);
     data.buffer = data.buffer || {};
+    data.jobs = Array.isArray(data.jobs) ? data.jobs : [];
+    data.autoStart = Boolean(data.autoStart);
+    data.autoRestart = Boolean(data.autoRestart);
+    data.notify = data.notify !== false;
+    data.notified = false;
     writeJson(quarry, "data", data);
     action(player, `Quarry area set (${maxX - minX + 1}x${maxZ - minZ + 1}, to bedrock). Connect storage and power.`);
 }
@@ -1942,6 +2111,98 @@ function surveyorUse(player, block) {
         player.setDynamicProperty("cw:corner_b", point);
         action(player, "Quarry corner B set. Use the surveyor on the Quarry Controller.");
     }
+}
+
+function copyQuarryArea(area) {
+    return {
+        min: { x: area.min.x, y: area.min.y, z: area.min.z },
+        max: { x: area.max.x, y: area.max.y, z: area.max.z },
+    };
+}
+
+function resetQuarryToArea(block, data, area, active) {
+    if (data.chunkArea) releaseQuarryChunks(block, data);
+    data.area = copyQuarryArea(area);
+    data.cursor = { x: area.min.x, y: area.max.y, z: area.min.z };
+    data.active = Boolean(active);
+    data.complete = false;
+    data.notified = false;
+    data.scanned = 0;
+    data.mined = 0;
+    data.total = (area.max.x - area.min.x + 1)
+        * (area.max.z - area.min.z + 1)
+        * (area.max.y - area.min.y + 1);
+    if (data.active) ensureQuarryChunks(block, data);
+}
+
+function saveQuarryJob(block, data, player) {
+    if (!data.area) {
+        action(player, "Survey an area first.");
+        return;
+    }
+    data.jobs = Array.isArray(data.jobs) ? data.jobs : [];
+    const area = data.area;
+    const duplicate = data.jobs.some((job) => job.min.x === area.min.x
+        && job.min.y === area.min.y && job.min.z === area.min.z
+        && job.max.x === area.max.x && job.max.y === area.max.y && job.max.z === area.max.z);
+    if (duplicate) {
+        action(player, "That area is already in the quarry queue.");
+        return;
+    }
+    data.jobs.push(copyQuarryArea(area));
+    writeJson(block, "data", data);
+    action(player, `Saved quarry job. Queue: ${data.jobs.length}.`);
+}
+
+function loadNextQuarryJob(block, data, start, player) {
+    data.jobs = Array.isArray(data.jobs) ? data.jobs : [];
+    if (!data.jobs.length) {
+        if (player) action(player, "No saved quarry jobs.");
+        return false;
+    }
+    const area = data.jobs.shift();
+    resetQuarryToArea(block, data, area, start);
+    writeJson(block, "data", data);
+    if (player) action(player, `Loaded quarry job. Remaining: ${data.jobs.length}.`);
+    return true;
+}
+
+function notifyQuarry(block, data, message) {
+    if (data.notify === false) return;
+    let players = [];
+    const owner = machineOwner(block);
+    if (owner) {
+        const names = new Set([owner, ...machineMembers(block)]);
+        players = world.getAllPlayers().filter((player) => names.has(player.name));
+    } else {
+        players = world.getAllPlayers().filter((player) => {
+            if (player.dimension.id !== block.dimension.id) return false;
+            const dx = player.location.x - block.location.x;
+            const dy = player.location.y - block.location.y;
+            const dz = player.location.z - block.location.z;
+            return dx * dx + dy * dy + dz * dz <= 128 * 128;
+        });
+    }
+    for (const player of players) {
+        try { player.sendMessage(message); } catch { /* player may be leaving */ }
+    }
+}
+
+function finishQuarry(block, data) {
+    if (data.complete && data.notified) return;
+    data.active = false;
+    data.complete = true;
+    data.cursor = undefined;
+    releaseQuarryChunks(block, data);
+    const location = `${block.location.x},${block.location.y},${block.location.z}`;
+    notifyQuarry(block, data, `Quarry at ${location} finished its excavation.`);
+    data.notified = true;
+    if (data.autoStart && Array.isArray(data.jobs) && data.jobs.length) {
+        loadNextQuarryJob(block, data, true);
+    } else if (data.autoRestart && data.area) {
+        resetQuarryToArea(block, data, data.area, true);
+    }
+    writeJson(block, "data", data);
 }
 
 function isDrillBlock(block) {
@@ -2069,6 +2330,7 @@ function applyBlueprint(player, block) {
             const current = block.permutation.getState("cw:channel");
             if (typeof current === "string") {
                 block.setPermutation(BlockPermutation.resolve(block.typeId, { "cw:channel": blueprint.channel }));
+                clearStorageCache();
             }
         } catch {
             // The destination may not have channels.
@@ -2110,6 +2372,26 @@ function openRecipePicker(player, block) {
         if (!recipe) return;
         write(block, "recipe", recipe.name);
         action(player, `Assembler recipe: ${recipe.name}.`);
+    }).catch(() => {});
+}
+
+function openLift(player, block) {
+    const item = readJson(block, "item", null);
+    const filters = Object.keys(beltFilters(block));
+    const form = new ActionFormData()
+        .title("Conveyor Lift")
+        .body(`Direction: ${liftDirection(block)}\nBuffer: ${item ? `${formatName(item.id)} x${item.amount}` : "empty"}\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (pass all)"}\n\nUse the wrench to change direction. Right-click with an item to toggle its input filter. Place lifts in a column to move stacks vertically.`)
+        .button(`Toggle direction: ${liftDirection(block) === "up" ? "down" : "up"}`)
+        .button("Clear filters")
+        .button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) {
+            action(player, `Conveyor Lift direction: ${cycleLift(block)}.`);
+        } else if (response.selection === 1) {
+            writeJson(block, "filters", {});
+            action(player, "Conveyor Lift filters cleared.");
+        }
     }).catch(() => {});
 }
 
@@ -2211,6 +2493,7 @@ function openSideConfig(player, block) {
     }
     form.button(`Auto-output: ${machineAutoOutput(block) ? "on" : "off"}`);
     form.button("Clear side filters");
+    form.button("Machine access");
     form.button("Back");
     form.show(player).then((response) => {
         if (!response || response.canceled) return;
@@ -2228,6 +2511,10 @@ function openSideConfig(player, block) {
         if (response.selection === MACHINE_SIDES.length + 1) {
             writeJson(block, "sideFilters", {});
             action(player, "Machine side filters cleared.");
+            return;
+        }
+        if (response.selection === MACHINE_SIDES.length + 2) {
+            later(() => openMachineAccessForm(player, block));
             return;
         }
         later(() => openMachine(player, block));
@@ -2260,6 +2547,10 @@ function openProcessor(player, block) {
 }
 
 function openMachine(player, block) {
+    if (LOCKABLE_TYPES.has(block.typeId) && !canAccessMachine(block, player)) {
+        action(player, "This machine is locked. Ask the owner for access.");
+        return;
+    }
     if (block.typeId === STORAGE_CORE || block.typeId === STORAGE_EXTENSION) {
         void openStorage(player, block);
         return;
@@ -2299,6 +2590,10 @@ function openMachine(player, block) {
         openPort(player, block);
         return;
     }
+    if (block.typeId === LIFT) {
+        openLift(player, block);
+        return;
+    }
     if (BELT_TYPES.has(block.typeId)) {
         openLogistics(player, block);
         return;
@@ -2318,6 +2613,7 @@ function openMachine(player, block) {
         const form = new ActionFormData().title("Tool Charger")
             .body(`Network energy: ${networkEnergy(block)}\nHeld battery tool: ${charge === null ? "none" : `${charge}/${BATTERY_TOOL_MAX}`}\n\nHold a Battery Drill or Battery Chainsaw and use the charger, or press Charge held tool.`)
             .button("Charge held tool")
+            .button("Machine access")
             .button("Close");
         form.show(player).then((response) => {
             if (!response || response.canceled) return;
@@ -2328,6 +2624,8 @@ function openMachine(player, block) {
                     return;
                 }
                 rechargeBatteryTool(player, block, tool);
+            } else if (response.selection === 1) {
+                later(() => openMachineAccessForm(player, block));
             }
         }).catch(() => {});
         return;
@@ -2373,15 +2671,26 @@ function openMachine(player, block) {
         const percent = Math.min(100, Math.floor(scanned / total * 100));
         const filters = Object.keys(data.filters || {});
         const form = new ActionFormData().title("Quarry Controller")
-            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nOres only: ${data.oreOnly ? "on" : "off"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
-            .button(data.active ? "Pause quarry" : "Start quarry")
+            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nOres only: ${data.oreOnly ? "on" : "off"}\nSaved jobs: ${(data.jobs || []).length}\nAuto-start next job: ${data.autoStart ? "on" : "off"}\nAuto-restart current: ${data.autoRestart ? "on" : "off"}\nCompletion notices: ${data.notify === false ? "off" : "on"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
+            .button(data.active ? "Pause quarry" : (data.complete ? "Restart quarry" : "Start quarry"))
             .button("Clear output filters")
             .button("Toggle fortune")
             .button("Toggle silk touch")
             .button("Toggle ores only")
+            .button("Save current area")
+            .button("Load next saved job")
+            .button("Toggle auto-start next job")
+            .button("Toggle auto-restart current")
+            .button("Toggle completion notices")
+            .button("Machine access")
+            .button("Clear saved jobs")
             .button("Close");
         form.show(player).then((response) => {
             if (!response || response.canceled) return;
+            data.jobs = Array.isArray(data.jobs) ? data.jobs : [];
+            data.autoStart = Boolean(data.autoStart);
+            data.autoRestart = Boolean(data.autoRestart);
+            data.notify = data.notify !== false;
             if (response.selection === 1) {
                 data.filters = {};
                 writeJson(block, "data", data);
@@ -2406,13 +2715,52 @@ function openMachine(player, block) {
                 action(player, `Quarry ores only: ${data.oreOnly ? "on" : "off"}.`);
                 return;
             }
-            if (response.selection !== 0) return;
+            if (response.selection === 5) {
+                saveQuarryJob(block, data, player);
+                return;
+            }
+            if (response.selection === 6) {
+                loadNextQuarryJob(block, data, false, player);
+                return;
+            }
+            if (response.selection === 7) {
+                data.autoStart = !data.autoStart;
+                writeJson(block, "data", data);
+                action(player, `Quarry auto-start next job: ${data.autoStart ? "on" : "off"}.`);
+                return;
+            }
+            if (response.selection === 8) {
+                data.autoRestart = !data.autoRestart;
+                writeJson(block, "data", data);
+                action(player, `Quarry auto-restart current: ${data.autoRestart ? "on" : "off"}.`);
+                return;
+            }
+            if (response.selection === 9) {
+                data.notify = data.notify === false;
+                writeJson(block, "data", data);
+                action(player, `Quarry completion notices: ${data.notify ? "on" : "off"}.`);
+                return;
+            }
+            if (response.selection === 10) {
+                later(() => openMachineAccessForm(player, block));
+                return;
+            }
+            if (response.selection === 11) {
+                data.jobs = [];
+                writeJson(block, "data", data);
+                action(player, "Saved quarry jobs cleared.");
+                return;
+            }
+            if (response.selection === 12) return;
             if (!quarryArea(data)) {
                 action(player, "Use the Quarry Surveyor on two corners first.");
                 return;
             }
             if (data.complete) {
-                action(player, "This quarry area is complete. Survey a new area.");
+                resetQuarryToArea(block, data, data.area, true);
+                showQuarryMarkers(block, data);
+                writeJson(block, "data", data);
+                action(player, "Quarry restarted.");
                 return;
             }
             data.active = !data.active;
@@ -2432,6 +2780,10 @@ function interact(event) {
     const block = event.block;
     const item = event.itemStack;
     if (!player || !block) return;
+    if (LOCKABLE_TYPES.has(block.typeId) && !canAccessMachine(block, player)) {
+        action(player, "This machine is locked. Ask the owner for access.");
+        return;
+    }
 
     if (item?.typeId === WRENCH && [STORAGE_CORE, STORAGE_EXTENSION].includes(block.typeId)) {
         if (player.isSneaking) {
@@ -2455,6 +2807,10 @@ function interact(event) {
         } else if (!applyStorageLink(player, block)) {
             action(player, "Sneak-use the wrench on a Storage Core to copy a remote link.");
         }
+        return;
+    }
+    if (item?.typeId === WRENCH && block.typeId === LIFT) {
+        action(player, `Conveyor Lift direction: ${cycleLift(block)}.`);
         return;
     }
     if (item?.typeId === WRENCH) {
@@ -2522,6 +2878,11 @@ function interact(event) {
         } else {
             later(() => openMachine(player, block));
         }
+        return;
+    }
+    if (block.typeId === LIFT) {
+        if (item) toggleBeltFilter(player, block, item.typeId);
+        else later(() => openLift(player, block));
         return;
     }
     if (BELT_TYPES.has(block.typeId)) {
@@ -2654,6 +3015,8 @@ world.afterEvents.playerInteractWithBlock.subscribe((event) => {
 
 world.afterEvents.playerPlaceBlock.subscribe((event) => {
     try {
+        clearEnergyCache();
+        clearStorageCache();
         if (!BELT_TYPES.has(event.block.typeId)) return;
         const yaw = event.player.getRotation().y;
         const index = Math.round(((yaw % 360) + 360) % 360 / 90) % 4;
@@ -2668,7 +3031,9 @@ world.afterEvents.playerPlaceBlock.subscribe((event) => {
 
 world.beforeEvents.playerBreakBlock?.subscribe((event) => {
     try {
-        if (BELT_TYPES.has(event.block.typeId)) {
+        clearEnergyCache();
+        clearStorageCache();
+        if (BELT_TYPES.has(event.block.typeId) || event.block.typeId === LIFT) {
             const id = read(event.block, "displayId", undefined);
             if (typeof id === "string") {
                 system.run(() => {

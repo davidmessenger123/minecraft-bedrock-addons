@@ -36,6 +36,7 @@ CAPTIONS = {
     "battery": ("Battery Bank", "5,000 E storage"),
     "tool_charger": ("Tool Charger", "recharges battery tools"),
     "conveyor": ("Conveyor Belt", "visible stack transport"),
+    "lift": ("Conveyor Lift", "vertical item transport"),
     "filter": ("Item Filter", "pass only tagged items"),
     "splitter": ("Belt Splitter", "round-robin three ways"),
     "merger": ("Belt Merger", "three inputs, one output"),

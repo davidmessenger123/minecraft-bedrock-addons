@@ -1,0 +1,61 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "cw:lift",
+      "menu_category": {
+        "category": "construction"
+      },
+      "states": {
+        "cw:lift": [
+          "up",
+          "down"
+        ]
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.cw.lift",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "cw_blocks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.cw.lift",
+        "material_instances": {
+          "*": {
+            "texture": "cw_blocks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 2.5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 4
+      },
+      "minecraft:light_emission": 2,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#59616d",
+      "minecraft:display_name": "tile.cw:lift.name",
+      "minecraft:loot": "loot_tables/blocks/lift.json",
+      "minecraft:block_entity": {
+        "dynamic_properties": true
+      },
+      "cw:machine": {},
+      "minecraft:tick": {
+        "interval_range": [
+          8,
+          12
+        ],
+        "looping": true
+      }
+    }
+  }
+}
