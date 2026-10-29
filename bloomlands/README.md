@@ -19,6 +19,19 @@ Bloomling mobs.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
 
+## What changed in 2.2.5
+
+- The Bloomgate now shows **“The Bloomlands are still waking”** while the
+  first-time island build runs, instead of announcing arrival before the
+  teleport has happened.
+- Cross-dimension teleport is retried and verified; a fallback teleport without
+  facing data is attempted if the first form is rejected.
+- Portal detection checks both the block at the player's feet and the block
+  directly below, so it works whether the flat portal surface has collision or
+  not.
+- The first visit can still take several minutes while the island is generated;
+  progress feedback remains visible during that wait.
+
 ## What changed in 2.2.4
 
 - Fixed Bloomgate activation when clicking a grass block. The item now uses a
@@ -67,7 +80,7 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.4.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-2.2.5.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
 3. Reload the world. The first load creates the island; this can take several minutes
    because the dimension is void-generated, every block is placed by the script, and
@@ -210,7 +223,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.4.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.5.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources

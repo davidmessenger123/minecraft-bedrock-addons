@@ -1619,37 +1619,62 @@ function saveReturn(player) {
 }
 
 async function enterBloomlands(player) {
-    message(player, "bl.portal.enter");
+    message(player, "bl.portal.waking");
     playPortalSound(player);
     // Remember where the player stood before any generation wait.
     saveReturn(player);
 
     let dimension;
+    let wakeFeedback;
     try {
         dimension = await requireDimension();
+        wakeFeedback = system.runInterval(() => {
+            if (player.isValid) actionBar(player, "bl.portal.waking");
+        }, 40);
         await ensureIsland();
     } catch (error) {
         warn("unable to open dimension", String(error));
         message(player, "bl.portal.failed");
+        if (wakeFeedback !== undefined) system.clearRun(wakeFeedback);
         return false;
     }
+    if (wakeFeedback !== undefined) system.clearRun(wakeFeedback);
 
-    try {
-        player.teleport(
-            SPAWN,
-            {
-                dimension,
-                checkForBlocks: false,
-                keepVelocity: false,
-                facingLocation: {
-                    x: PORTAL.x + 0.5,
-                    y: 65,
-                    z: PORTAL.z + 0.5,
+    let teleported = false;
+    for (let attempt = 0; attempt < 5 && !teleported; attempt++) {
+        try {
+            player.teleport(
+                SPAWN,
+                {
+                    dimension,
+                    checkForBlocks: false,
+                    keepVelocity: false,
+                    facingLocation: {
+                        x: PORTAL.x + 0.5,
+                        y: 65,
+                        z: PORTAL.z + 0.5,
+                    },
                 },
-            },
-        );
-    } catch (error) {
-        warn("teleport into Bloomlands failed", String(error));
+            );
+            await system.waitTicks(2);
+            teleported = player.dimension.id === DIMENSION_ID;
+        } catch (error) {
+            warn("teleport into Bloomlands failed", String(error));
+            try {
+                player.teleport(SPAWN, {
+                    dimension,
+                    checkForBlocks: false,
+                    keepVelocity: false,
+                });
+                await system.waitTicks(2);
+                teleported = player.dimension.id === DIMENSION_ID;
+            } catch (fallbackError) {
+                warn("fallback teleport into Bloomlands failed", String(fallbackError));
+            }
+            if (!teleported) await system.waitTicks(5);
+        }
+    }
+    if (!teleported) {
         message(player, "bl.portal.failed");
         return false;
     }
@@ -1662,6 +1687,7 @@ async function enterBloomlands(player) {
 
     spawnBurst(dimension, { x: SPAWN.x, y: SPAWN.y + 0.2, z: SPAWN.z });
     title(player, "bl.title.bloomlands", "bl.subtitle.bloomlands");
+    message(player, "bl.portal.enter");
     actionBar(player, "bl.portal.enter");
     sound(player, "random.orb", 0.8, 1.3);
     return true;
@@ -2159,6 +2185,16 @@ function rescuePlayerIfNeeded(player, dimension) {
     return true;
 }
 
+function standingOnPortal(player, dimension) {
+    const x = Math.floor(player.location.x);
+    const y = Math.floor(player.location.y);
+    const z = Math.floor(player.location.z);
+    return (
+        typeAt(dimension, x, y, z) === PORTAL_BLOCK ||
+        typeAt(dimension, x, y - 1, z) === PORTAL_BLOCK
+    );
+}
+
 function managePlayer(player, dimension) {
     const inBloomlands = player.dimension.id === DIMENSION_ID;
     const stateValue = getPlayerState(player);
@@ -2169,13 +2205,7 @@ function managePlayer(player, dimension) {
             stateValue.fogSet = false;
         }
         stateValue.lastRegion = "";
-        const under = typeAt(
-            player.dimension,
-            Math.floor(player.location.x),
-            Math.floor(player.location.y),
-            Math.floor(player.location.z),
-        );
-        if (under === PORTAL_BLOCK) {
+        if (standingOnPortal(player, player.dimension)) {
             if (!stateValue.portalDisarmed && system.currentTick >= stateValue.cooldownUntil) {
                 void activatePortal(player);
             }
@@ -2199,13 +2229,7 @@ function managePlayer(player, dimension) {
         stateValue.lastRegion = region;
     }
 
-    const under = typeAt(
-        dimension,
-        Math.floor(player.location.x),
-        Math.floor(player.location.y),
-        Math.floor(player.location.z),
-    );
-    if (under === PORTAL_BLOCK) {
+    if (standingOnPortal(player, dimension)) {
         if (!stateValue.portalDisarmed && system.currentTick >= stateValue.cooldownUntil) {
             void activatePortal(player);
         }
