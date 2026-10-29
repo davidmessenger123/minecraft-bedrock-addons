@@ -367,6 +367,7 @@ def build_recipes() -> None:
         "assembler": shaped("cw:assembler_recipe", ["IGI", "CTC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "T": "minecraft:crafting_table"}, "cw:assembler", 1),
         "cable": shaped("cw:cable_recipe", ["CCC", "C C", "CCC"], {"C": "minecraft:copper_ingot"}, "cw:cable", 8),
         "battery": shaped("cw:battery_recipe", ["CRC", "RGR", "CRC"], {"C": "minecraft:copper_ingot", "R": "minecraft:redstone", "G": "cw:gear"}, "cw:battery", 1),
+        "tool_charger": shaped("cw:tool_charger_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "B": "cw:battery"}, "cw:tool_charger", 1),
         "storage_core": shaped("cw:storage_core_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_core", 1),
         "storage_extension": shaped("cw:storage_extension_recipe", ["ICI", "CBC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "B": "minecraft:barrel"}, "cw:storage_extension", 1),
         "storage_terminal": shaped("cw:storage_terminal_recipe", ["IGI", "CBC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "cw:circuit", "B": "minecraft:barrel"}, "cw:storage_terminal", 1),

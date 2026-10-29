@@ -1,0 +1,14 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "cw:tool_charger",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

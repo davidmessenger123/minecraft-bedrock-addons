@@ -4,13 +4,13 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.7.1.mcaddon](Cogworks-1.7.1.mcaddon)
+**Download:** [Cogworks-1.8.0.mcaddon](Cogworks-1.8.0.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
-  Transformer, Copper Cable, Battery Bank, Energy Meter, Conveyor Belt, Item
-  Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
-  Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting
-  Assembler, Storage Core, Storage Extension and Quarry Controller.
+  Transformer, Copper Cable, Battery Bank, Tool Charger, Energy Meter, Conveyor
+  Belt, Item Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage
+  Terminal, Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter,
+  Crafting Assembler, Storage Core, Storage Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Battery Drill, Battery Chainsaw,
   Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and Electric
   Motor.
@@ -23,6 +23,11 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   networks and machine energy costs.
 - **Machine modules:** processor UI upgrades Speed, Efficiency and Parallel
   using gears, circuits and motors.
+- **Machine I/O:** processors and the assembler have per-side input/output/both/
+  disabled modes, auto-output and side item filters. Sneak-use a machine side
+  with an item to toggle that side's filter.
+- **Tool Charger:** a dedicated station that recharges Battery Drill and
+  Battery Chainsaw from the connected power network.
 - **Visible transport:** item stacks ride on belts as display entities.
   Filter pass-lists, three-way splitters and three-input mergers let you build
   real routing lines. Belts automatically choose straight, left-corner or
@@ -63,7 +68,8 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
 - **Tools:** the drill supports 1×1, 3×3 and 3×3×3 modes (sneak-use to cycle);
   the chainsaw fells the connected tree; the wrench rotates conveyors, filters,
   splitters, mergers and extractors. Battery Drill and Battery Chainsaw store
-  500 charge; right-click a connected Battery Bank to recharge them.
+  500 charge; right-click a Tool Charger or connected Battery Bank to recharge
+  them.
 
 ### Held item models
 
@@ -85,7 +91,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.7.1.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.8.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -106,6 +112,7 @@ and **Storage Core**:
 - **Wind Turbine / Solar Panel / Water Wheel / Energy Meter:** iron, copper,
   gears, motors, circuits, glass, water and fuel-free generation.
 - **Storage Core / Extension:** iron, copper/circuit and a barrel.
+- **Tool Charger:** iron, circuits and a Battery Bank.
 - **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
 - **Drill / Chainsaw:** iron, gear and motor.
@@ -209,13 +216,24 @@ Processors have three module levels: **Speed** (2 gears), **Efficiency**
 (2 circuits) and **Parallel** (1 motor). Speed accelerates progress,
 Efficiency reduces energy use, and Parallel multiplies output.
 
+### Machine I/O
+
+Processors and the **Crafting Assembler** expose **Side configuration** in
+their forms. Each of the six sides can be **both**, **input**, **output** or
+**disabled**. **Auto-output** can be turned off to buffer finished items.
+Sneak-use a machine side with an item to add or remove a filter for that side;
+the side filter applies to both input and output. This lets belts feed a
+machine from the back while it exports from a side or bottom. The default is
+all sides `both`, which preserves the original machine behavior.
+
 ### Power
 
 The **Wind Turbine** generates energy based on its height, the **Solar Panel**
 generates during daylight, and the **Water Wheel** generates when adjacent to
 water. The **Power Transformer** pulls from nearby generation/batteries into a
 10,000 E high-capacity buffer. All connect to the same cable network. The
-**Energy Meter** shows total stored network energy.
+**Energy Meter** shows total stored network energy. The **Tool Charger** uses
+that network to refill Battery Drill and Battery Chainsaw charge.
 
 ### Blueprints
 
@@ -249,7 +267,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all twenty-three blocks, the
+[block model sheet](previews/models.png) shows all twenty-four blocks, the
 [item model sheet](previews/tools.png) shows all nine held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial
@@ -285,4 +303,5 @@ node --check cogworks/behavior_pack/scripts/main.js
 - The add-on is static-validated here. Live Bedrock testing is still needed for
   the custom block tick component, display entities, UI forms, energy/conveyor
   behavior, quarry depth, attachable rendering and swing animations, remote
-  terminal links, storage access lists and battery-tool charge behavior.
+  terminal links, storage access lists, battery-tool charge behavior, machine
+  side I/O and Tool Charger energy transfer.

@@ -8,6 +8,9 @@
   "cw:battery": {
     "sound": "metal"
   },
+  "cw:tool_charger": {
+    "sound": "metal"
+  },
   "cw:conveyor": {
     "sound": "metal"
   },

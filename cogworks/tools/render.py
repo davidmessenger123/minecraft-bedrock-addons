@@ -34,6 +34,7 @@ CAPTIONS = {
     "generator": ("Coal Generator", "fuel + 2,000 E buffer"),
     "cable": ("Copper Cable", "links the power network"),
     "battery": ("Battery Bank", "5,000 E storage"),
+    "tool_charger": ("Tool Charger", "recharges battery tools"),
     "conveyor": ("Conveyor Belt", "visible stack transport"),
     "filter": ("Item Filter", "pass only tagged items"),
     "splitter": ("Belt Splitter", "round-robin three ways"),

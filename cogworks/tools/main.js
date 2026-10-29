@@ -21,6 +21,7 @@ const NS = "cw:";
 const GENERATOR = "cw:generator";
 const CABLE = "cw:cable";
 const BATTERY = "cw:battery";
+const TOOL_CHARGER = "cw:tool_charger";
 const CONVEYOR = "cw:conveyor";
 const FILTER = "cw:filter";
 const SPLITTER = "cw:splitter";
@@ -55,9 +56,12 @@ const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE, SOLAR_PAN
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
+const MACHINE_IO_TYPES = new Set([ASSEMBLER, ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
+const MACHINE_SIDES = ["north", "east", "south", "west", "up", "down"];
+const SIDE_MODES = ["both", "input", "output", "disabled"];
 const FACINGS = ["north", "east", "south", "west"];
 const STORAGE_CHANNELS = ["copper", "iron", "gold", "amethyst"];
-const OPPOSITE = { north: "south", east: "west", south: "north", west: "east" };
+const OPPOSITE = { north: "south", east: "west", south: "north", west: "east", up: "down", down: "up" };
 const LEFT_OF = { north: "west", west: "south", south: "east", east: "north" };
 const RIGHT_OF = { north: "east", east: "south", south: "west", west: "north" };
 const DRILL_MODES = ["1x1", "3x3", "3x3x3"];
@@ -211,6 +215,77 @@ function channelOf(block) {
     } catch {
         return "copper";
     }
+}
+
+function sideToward(target, source) {
+    const dx = source.location.x - target.location.x;
+    const dy = source.location.y - target.location.y;
+    const dz = source.location.z - target.location.z;
+    if (dx > 0) return "east";
+    if (dx < 0) return "west";
+    if (dy > 0) return "up";
+    if (dy < 0) return "down";
+    if (dz > 0) return "south";
+    if (dz < 0) return "north";
+    return "north";
+}
+
+function machineIo(block) {
+    const stored = readJson(block, "io", {});
+    const result = {};
+    for (const side of MACHINE_SIDES) {
+        result[side] = SIDE_MODES.includes(stored[side]) ? stored[side] : "both";
+    }
+    return result;
+}
+
+function machineSideMode(block, side) {
+    return machineIo(block)[String(side).toLowerCase()] || "both";
+}
+
+function cycleMachineSide(block, side) {
+    const io = machineIo(block);
+    const current = io[side] || "both";
+    const next = SIDE_MODES[(SIDE_MODES.indexOf(current) + 1) % SIDE_MODES.length];
+    io[side] = next;
+    writeJson(block, "io", io);
+    return next;
+}
+
+function machineSideFilters(block) {
+    return readJson(block, "sideFilters", {});
+}
+
+function machineSideFilterAllows(block, side, typeId) {
+    const filters = machineSideFilters(block)[side];
+    if (!filters || !Object.keys(filters).length) return true;
+    return filters[typeId] === true;
+}
+
+function toggleMachineSideFilter(block, side, typeId) {
+    const filters = machineSideFilters(block);
+    filters[side] = filters[side] || {};
+    if (filters[side][typeId]) delete filters[side][typeId];
+    else filters[side][typeId] = true;
+    writeJson(block, "sideFilters", filters);
+}
+
+function machineAcceptsFrom(block, side, typeId) {
+    if (!MACHINE_IO_TYPES.has(block.typeId)) return true;
+    const mode = machineSideMode(block, side);
+    if (mode !== "both" && mode !== "input") return false;
+    return machineSideFilterAllows(block, side, typeId);
+}
+
+function machineOutputsTo(block, side, typeId) {
+    if (!MACHINE_IO_TYPES.has(block.typeId)) return true;
+    const mode = machineSideMode(block, side);
+    if (mode !== "both" && mode !== "output") return false;
+    return machineSideFilterAllows(block, side, typeId);
+}
+
+function machineAutoOutput(block) {
+    return read(block, "autoOutput", true) !== false;
 }
 
 function cycleStorageChannel(block) {
@@ -1221,7 +1296,7 @@ function insertGenerator(generator, typeId, amount) {
     return amount;
 }
 
-function acceptItem(block, typeId, amount) {
+function acceptItem(block, typeId, amount, fromSide = null) {
     if (!block) return 0;
     switch (block.typeId) {
         case STORAGE_CORE:
@@ -1233,11 +1308,13 @@ function acceptItem(block, typeId, amount) {
         case MERGER:
             return insertConveyor(block, typeId, amount);
         case ASSEMBLER:
+            if (fromSide && !machineAcceptsFrom(block, fromSide, typeId)) return 0;
             return insertAssembler(block, typeId, amount);
         case ELECTRIC_FURNACE:
         case CRUSHER:
         case SAWMILL:
         case ALLOY_SMELTER:
+            if (fromSide && !machineAcceptsFrom(block, fromSide, typeId)) return 0;
             return insertProcessor(block, typeId, amount);
         case GENERATOR:
             return insertGenerator(block, typeId, amount);
@@ -1247,9 +1324,12 @@ function acceptItem(block, typeId, amount) {
 }
 
 function outputAdjacent(block, typeId, amount) {
-    for (const next of allNeighbors(block)) {
+    if (MACHINE_IO_TYPES.has(block.typeId) && !machineAutoOutput(block)) return 0;
+    for (const side of MACHINE_SIDES) {
+        if (MACHINE_IO_TYPES.has(block.typeId) && !machineOutputsTo(block, side, typeId)) continue;
+        const next = neighbor(block, side);
         if (!next) continue;
-        const accepted = acceptItem(next, typeId, amount);
+        const accepted = acceptItem(next, typeId, amount, OPPOSITE[side]);
         if (accepted > 0) return accepted;
     }
     return 0;
@@ -1329,6 +1409,10 @@ function tickGenerator(block) {
     }
     write(block, "energy", Math.max(0, energy));
     markStatus(block, fuel > 0 ? "working" : "idle");
+}
+
+function tickToolCharger(block) {
+    markStatus(block, networkEnergy(block) > 0 ? "working" : "blocked");
 }
 
 function tickWindTurbine(block) {
@@ -1433,7 +1517,7 @@ function pullFromStorage(extractor) {
 function moveBeltItem(block, item, direction) {
     const next = neighbor(block, direction);
     if (!next) return 0;
-    return acceptItem(next, item.id, item.amount);
+    return acceptItem(next, item.id, item.amount, sideToward(next, block));
 }
 
 function tickConveyor(block) {
@@ -1754,6 +1838,7 @@ function tickMachine(block) {
     try {
         switch (block.typeId) {
             case GENERATOR: tickGenerator(block); break;
+            case TOOL_CHARGER: tickToolCharger(block); break;
             case WIND_TURBINE: tickWindTurbine(block); break;
             case SOLAR_PANEL: tickSolarPanel(block); break;
             case WATER_WHEEL: tickWaterWheel(block); break;
@@ -2110,6 +2195,45 @@ function toggleQuarryFilter(player, block, typeId) {
     writeJson(block, "data", data);
 }
 
+function openSideConfig(player, block) {
+    const io = machineIo(block);
+    const filters = machineSideFilters(block);
+    const lines = MACHINE_SIDES.map((side) => {
+        const count = Object.keys(filters[side] || {}).length;
+        return `${side.toUpperCase()}: ${io[side]}${count ? ` (${count} filter${count === 1 ? "" : "s"})` : ""}`;
+    });
+    const form = new ActionFormData()
+        .title(`Machine I/O — ${formatName(block.typeId)}`)
+        .body(`${lines.join("\n")}\n\nClick a side to cycle: both → input → output → disabled.\nSneak-use the machine with an item on a side to toggle that side's item filter.\nAuto-output pushes finished items to adjacent machines, belts and storage.`)
+    for (const side of MACHINE_SIDES) {
+        const count = Object.keys(filters[side] || {}).length;
+        form.button(`${side.toUpperCase()} — ${io[side]}${count ? ` (${count})` : ""}`);
+    }
+    form.button(`Auto-output: ${machineAutoOutput(block) ? "on" : "off"}`);
+    form.button("Clear side filters");
+    form.button("Back");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection < MACHINE_SIDES.length) {
+            const side = MACHINE_SIDES[response.selection];
+            const next = cycleMachineSide(block, side);
+            action(player, `${side.toUpperCase()} side: ${next}.`);
+            return;
+        }
+        if (response.selection === MACHINE_SIDES.length) {
+            write(block, "autoOutput", !machineAutoOutput(block));
+            action(player, `Auto-output: ${machineAutoOutput(block) ? "on" : "off"}.`);
+            return;
+        }
+        if (response.selection === MACHINE_SIDES.length + 1) {
+            writeJson(block, "sideFilters", {});
+            action(player, "Machine side filters cleared.");
+            return;
+        }
+        later(() => openMachine(player, block));
+    }).catch(() => {});
+}
+
 function openProcessor(player, block) {
     const input = readJson(block, "input", {});
     const output = readJson(block, "output", {});
@@ -2124,12 +2248,14 @@ function openProcessor(player, block) {
         .button(`Speed +1 (2 gears)`)
         .button(`Efficiency +1 (2 circuits)`)
         .button(`Parallel +1 (1 motor)`)
+        .button("Side configuration")
         .button("Close");
     form.show(player).then((response) => {
         if (!response || response.canceled) return;
         if (response.selection === 0) upgradeProcessor(player, block, "speed");
         else if (response.selection === 1) upgradeProcessor(player, block, "efficiency");
         else if (response.selection === 2) upgradeProcessor(player, block, "parallel");
+        else if (response.selection === 3) later(() => openSideConfig(player, block));
     }).catch(() => {});
 }
 
@@ -2186,6 +2312,26 @@ function openMachine(player, block) {
         void form.show(player).catch(() => {});
         return;
     }
+    if (block.typeId === TOOL_CHARGER) {
+        const item = heldItem(player);
+        const charge = item && BATTERY_TOOLS.has(item.typeId) ? batteryCharge(item) : null;
+        const form = new ActionFormData().title("Tool Charger")
+            .body(`Network energy: ${networkEnergy(block)}\nHeld battery tool: ${charge === null ? "none" : `${charge}/${BATTERY_TOOL_MAX}`}\n\nHold a Battery Drill or Battery Chainsaw and use the charger, or press Charge held tool.`)
+            .button("Charge held tool")
+            .button("Close");
+        form.show(player).then((response) => {
+            if (!response || response.canceled) return;
+            if (response.selection === 0) {
+                const tool = heldItem(player);
+                if (!tool || !BATTERY_TOOLS.has(tool.typeId)) {
+                    action(player, "Hold a Battery Drill or Battery Chainsaw first.");
+                    return;
+                }
+                rechargeBatteryTool(player, block, tool);
+            }
+        }).catch(() => {});
+        return;
+    }
     if (block.typeId === BATTERY) {
         const energy = Number(read(block, "energy", 0));
         const form = new ActionFormData().title("Battery Bank")
@@ -2202,6 +2348,7 @@ function openMachine(player, block) {
             .body(`Status: ${read(block, "status", "idle")}\nRecipe: ${selected || "Auto — first available"}\nInput: ${Object.entries(input).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nOutput: ${Object.entries(output).map(([id, n]) => `${formatName(id)} x${n}`).join(", ") || "empty"}\nEnergy: ${networkEnergy(block)}`)
             .button("Select recipe")
             .button("Use automatic recipe")
+            .button("Side configuration")
             .button("Close");
         form.show(player).then((response) => {
             if (!response || response.canceled) return;
@@ -2210,6 +2357,8 @@ function openMachine(player, block) {
             } else if (response.selection === 1) {
                 write(block, "recipe", "");
                 action(player, "Assembler set to automatic recipe.");
+            } else if (response.selection === 2) {
+                later(() => openSideConfig(player, block));
             }
         }).catch(() => {});
         return;
@@ -2332,6 +2481,10 @@ function interact(event) {
         rechargeBatteryTool(player, block, item);
         return;
     }
+    if (block.typeId === TOOL_CHARGER && item && BATTERY_TOOLS.has(item.typeId)) {
+        rechargeBatteryTool(player, block, item);
+        return;
+    }
     if (item?.typeId === BATTERY_DRILL || item?.typeId === BATTERY_CHAINSAW) {
         const isDrill = item.typeId === BATTERY_DRILL;
         if (isDrill && player.isSneaking) {
@@ -2392,6 +2545,16 @@ function interact(event) {
 
     if (PROCESSOR_TYPES.has(block.typeId)) {
         if (item) {
+            const side = String(event.blockFace || "north").toLowerCase();
+            if (player.isSneaking) {
+                toggleMachineSideFilter(block, side, item.typeId);
+                action(player, `Machine ${side} filter: ${formatName(item.typeId)}.`);
+                return;
+            }
+            if (!machineAcceptsFrom(block, side, item.typeId)) {
+                action(player, `The ${side} side is not an input.`);
+                return;
+            }
             const accepted = insertProcessor(block, item.typeId, item.amount);
             if (accepted > 0) {
                 takeHeld(player, item.typeId, accepted);
@@ -2454,6 +2617,16 @@ function interact(event) {
     }
     if (block.typeId === ASSEMBLER) {
         if (item) {
+            const side = String(event.blockFace || "north").toLowerCase();
+            if (player.isSneaking) {
+                toggleMachineSideFilter(block, side, item.typeId);
+                action(player, `Machine ${side} filter: ${formatName(item.typeId)}.`);
+                return;
+            }
+            if (!machineAcceptsFrom(block, side, item.typeId)) {
+                action(player, `The ${side} side is not an input.`);
+                return;
+            }
             const accepted = insertAssembler(block, item.typeId, item.amount);
             if (accepted > 0) {
                 takeHeld(player, item.typeId, accepted);
@@ -2468,6 +2641,10 @@ function interact(event) {
     }
     if (block.typeId === BATTERY) {
         later(() => openMachine(player, block));
+    }
+    if (block.typeId === TOOL_CHARGER) {
+        if (item) action(player, "The Tool Charger accepts Battery Drill and Battery Chainsaw.");
+        else later(() => openMachine(player, block));
     }
 }
 
