@@ -255,6 +255,21 @@ def lift_geo() -> dict:
     ], (1.0, 1.5, (0, 0.75, 0)))
 
 
+def control_panel_geo() -> dict:
+    return block_geo("geometry.cw.control_panel", [
+        cube([-7, 0, -7], [14, 2, 14], STEEL),
+        cube([-6, 2, -6], [12, 8, 12], DARK),
+        cube([-5, 3, -7], [10, 6, 1], ENERGY),
+        cube([-4, 4, -8], [8, 1, 1], COPPER),
+        cube([-4, 6, -8], [3, 1, 1], LIGHT),
+        cube([1, 6, -8], [3, 1, 1], BRASS),
+        cube([-5, 10, -5], [10, 2, 10], COPPER),
+        cube([-2, 12, -2], [4, 2, 4], BRASS),
+        cube([-7, 3, -7], [1, 7, 14], STEEL),
+        cube([6, 3, -7], [1, 7, 14], STEEL),
+    ], (1.0, 1.35, (0, 0.7, 0)))
+
+
 def conveyor_cubes() -> list[dict]:
     return [
         cube([-8, 0, -7], [1, 9, 14], STEEL),
@@ -566,6 +581,7 @@ def block_geometries() -> dict[str, dict]:
         "battery": battery_geo(),
         "tool_charger": tool_charger_geo(),
         "lift": lift_geo(),
+        "control_panel": control_panel_geo(),
         "conveyor": conveyor_curve_geo(),
         "filter": logistics_geo("filter"),
         "splitter": logistics_geo("splitter"),
@@ -894,6 +910,7 @@ BLOCKS: list[BlockSpec] = [
     BlockSpec("tool_charger", "Tool Charger", "geometry.cw.tool_charger", 2.5, light=4, machine=True, sound="metal", tick_range=(20, 20), status_state=True),
     BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8), curve_state=True),
     BlockSpec("lift", "Conveyor Lift", "geometry.cw.lift", 2.5, light=2, machine=True, sound="metal", tick_range=(8, 12), lift_state=True),
+    BlockSpec("control_panel", "Control Panel", "geometry.cw.control_panel", 3.0, light=3, machine=True, sound="metal", tick_range=(20, 20), status_state=True),
     BlockSpec("filter", "Item Filter", "geometry.cw.filter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("splitter", "Belt Splitter", "geometry.cw.splitter", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),
     BlockSpec("merger", "Belt Merger", "geometry.cw.merger", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8)),

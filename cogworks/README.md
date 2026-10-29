@@ -4,14 +4,14 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.9.1.mcaddon](Cogworks-1.9.1.mcaddon)
+**Download:** [Cogworks-1.9.2.mcaddon](Cogworks-1.9.2.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, MV Cable, HV Cable, Battery Bank, Tool Charger,
-  Energy Meter, Conveyor Belt, Conveyor Lift, Item Filter, Belt Splitter, Belt
-  Merger, Storage Extractor, Storage Terminal, Storage Port, Electric Furnace,
-  Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage Core, Storage
-  Extension and Quarry Controller.
+  Energy Meter, Control Panel, Conveyor Belt, Conveyor Lift, Item Filter, Belt
+  Splitter, Belt Merger, Storage Extractor, Storage Terminal, Storage Port,
+  Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage
+  Core, Storage Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Battery Drill, Battery Chainsaw,
   Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and Electric
   Motor.
@@ -35,6 +35,13 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   Battery Chainsaw from the connected power network.
 - **Ownership:** processors, assembler, Tool Charger and quarry can be claimed
   and shared with named players; `cw:admin` bypasses locks.
+- **Control Panel:** link nearby machines, pause/resume the group, and open
+  quarry, storage and belt dashboards.
+- **Redstone control:** processors, assembler and quarry support ignore/high/low
+  redstone modes. A Control Panel can also pause linked machines directly.
+- **Diagnostics:** the panel reports nearby quarry queues, storage fill levels
+  and transport buffer occupancy, with alarms when storage or belts are nearly
+  full.
 - **Vertical transport:** Conveyor Lift moves one stack per block up or down
   through stacked lift columns. Wrench changes direction; right-click with an
   item toggles its filter.
@@ -111,7 +118,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.9.1.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.9.2.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -135,6 +142,7 @@ and **Storage Core**:
   gears, motors, circuits, glass, water and fuel-free generation.
 - **Storage Core / Extension:** iron, copper/circuit and a barrel.
 - **Tool Charger:** iron, circuits and a Battery Bank.
+- **Control Panel:** iron, circuits and redstone.
 - **Storage Extractor:** iron, circuits, gears and a barrel.
 - **Wrench:** iron and copper.
 - **Drill / Chainsaw:** iron, gear and motor.
@@ -260,6 +268,22 @@ locks.
 
 The same form cycles each machine's **Voltage requirement** through LV, MV and
 HV. A machine stops when its requirement is above the connected network tier.
+It also cycles **Redstone control** through ignore/high/low; in high mode the
+machine runs only while powered, and low mode runs only while unpowered.
+
+### Control Panel
+
+Place a **Control Panel** near a machine group and interact empty-handed.
+
+- **Link nearby machines** records the panel on processors, assemblers, Tool
+  Chargers and Quarry Controllers within 12 blocks.
+- **Pause linked machines** and **Resume linked machines** set the group state
+  without changing their recipes.
+- **Quarry dashboard** lists nearby quarry controllers, their state and saved
+  job counts.
+- **Storage diagnostics** totals nearby storage slots and raises an alarm at 90%
+  fill.
+- **Belt diagnostics** counts nearby belts/lifts and items currently in transit.
 
 ### Power
 
@@ -319,7 +343,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all twenty-seven blocks, the
+[block model sheet](previews/models.png) shows all twenty-eight blocks, the
 [item model sheet](previews/tools.png) shows all nine held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial
@@ -358,4 +382,5 @@ node --check cogworks/behavior_pack/scripts/main.js
   terminal links, storage/machine access lists, battery-tool charge behavior,
   machine side I/O, Tool Charger energy transfer, Conveyor Lift transport,
   quarry scheduling and network cache invalidation, power tiers, cable
-  capacity, transformer tier changes and machine voltage cutoffs.
+  capacity, transformer tier changes, machine voltage cutoffs, redstone modes,
+  Control Panel linking/pausing, and quarry/belt/storage dashboards.

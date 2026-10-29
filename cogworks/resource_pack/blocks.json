@@ -23,6 +23,9 @@
   "cw:lift": {
     "sound": "metal"
   },
+  "cw:control_panel": {
+    "sound": "metal"
+  },
   "cw:filter": {
     "sound": "metal"
   },

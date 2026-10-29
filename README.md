@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.9.1 | [Cogworks-1.9.1.mcaddon](cogworks/Cogworks-1.9.1.mcaddon) |
+| **Cogworks** | Add-on | 1.9.2 | [Cogworks-1.9.2.mcaddon](cogworks/Cogworks-1.9.2.mcaddon) |
 
 ## Install
 
@@ -165,12 +165,12 @@ network, visible stacks ride conveyors through filters/splitters/mergers, an
 automated assembler crafts, and a surveyor-defined quarry excavates all the way
 to bedrock into expandable storage.
 
-- 27 custom blocks: Coal Generator, Wind Turbine, Solar Panel, Water Wheel,
+- 28 custom blocks: Coal Generator, Wind Turbine, Solar Panel, Water Wheel,
   Power Transformer, Copper Cable, MV Cable, HV Cable, Battery Bank, Tool
-  Charger, Energy Meter, Conveyor Belt, Conveyor Lift, Item Filter, Belt
-  Splitter, Belt Merger, Storage Extractor, Storage Terminal, Storage Port,
-  Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage
-  Core, Storage Extension and Quarry Controller.
+  Charger, Energy Meter, Control Panel, Conveyor Belt, Conveyor Lift, Item
+  Filter, Belt Splitter, Belt Merger, Storage Extractor, Storage Terminal,
+  Storage Port, Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting
+  Assembler, Storage Core, Storage Extension and Quarry Controller.
 - 9 custom items: Powered Drill, Powered Chainsaw, Battery Drill, Battery
   Chainsaw, Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and
   Electric Motor.
@@ -222,12 +222,15 @@ to bedrock into expandable storage.
   saved machine configurations covering filters, processor modules, quarry
   settings and channels; terminal requests recursively queue missing
   sub-crafts for an output quantity.
+- **1.9.2 control layer:** machine redstone modes, a Control Panel for pausing
+  linked machine groups, nearby quarry dashboard, storage-fill alarms and belt
+  buffer diagnostics.
 - Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
   `@minecraft/server-ui` **2.0.0**.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
-[block model sheet](cogworks/previews/models.png) shows all twenty-seven blocks,
+[block model sheet](cogworks/previews/models.png) shows all twenty-eight blocks,
 the [item model sheet](cogworks/previews/tools.png) shows all nine held items,
 and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
 corner variants.
@@ -318,3 +321,4 @@ details and the Blockbench source.
 - [Cogworks 1.8.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.8.1)
 - [Cogworks 1.9.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.0)
 - [Cogworks 1.9.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.1)
+- [Cogworks 1.9.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.2)

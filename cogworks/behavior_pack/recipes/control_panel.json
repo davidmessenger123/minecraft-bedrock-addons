@@ -1,0 +1,31 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:control_panel_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "ICI",
+      "CGC",
+      "ICI"
+    ],
+    "key": {
+      "I": {
+        "item": "minecraft:iron_ingot"
+      },
+      "C": {
+        "item": "cw:circuit"
+      },
+      "G": {
+        "item": "minecraft:redstone"
+      }
+    },
+    "result": {
+      "item": "cw:control_panel",
+      "count": 1
+    }
+  }
+}

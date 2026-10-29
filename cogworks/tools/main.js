@@ -40,6 +40,7 @@ const SOLAR_PANEL = "cw:solar_panel";
 const WATER_WHEEL = "cw:water_wheel";
 const TRANSFORMER = "cw:transformer";
 const ENERGY_METER = "cw:energy_meter";
+const CONTROL_PANEL = "cw:control_panel";
 const STORAGE_CORE = "cw:storage_core";
 const STORAGE_EXTENSION = "cw:storage_extension";
 const STORAGE_TERMINAL = "cw:storage_terminal";
@@ -62,6 +63,7 @@ const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
 const MACHINE_IO_TYPES = new Set([ASSEMBLER, ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
 const LOCKABLE_TYPES = new Set([ASSEMBLER, ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER, QUARRY, TOOL_CHARGER]);
+const CONTROLLABLE_TYPES = new Set([...LOCKABLE_TYPES]);
 const MACHINE_SIDES = ["north", "east", "south", "west", "up", "down"];
 const SIDE_MODES = ["both", "input", "output", "disabled"];
 const FACINGS = ["north", "east", "south", "west"];
@@ -600,6 +602,10 @@ function consumeBatteryTool(player, item) {
 }
 
 function rechargeBatteryTool(player, block, item) {
+    if (machineHalted(block)) {
+        action(player, "The charger is paused.");
+        return;
+    }
     const charge = batteryCharge(item);
     if (charge >= BATTERY_TOOL_MAX) {
         action(player, "Battery tool is already full.");
@@ -1626,6 +1632,38 @@ function voltageName(tier) {
     return ["", "LV", "MV", "HV"][Math.max(1, Math.min(3, Number(tier) || 1))];
 }
 
+function redstoneMode(block) {
+    const value = read(block, "redstone", "ignore");
+    return ["ignore", "high", "low"].includes(value) ? value : "ignore";
+}
+
+function cycleRedstoneMode(block) {
+    const modes = ["ignore", "high", "low"];
+    const next = modes[(modes.indexOf(redstoneMode(block)) + 1) % modes.length];
+    write(block, "redstone", next);
+    return next;
+}
+
+function redstonePaused(block) {
+    const mode = redstoneMode(block);
+    if (mode === "ignore") return false;
+    let power = 0;
+    try {
+        if (typeof block.getRedstonePower === "function") power = Number(block.getRedstonePower()) || 0;
+    } catch {
+        power = 0;
+    }
+    return mode === "high" ? power <= 0 : power > 0;
+}
+
+function machinePaused(block) {
+    return read(block, "paused", false) === true;
+}
+
+function machineHalted(block) {
+    return machinePaused(block) || redstonePaused(block);
+}
+
 function transformerTier(block) {
     return Math.max(1, Math.min(3, Math.floor(Number(read(block, "tier", 1)) || 1)));
 }
@@ -1693,6 +1731,10 @@ function tickGenerator(block) {
 }
 
 function tickToolCharger(block) {
+    if (machineHalted(block)) {
+        markStatus(block, "idle");
+        return;
+    }
     markStatus(block, networkEnergy(block) > 0 ? "working" : "blocked");
 }
 
@@ -1877,6 +1919,10 @@ function tickAssembler(block) {
         else output[typeId] = amount - accepted;
     }
     writeJson(block, "output", output);
+    if (machineHalted(block)) {
+        markStatus(block, "idle");
+        return;
+    }
     if (machineVoltage(block) > networkTier(block)) {
         markStatus(block, "blocked");
         return;
@@ -1912,6 +1958,10 @@ function tickProcessor(block) {
         else output[typeId] = amount - accepted;
     }
     writeJson(block, "output", output);
+    if (machineHalted(block)) {
+        markStatus(block, "idle");
+        return;
+    }
     if (machineVoltage(block) > networkTier(block)) {
         markStatus(block, "blocked");
         return;
@@ -2056,6 +2106,11 @@ function showQuarryMarkers(block, data) {
 function tickQuarry(block) {
     const data = readJson(block, "data", { buffer: {} });
     data.buffer = data.buffer || {};
+    if (machineHalted(block)) {
+        markStatus(block, "idle");
+        writeJson(block, "data", data);
+        return;
+    }
     if (data.area) {
         const bottom = dimensionBottom(block);
         if (data.area.min.y > bottom) {
@@ -2595,6 +2650,135 @@ function openRecipePicker(player, block) {
     }).catch(() => {});
 }
 
+function panelKey(block) {
+    return `cw_panel_${block.dimension.id.replace(/[^a-z0-9]/gi, "")}_${block.location.x}_${block.location.y}_${block.location.z}`;
+}
+
+function scanNearbyBlocks(panel, radius = 12, vertical = 8, predicate = () => true) {
+    const found = [];
+    const origin = panel.location;
+    const dimension = panel.dimension;
+    for (let x = -radius; x <= radius; x++) {
+        for (let y = -vertical; y <= vertical; y++) {
+            for (let z = -radius; z <= radius; z++) {
+                const block = dimension.getBlock({ x: origin.x + x, y: origin.y + y, z: origin.z + z });
+                if (block && predicate(block)) found.push(block);
+            }
+        }
+    }
+    return found;
+}
+
+function scanControllable(panel, radius = 12, vertical = 8) {
+    return scanNearbyBlocks(panel, radius, vertical, (block) => CONTROLLABLE_TYPES.has(block.typeId));
+}
+
+function linkNearbyMachines(panel, player) {
+    const key = panelKey(panel);
+    let count = 0;
+    for (const block of scanControllable(panel)) {
+        write(block, "controlPanel", key);
+        count++;
+    }
+    action(player, `Linked ${count} nearby machine${count === 1 ? "" : "s"} to the Control Panel.`);
+}
+
+function setLinkedPaused(panel, paused, player) {
+    const key = panelKey(panel);
+    let count = 0;
+    for (const block of scanControllable(panel)) {
+        if (read(block, "controlPanel", "") !== key) continue;
+        write(block, "paused", paused);
+        count++;
+    }
+    action(player, `${paused ? "Paused" : "Resumed"} ${count} linked machine${count === 1 ? "" : "s"}.`);
+}
+
+function openQuarryDashboard(player, panel) {
+    const quarries = scanNearbyBlocks(panel, 16, 16, (block) => block.typeId === QUARRY);
+    if (!quarries.length) {
+        action(player, "No Quarry Controller found within 16 blocks.");
+        return;
+    }
+    const form = new ActionFormData()
+        .title("Quarry Dashboard")
+        .body(`${quarries.length} quarry controller${quarries.length === 1 ? "" : "s"} nearby.\nSelect one to open its controls.`);
+    for (const quarry of quarries) {
+        const data = readJson(quarry, "data", {});
+        const jobs = Array.isArray(data.jobs) ? data.jobs.length : 0;
+        const status = data.complete ? "complete" : data.active ? "active" : "paused";
+        form.button(`${quarry.location.x},${quarry.location.y},${quarry.location.z} — ${status} (${jobs} jobs)`);
+    }
+    form.button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        const quarry = quarries[response.selection];
+        if (!quarry) return;
+        later(() => openMachine(player, quarry));
+    }).catch(() => {});
+}
+
+function openStorageDiagnostics(player, panel) {
+    const cores = scanNearbyBlocks(panel, 16, 16, (block) => block.typeId === STORAGE_CORE);
+    if (!cores.length) {
+        action(player, "No Storage Core found within 16 blocks.");
+        return;
+    }
+    let usedSlots = 0;
+    let capacity = 0;
+    let itemCount = 0;
+    for (const core of cores) {
+        const info = storageInfo(core);
+        capacity += info.capacity;
+        itemCount += Object.values(info.items).reduce((sum, count) => sum + Number(count || 0), 0);
+        usedSlots += Object.values(info.items).reduce((sum, count) => sum + Math.ceil(Number(count || 0) / 64), 0);
+    }
+    const form = new ActionFormData()
+        .title("Storage Diagnostics")
+        .body(`Cores: ${cores.length}\nSlots: ${usedSlots}/${capacity}\nItems: ${itemCount}\n\n${usedSlots / Math.max(1, capacity) >= 0.9 ? "ALARM: storage is nearly full." : "Storage levels are within tolerance."}`)
+        .button("Close");
+    form.show(player).catch(() => {});
+}
+
+function openBeltDiagnostics(player, panel) {
+    const belts = scanNearbyBlocks(panel, 16, 16, (block) => BELT_TYPES.has(block.typeId) || block.typeId === LIFT);
+    let loaded = 0;
+    let items = 0;
+    for (const belt of belts) {
+        const item = readJson(belt, "item", null);
+        if (!item) continue;
+        loaded++;
+        items += Number(item.amount || 0);
+    }
+    const form = new ActionFormData()
+        .title("Belt Diagnostics")
+        .body(`Belts/lifts: ${belts.length}\nLoaded: ${loaded}\nItems in transit: ${items}\n\n${loaded >= Math.max(1, Math.floor(belts.length * 0.75)) ? "ALARM: most transport buffers are occupied." : "Transport buffers are flowing."}`)
+        .button("Close");
+    form.show(player).catch(() => {});
+}
+
+function openControlPanel(player, panel) {
+    const form = new ActionFormData()
+        .title("Control Panel")
+        .body("Link nearby processors, assemblers, Tool Chargers and Quarry Controllers, then pause or resume the group. The dashboard lists nearby quarries; diagnostics reports nearby storage capacity.")
+        .button("Link nearby machines")
+        .button("Pause linked machines")
+        .button("Resume linked machines")
+        .button("Quarry dashboard")
+        .button("Storage diagnostics")
+        .button("Belt diagnostics")
+        .button("Close");
+    form.show(player).then((response) => {
+        if (!response || response.canceled) return;
+        if (response.selection === 0) linkNearbyMachines(panel, player);
+        else if (response.selection === 1) setLinkedPaused(panel, true, player);
+        else if (response.selection === 2) setLinkedPaused(panel, false, player);
+        else if (response.selection === 3) later(() => openQuarryDashboard(player, panel));
+        else if (response.selection === 4) later(() => openStorageDiagnostics(player, panel));
+        else if (response.selection === 5) later(() => openBeltDiagnostics(player, panel));
+    }).catch(() => {});
+}
+
 function openLift(player, block) {
     const item = readJson(block, "item", null);
     const filters = Object.keys(beltFilters(block));
@@ -2706,7 +2890,7 @@ function openSideConfig(player, block) {
     });
     const form = new ActionFormData()
         .title(`Machine I/O — ${formatName(block.typeId)}`)
-        .body(`${lines.join("\n")}\nVoltage requirement: ${voltageName(machineVoltage(block))} (network ${voltageName(networkTier(block))})\n\nClick a side to cycle: both → input → output → disabled.\nSneak-use the machine with an item on a side to toggle that side's item filter.\nAuto-output pushes finished items to adjacent machines, belts and storage.`)
+        .body(`${lines.join("\n")}\nVoltage requirement: ${voltageName(machineVoltage(block))} (network ${voltageName(networkTier(block))})\nRedstone control: ${redstoneMode(block)}\n\nClick a side to cycle: both → input → output → disabled.\nSneak-use the machine with an item on a side to toggle that side's item filter.\nAuto-output pushes finished items to adjacent machines, belts and storage.`)
     for (const side of MACHINE_SIDES) {
         const count = Object.keys(filters[side] || {}).length;
         form.button(`${side.toUpperCase()} — ${io[side]}${count ? ` (${count})` : ""}`);
@@ -2714,6 +2898,7 @@ function openSideConfig(player, block) {
     form.button(`Auto-output: ${machineAutoOutput(block) ? "on" : "off"}`);
     form.button("Clear side filters");
     form.button(`Voltage requirement: ${voltageName(machineVoltage(block))}`);
+    form.button(`Redstone control: ${redstoneMode(block)}`);
     form.button("Machine access");
     form.button("Back");
     form.show(player).then((response) => {
@@ -2739,6 +2924,10 @@ function openSideConfig(player, block) {
             return;
         }
         if (response.selection === MACHINE_SIDES.length + 3) {
+            action(player, `Redstone control: ${cycleRedstoneMode(block)}.`);
+            return;
+        }
+        if (response.selection === MACHINE_SIDES.length + 4) {
             later(() => openMachineAccessForm(player, block));
             return;
         }
@@ -2811,6 +3000,10 @@ function openMachine(player, block) {
             .body(`Network energy: ${networkEnergy(block)}\nNetwork tier: ${voltageName(networkTier(block))}\nCapacity: ${networkCapacity(block)} E/tick\n\nConnect the meter to the same cable network as generators, batteries and machines. Use MV/HV cable or a transformer tier to raise voltage.`)
             .button("Close");
         form.show(player).catch(() => {});
+        return;
+    }
+    if (block.typeId === CONTROL_PANEL) {
+        openControlPanel(player, block);
         return;
     }
     if (PROCESSOR_TYPES.has(block.typeId)) {
@@ -2902,7 +3095,7 @@ function openMachine(player, block) {
         const percent = Math.min(100, Math.floor(scanned / total * 100));
         const filters = Object.keys(data.filters || {});
         const form = new ActionFormData().title("Quarry Controller")
-            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nOres only: ${data.oreOnly ? "on" : "off"}\nSaved jobs: ${(data.jobs || []).length}\nAuto-start next job: ${data.autoStart ? "on" : "off"}\nAuto-restart current: ${data.autoRestart ? "on" : "off"}\nCompletion notices: ${data.notify === false ? "off" : "on"}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
+            .body(`Status: ${data.complete ? "complete" : data.active ? "active" : "paused"}${read(block, "status", "") ? ` (${read(block, "status", "")})` : ""}\nProgress: ${percent}% (${scanned}/${total})\nMined: ${Number(data.mined || 0)}\nArea: ${area}\nBottom: bedrock (${data.area ? data.area.min.y : dimensionBottom(block)})\nFilters: ${filters.length ? filters.map(formatName).join(", ") : "none (collect all drops)"}\nFortune: ${data.fortune ? "on" : "off"}\nSilk Touch: ${data.silk ? "on" : "off"}\nOres only: ${data.oreOnly ? "on" : "off"}\nSaved jobs: ${(data.jobs || []).length}\nAuto-start next job: ${data.autoStart ? "on" : "off"}\nAuto-restart current: ${data.autoRestart ? "on" : "off"}\nCompletion notices: ${data.notify === false ? "off" : "on"}\nRedstone control: ${redstoneMode(block)}\nChunk loading: ${data.chunkArea ? "active" : "off"}\nBuffer: ${Object.values(data.buffer || {}).reduce((a, b) => a + b, 0)} items\nEnergy: ${networkEnergy(block)}`)
             .button(data.active ? "Pause quarry" : (data.complete ? "Restart quarry" : "Start quarry"))
             .button("Clear output filters")
             .button("Toggle fortune")
@@ -2913,6 +3106,7 @@ function openMachine(player, block) {
             .button("Toggle auto-start next job")
             .button("Toggle auto-restart current")
             .button("Toggle completion notices")
+            .button(`Redstone control: ${redstoneMode(block)}`)
             .button("Machine access")
             .button("Clear saved jobs")
             .button("Close");
@@ -2973,16 +3167,20 @@ function openMachine(player, block) {
                 return;
             }
             if (response.selection === 10) {
-                later(() => openMachineAccessForm(player, block));
+                action(player, `Quarry redstone control: ${cycleRedstoneMode(block)}.`);
                 return;
             }
             if (response.selection === 11) {
+                later(() => openMachineAccessForm(player, block));
+                return;
+            }
+            if (response.selection === 12) {
                 data.jobs = [];
                 writeJson(block, "data", data);
                 action(player, "Saved quarry jobs cleared.");
                 return;
             }
-            if (response.selection === 12) return;
+            if (response.selection === 13) return;
             if (!quarryArea(data)) {
                 action(player, "Use the Quarry Surveyor on two corners first.");
                 return;
@@ -3162,6 +3360,11 @@ function interact(event) {
 
     if (block.typeId === STORAGE_TERMINAL) {
         later(() => openTerminal(player, block));
+        return;
+    }
+    if (block.typeId === CONTROL_PANEL) {
+        if (item) action(player, "Use the Control Panel empty-handed to open its controls.");
+        else later(() => openControlPanel(player, block));
         return;
     }
     if (block.typeId === WIND_TURBINE || block.typeId === SOLAR_PANEL || block.typeId === WATER_WHEEL || block.typeId === TRANSFORMER || block.typeId === ENERGY_METER) {

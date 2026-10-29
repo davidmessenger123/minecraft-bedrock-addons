@@ -386,6 +386,7 @@ def build_recipes() -> None:
         "water_wheel": shaped("cw:water_wheel_recipe", ["IGI", "CWC", "IGI"], {"I": "minecraft:iron_ingot", "G": "cw:gear", "C": "minecraft:copper_ingot", "W": "minecraft:water_bucket"}, "cw:water_wheel", 1),
         "transformer": shaped("cw:transformer_recipe", ["ICI", "CGC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "G": "cw:circuit"}, "cw:transformer", 1),
         "energy_meter": shaped("cw:energy_meter_recipe", ["ICI", "CGC", "ICI"], {"I": "minecraft:iron_ingot", "C": "minecraft:copper_ingot", "G": "cw:circuit"}, "cw:energy_meter", 1),
+        "control_panel": shaped("cw:control_panel_recipe", ["ICI", "CGC", "ICI"], {"I": "minecraft:iron_ingot", "C": "cw:circuit", "G": "minecraft:redstone"}, "cw:control_panel", 1),
         "quarry": shaped("cw:quarry_recipe", ["IMI", "GQG", "IMI"], {"I": "minecraft:iron_block", "M": "cw:motor", "G": "cw:gear", "Q": "cw:circuit"}, "cw:quarry", 1),
         "drill": shaped("cw:drill_recipe", [" I ", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:drill", 1),
         "chainsaw": shaped("cw:chainsaw_recipe", [" II", "IGI", " M "], {"I": "minecraft:iron_ingot", "G": "cw:gear", "M": "cw:motor"}, "cw:chainsaw", 1),

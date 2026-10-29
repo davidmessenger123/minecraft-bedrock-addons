@@ -57,6 +57,7 @@ CAPTIONS = {
     "water_wheel": ("Water Wheel", "flow generation"),
     "transformer": ("Power Transformer", "high-capacity buffer"),
     "energy_meter": ("Energy Meter", "network diagnostics"),
+    "control_panel": ("Control Panel", "factory controls"),
     "quarry": ("Quarry Controller", "surveyor-defined excavation"),
 }
 
