@@ -1,0 +1,28 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "cw:mv_cable_recipe"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      "CCC",
+      "CGC",
+      "CCC"
+    ],
+    "key": {
+      "C": {
+        "item": "cw:cable"
+      },
+      "G": {
+        "item": "cw:circuit"
+      }
+    },
+    "result": {
+      "item": "cw:mv_cable",
+      "count": 8
+    }
+  }
+}

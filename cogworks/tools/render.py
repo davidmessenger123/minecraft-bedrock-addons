@@ -33,6 +33,8 @@ FACE_LIGHT = {
 CAPTIONS = {
     "generator": ("Coal Generator", "fuel + 2,000 E buffer"),
     "cable": ("Copper Cable", "links the power network"),
+    "mv_cable": ("MV Cable", "medium-voltage network"),
+    "hv_cable": ("HV Cable", "high-voltage network"),
     "battery": ("Battery Bank", "5,000 E storage"),
     "tool_charger": ("Tool Charger", "recharges battery tools"),
     "conveyor": ("Conveyor Belt", "visible stack transport"),

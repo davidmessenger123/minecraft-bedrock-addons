@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.3 | [Bloomlands-2.2.3.mcaddon](bloomlands/Bloomlands-2.2.3.mcaddon) |
-| **Cogworks** | Add-on | 1.9.0 | [Cogworks-1.9.0.mcaddon](cogworks/Cogworks-1.9.0.mcaddon) |
+| **Cogworks** | Add-on | 1.9.1 | [Cogworks-1.9.1.mcaddon](cogworks/Cogworks-1.9.1.mcaddon) |
 
 ## Install
 
@@ -165,12 +165,12 @@ network, visible stacks ride conveyors through filters/splitters/mergers, an
 automated assembler crafts, and a surveyor-defined quarry excavates all the way
 to bedrock into expandable storage.
 
-- 25 custom blocks: Coal Generator, Wind Turbine, Solar Panel, Water Wheel,
-  Power Transformer, Copper Cable, Battery Bank, Tool Charger, Energy Meter,
-  Conveyor Belt, Conveyor Lift, Item Filter, Belt Splitter, Belt Merger, Storage
-  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher, Sawmill,
-  Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension and Quarry
-  Controller.
+- 27 custom blocks: Coal Generator, Wind Turbine, Solar Panel, Water Wheel,
+  Power Transformer, Copper Cable, MV Cable, HV Cable, Battery Bank, Tool
+  Charger, Energy Meter, Conveyor Belt, Conveyor Lift, Item Filter, Belt
+  Splitter, Belt Merger, Storage Extractor, Storage Terminal, Storage Port,
+  Electric Furnace, Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage
+  Core, Storage Extension and Quarry Controller.
 - 9 custom items: Powered Drill, Powered Chainsaw, Battery Drill, Battery
   Chainsaw, Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and
   Electric Motor.
@@ -179,6 +179,9 @@ to bedrock into expandable storage.
   swing animations are included for first and third person.
 - Coal generation is joined by wind, solar and water generation; a Power
   Transformer buffers 10,000 E; the Energy Meter reports network totals.
+- Power tiers use Copper/MV/HV cables with 128/512/2,048 E capacity; machines
+  have configurable LV/MV/HV requirements and transformers can step the network
+  tier.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
   route them between machines; belt corners are selected automatically from
   adjacent connections, with no separate corner item.
@@ -224,7 +227,7 @@ to bedrock into expandable storage.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
 search, conveyor routing, quarry controls and build instructions. The
-[block model sheet](cogworks/previews/models.png) shows all twenty-five blocks,
+[block model sheet](cogworks/previews/models.png) shows all twenty-seven blocks,
 the [item model sheet](cogworks/previews/tools.png) shows all nine held items,
 and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
 corner variants.
@@ -314,3 +317,4 @@ details and the Blockbench source.
 - [Cogworks 1.8.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.8.0)
 - [Cogworks 1.8.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.8.1)
 - [Cogworks 1.9.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.0)
+- [Cogworks 1.9.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.1)

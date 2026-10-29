@@ -1,0 +1,56 @@
+{
+  "format_version": "1.26.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "cw:hv_cable",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.cw.cable_hv",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "cw_blocks",
+          "render_method": "opaque",
+          "face_dimming": true,
+          "ambient_occlusion": true
+        }
+      },
+      "minecraft:item_visual": {
+        "geometry": "geometry.cw.cable_hv",
+        "material_instances": {
+          "*": {
+            "texture": "cw_blocks",
+            "render_method": "opaque",
+            "face_dimming": true,
+            "ambient_occlusion": true
+          }
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1.5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 4
+      },
+      "minecraft:light_emission": 0,
+      "minecraft:light_dampening": 15,
+      "minecraft:map_color": "#59616d",
+      "minecraft:display_name": "tile.cw:hv_cable.name",
+      "minecraft:loot": "loot_tables/blocks/hv_cable.json",
+      "minecraft:collision_box": {
+        "origin": [
+          -5,
+          0,
+          -5
+        ],
+        "size": [
+          10,
+          8,
+          10
+        ]
+      }
+    }
+  }
+}

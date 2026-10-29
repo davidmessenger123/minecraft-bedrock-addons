@@ -4,14 +4,14 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.9.0.mcaddon](Cogworks-1.9.0.mcaddon)
+**Download:** [Cogworks-1.9.1.mcaddon](Cogworks-1.9.1.mcaddon)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
-  Transformer, Copper Cable, Battery Bank, Tool Charger, Energy Meter, Conveyor
-  Belt, Conveyor Lift, Item Filter, Belt Splitter, Belt Merger, Storage
-  Extractor, Storage Terminal, Storage Port, Electric Furnace, Crusher, Sawmill,
-  Alloy Smelter, Crafting Assembler, Storage Core, Storage Extension and Quarry
-  Controller.
+  Transformer, Copper Cable, MV Cable, HV Cable, Battery Bank, Tool Charger,
+  Energy Meter, Conveyor Belt, Conveyor Lift, Item Filter, Belt Splitter, Belt
+  Merger, Storage Extractor, Storage Terminal, Storage Port, Electric Furnace,
+  Crusher, Sawmill, Alloy Smelter, Crafting Assembler, Storage Core, Storage
+  Extension and Quarry Controller.
 - **Items:** Powered Drill, Powered Chainsaw, Battery Drill, Battery Chainsaw,
   Cogworks Wrench, Quarry Surveyor, Cogwork Gear, Control Circuit and Electric
   Motor.
@@ -22,6 +22,10 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
 - **Power:** coal/charcoal/coal-block generation, wind, daylight solar and water
   wheels, a 10,000 E Power Transformer buffer, 5,000 E batteries, copper cable
   networks and machine energy costs.
+- **Power tiers:** Copper (LV), MV and HV cables carry 128/512/2,048 E per
+  transfer operation. Machines have a configurable LV/MV/HV voltage requirement;
+  the Power Transformer tier contributes to network voltage and can step a
+  network up or down.
 - **Machine modules:** processor UI upgrades Speed, Efficiency and Parallel
   using gears, circuits and motors.
 - **Machine I/O:** processors and the assembler have per-side input/output/both/
@@ -107,7 +111,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.9.0.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.9.1.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
@@ -123,6 +127,7 @@ and **Storage Core**:
 - **Generator:** iron, copper and a furnace.
 - **Conveyor:** iron, gears and redstone.
 - **Conveyor Lift:** iron, gears, a conveyor and a motor.
+- **MV / HV Cable:** copper cables plus circuits, then MV cable plus circuits.
 - **Filter / splitter / merger:** iron, gears, circuit and redstone.
 - **Electric Furnace / Crusher / Sawmill / Alloy Smelter:** iron, gears,
   motors, circuits and a furnace or blast furnace.
@@ -253,6 +258,9 @@ assembler or Tool Charger to make it private, then add named members. Quarry
 access is managed from its controller form. The `cw:admin` tag bypasses machine
 locks.
 
+The same form cycles each machine's **Voltage requirement** through LV, MV and
+HV. A machine stops when its requirement is above the connected network tier.
+
 ### Power
 
 The **Wind Turbine** generates energy based on its height, the **Solar Panel**
@@ -261,6 +269,14 @@ water. The **Power Transformer** pulls from nearby generation/batteries into a
 10,000 E high-capacity buffer. All connect to the same cable network. The
 **Energy Meter** shows total stored network energy. The **Tool Charger** uses
 that network to refill Battery Drill and Battery Chainsaw charge.
+
+Power networks have three cable tiers: **Copper (LV)**, **MV** and **HV**.
+The highest cable or transformer tier in the connected network sets its tier
+and transfer capacity (128, 512 and 2,048 E per operation). Processors and the
+assembler have a configurable **Voltage requirement** in their Side
+configuration form; a machine whose requirement exceeds the network tier stops
+with a blocked status. Cycle the **Power Transformer** tier to step a network
+up or down. Existing factories default to all-LV, so they keep working.
 
 ### Blueprints
 
@@ -303,7 +319,7 @@ The block and held-item models are generated from `tools/content.py`; the
 editable Blockbench sources live in `blockbench/blocks/` and
 `blockbench/tools/`. The shipped add-on uses the exported `.geo.json` models and
 the shared `cw_blocks` texture atlas. The
-[block model sheet](previews/models.png) shows all twenty-five blocks, the
+[block model sheet](previews/models.png) shows all twenty-seven blocks, the
 [item model sheet](previews/tools.png) shows all nine held items, and
 [belt shape sheet](previews/belt_shapes.png) shows the automatic corner
 variants. [previews/materials.png](previews/materials.png) shows the industrial
@@ -341,4 +357,5 @@ node --check cogworks/behavior_pack/scripts/main.js
   behavior, quarry depth, attachable rendering and swing animations, remote
   terminal links, storage/machine access lists, battery-tool charge behavior,
   machine side I/O, Tool Charger energy transfer, Conveyor Lift transport,
-  quarry scheduling and network cache invalidation.
+  quarry scheduling and network cache invalidation, power tiers, cable
+  capacity, transformer tier changes and machine voltage cutoffs.

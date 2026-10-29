@@ -193,6 +193,24 @@ def cable_geo() -> dict:
     ], (1.0, 1.0, (0, 0.5, 0)))
 
 
+def cable_tier_geo(tier: int) -> dict:
+    if tier == 2:
+        band, core = ENERGY, COPPER
+        identifier = "geometry.cw.cable_mv"
+    else:
+        band, core = WARNING, COPPER
+        identifier = "geometry.cw.cable_hv"
+    return block_geo(identifier, [
+        cube([-2, 0, -2], [4, 16, 4], core),
+        cube([-8, 5, -2], [16, 4, 4], core, {"up": band, "down": band}),
+        cube([-2, 5, -8], [4, 4, 16], core, {"up": band, "down": band}),
+        cube([-3, 0, -3], [6, 2, 6], DARK),
+        cube([-3, 14, -3], [6, 2, 6], DARK),
+        cube([-3, 3, -3], [6, 1, 6], band),
+        cube([-3, 12, -3], [6, 1, 6], band),
+    ], (1.0, 1.0, (0, 0.5, 0)))
+
+
 def battery_geo() -> dict:
     return block_geo("geometry.cw.battery", [
         cube([-7, 0, -7], [14, 2, 14], STEEL),
@@ -543,6 +561,8 @@ def block_geometries() -> dict[str, dict]:
     return {
         "generator": generator_geo(),
         "cable": cable_geo(),
+        "mv_cable": cable_tier_geo(2),
+        "hv_cable": cable_tier_geo(3),
         "battery": battery_geo(),
         "tool_charger": tool_charger_geo(),
         "lift": lift_geo(),
@@ -868,6 +888,8 @@ class BlockSpec:
 BLOCKS: list[BlockSpec] = [
     BlockSpec("generator", "Coal Generator", "geometry.cw.generator", 3.0, light=8, machine=True, fuel=True, sound="metal", status_state=True),
     BlockSpec("cable", "Copper Cable", "geometry.cw.cable", 1.0, collision={"origin": [-5, 0, -5], "size": [10, 8, 10]}, sound="metal"),
+    BlockSpec("mv_cable", "MV Cable", "geometry.cw.cable_mv", 1.2, collision={"origin": [-5, 0, -5], "size": [10, 8, 10]}, sound="metal", dynamic=False),
+    BlockSpec("hv_cable", "HV Cable", "geometry.cw.cable_hv", 1.5, collision={"origin": [-5, 0, -5], "size": [10, 8, 10]}, sound="metal", dynamic=False),
     BlockSpec("battery", "Battery Bank", "geometry.cw.battery", 2.5, light=4, collision={"origin": [-8, 0, -8], "size": [16, 12, 16]}, sound="metal"),
     BlockSpec("tool_charger", "Tool Charger", "geometry.cw.tool_charger", 2.5, light=4, machine=True, sound="metal", tick_range=(20, 20), status_state=True),
     BlockSpec("conveyor", "Conveyor Belt", "geometry.cw.conveyor", 2.0, collision={"origin": [-8, 0, -8], "size": [16, 8, 16]}, machine=True, state=True, sound="metal", tick_range=(4, 8), curve_state=True),

@@ -5,6 +5,12 @@
   "cw:cable": {
     "sound": "metal"
   },
+  "cw:mv_cable": {
+    "sound": "metal"
+  },
+  "cw:hv_cable": {
+    "sound": "metal"
+  },
   "cw:battery": {
     "sound": "metal"
   },

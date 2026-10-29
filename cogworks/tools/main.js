@@ -20,6 +20,8 @@ import { ActionFormData, ModalFormData } from "@minecraft/server-ui";
 const NS = "cw:";
 const GENERATOR = "cw:generator";
 const CABLE = "cw:cable";
+const MV_CABLE = "cw:mv_cable";
+const HV_CABLE = "cw:hv_cable";
 const BATTERY = "cw:battery";
 const TOOL_CHARGER = "cw:tool_charger";
 const CONVEYOR = "cw:conveyor";
@@ -53,7 +55,8 @@ const WRENCH = "cw:wrench";
 const SURVEYOR = "cw:surveyor";
 const MACHINE_COMPONENT = "cw:machine";
 
-const ENERGY_TYPES = new Set([GENERATOR, CABLE, BATTERY, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER]);
+const ENERGY_TYPES = new Set([GENERATOR, CABLE, MV_CABLE, HV_CABLE, BATTERY, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER]);
+const CABLE_TIERS = { [CABLE]: 1, [MV_CABLE]: 2, [HV_CABLE]: 3 };
 const BELT_TYPES = new Set([CONVEYOR, FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const LOGISTICS_TYPES = new Set([FILTER, SPLITTER, MERGER, EXTRACTOR]);
 const PROCESSOR_TYPES = new Set([ELECTRIC_FURNACE, CRUSHER, SAWMILL, ALLOY_SMELTER]);
@@ -604,8 +607,16 @@ function rechargeBatteryTool(player, block, item) {
     }
     const need = BATTERY_TOOL_MAX - charge;
     const available = networkEnergy(block);
-    const energy = Math.min(need, available);
-    if (energy < 1 || !drainEnergy(block, energy)) {
+    let remaining = Math.min(need, available);
+    const capacity = networkCapacity(block);
+    let energy = 0;
+    while (remaining > 0 && energy < need) {
+        const chunk = Math.min(remaining, capacity);
+        if (chunk < 1 || !drainEnergy(block, chunk)) break;
+        energy += chunk;
+        remaining -= chunk;
+    }
+    if (energy < 1) {
         action(player, "The network has no energy available.");
         return;
     }
@@ -1585,6 +1596,47 @@ function clearEnergyCache() {
     ENERGY_CACHE.clear();
 }
 
+function networkTier(block) {
+    let tier = 1;
+    const parts = [...energyBlocks(block), block];
+    for (const part of parts) {
+        if (!part) continue;
+        if (CABLE_TIERS[part.typeId]) tier = Math.max(tier, CABLE_TIERS[part.typeId]);
+        if (part.typeId === TRANSFORMER) tier = Math.max(tier, Number(read(part, "tier", 1)));
+    }
+    return Math.max(1, Math.min(3, Math.floor(tier)));
+}
+
+function networkCapacity(block) {
+    return [0, 128, 512, 2048][networkTier(block)] || 128;
+}
+
+function machineVoltage(block) {
+    const value = Number(read(block, "voltage", 1));
+    return Math.max(1, Math.min(3, Math.floor(value || 1)));
+}
+
+function cycleMachineVoltage(block) {
+    const next = (machineVoltage(block) % 3) + 1;
+    write(block, "voltage", next);
+    return next;
+}
+
+function voltageName(tier) {
+    return ["", "LV", "MV", "HV"][Math.max(1, Math.min(3, Number(tier) || 1))];
+}
+
+function transformerTier(block) {
+    return Math.max(1, Math.min(3, Math.floor(Number(read(block, "tier", 1)) || 1)));
+}
+
+function cycleTransformerTier(block) {
+    const next = (transformerTier(block) % 3) + 1;
+    write(block, "tier", next);
+    clearEnergyCache();
+    return next;
+}
+
 function networkEnergy(block) {
     let total = 0;
     for (const part of energyBlocks(block)) {
@@ -1596,6 +1648,7 @@ function networkEnergy(block) {
 }
 
 function drainEnergy(block, amount) {
+    if (amount > networkCapacity(block)) return false;
     const sources = new Set([BATTERY, GENERATOR, WIND_TURBINE, SOLAR_PANEL, WATER_WHEEL, TRANSFORMER]);
     const parts = energyBlocks(block).filter((part) => sources.has(part.typeId));
     let total = parts.reduce((sum, part) => sum + Number(read(part, "energy", 0)), 0);
@@ -1824,6 +1877,10 @@ function tickAssembler(block) {
         else output[typeId] = amount - accepted;
     }
     writeJson(block, "output", output);
+    if (machineVoltage(block) > networkTier(block)) {
+        markStatus(block, "blocked");
+        return;
+    }
     const input = readJson(block, "input", {});
     const selected = read(block, "recipe", "");
     const recipes = selected
@@ -1855,6 +1912,10 @@ function tickProcessor(block) {
         else output[typeId] = amount - accepted;
     }
     writeJson(block, "output", output);
+    if (machineVoltage(block) > networkTier(block)) {
+        markStatus(block, "blocked");
+        return;
+    }
     const input = readJson(block, "input", {});
     const recipes = recipesForMachine(block.typeId);
     const selected = read(block, "recipe", "");
@@ -2369,7 +2430,7 @@ function chainsaw(player, block) {
 }
 
 function blueprintSnapshot(block) {
-    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode", "mode", "speed", "efficiency", "parallel", "autoOutput", "io", "sideFilters"];
+    const keys = ["recipe", "filters", "outputFilters", "priority", "filterMode", "mode", "speed", "efficiency", "parallel", "autoOutput", "io", "sideFilters", "voltage", "tier"];
     const dataKeys = ["filters", "fortune", "silk", "oreOnly"];
     const values = {};
     for (const key of keys) {
@@ -2645,13 +2706,14 @@ function openSideConfig(player, block) {
     });
     const form = new ActionFormData()
         .title(`Machine I/O — ${formatName(block.typeId)}`)
-        .body(`${lines.join("\n")}\n\nClick a side to cycle: both → input → output → disabled.\nSneak-use the machine with an item on a side to toggle that side's item filter.\nAuto-output pushes finished items to adjacent machines, belts and storage.`)
+        .body(`${lines.join("\n")}\nVoltage requirement: ${voltageName(machineVoltage(block))} (network ${voltageName(networkTier(block))})\n\nClick a side to cycle: both → input → output → disabled.\nSneak-use the machine with an item on a side to toggle that side's item filter.\nAuto-output pushes finished items to adjacent machines, belts and storage.`)
     for (const side of MACHINE_SIDES) {
         const count = Object.keys(filters[side] || {}).length;
         form.button(`${side.toUpperCase()} — ${io[side]}${count ? ` (${count})` : ""}`);
     }
     form.button(`Auto-output: ${machineAutoOutput(block) ? "on" : "off"}`);
     form.button("Clear side filters");
+    form.button(`Voltage requirement: ${voltageName(machineVoltage(block))}`);
     form.button("Machine access");
     form.button("Back");
     form.show(player).then((response) => {
@@ -2673,6 +2735,10 @@ function openSideConfig(player, block) {
             return;
         }
         if (response.selection === MACHINE_SIDES.length + 2) {
+            action(player, `Machine voltage requirement: ${voltageName(cycleMachineVoltage(block))}.`);
+            return;
+        }
+        if (response.selection === MACHINE_SIDES.length + 3) {
             later(() => openMachineAccessForm(player, block));
             return;
         }
@@ -2729,15 +2795,21 @@ function openMachine(player, block) {
     if (block.typeId === TRANSFORMER) {
         const energy = Number(read(block, "energy", 0));
         const form = new ActionFormData().title("Power Transformer")
-            .body(`Buffered energy: ${Math.floor(energy)}/10,000\nNetwork: ${networkEnergy(block)}\n\nPulls adjacent generation/battery energy into its high-capacity buffer.`);
-        form.button("Close");
-        form.show(player).catch(() => {});
+            .body(`Buffered energy: ${Math.floor(energy)}/10,000\nNetwork: ${networkEnergy(block)}\nNetwork tier: ${voltageName(networkTier(block))}\nTransformer tier: ${voltageName(transformerTier(block))}\nCapacity: ${networkCapacity(block)} E/tick\n\nPulls adjacent generation/battery energy into its high-capacity buffer. Transformer tier contributes to the network voltage tier.`)
+            .button("Cycle transformer voltage tier")
+            .button("Close");
+        form.show(player).then((response) => {
+            if (!response || response.canceled) return;
+            if (response.selection === 0) {
+                action(player, `Transformer tier: ${voltageName(cycleTransformerTier(block))}.`);
+            }
+        }).catch(() => {});
         return;
     }
     if (block.typeId === ENERGY_METER) {
         const form = new ActionFormData().title("Energy Meter")
-            .body(`Network energy: ${networkEnergy(block)}\n\nConnect the meter to the same cable network as generators, batteries and machines.`);
-        form.button("Close");
+            .body(`Network energy: ${networkEnergy(block)}\nNetwork tier: ${voltageName(networkTier(block))}\nCapacity: ${networkCapacity(block)} E/tick\n\nConnect the meter to the same cable network as generators, batteries and machines. Use MV/HV cable or a transformer tier to raise voltage.`)
+            .button("Close");
         form.show(player).catch(() => {});
         return;
     }
