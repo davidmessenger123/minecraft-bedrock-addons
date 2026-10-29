@@ -4,7 +4,7 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.9.2.mcaddon](Cogworks-1.9.2.mcaddon)  
+**Download:** [Cogworks-1.9.3.mcaddon](Cogworks-1.9.3.mcaddon)  
 **Live-test checklist:** [TESTING.md](TESTING.md)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
@@ -99,6 +99,15 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   500 charge; right-click a Tool Charger or connected Battery Bank to recharge
   them.
 
+### What changed in 1.9.3
+
+- Rebuilt held-tool geometry to remove overlapping and coincident cube faces
+  that caused texture z-fighting/flicker.
+- Re-anchored first- and third-person hold poses to the item bone instead of
+  the previous large hand offsets.
+- Added swing poses based on the corrected hold pose.
+- Updated all seven editable tool Blockbench sources and the tool preview sheet.
+
 ### Held item models
 
 All nine custom items use Bedrock attachables:
@@ -119,7 +128,7 @@ Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.9.2.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.9.3.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.

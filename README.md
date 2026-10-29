@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.5 | [Bloomlands-2.2.5.mcaddon](bloomlands/Bloomlands-2.2.5.mcaddon) |
-| **Cogworks** | Add-on | 1.9.2 | [Cogworks-1.9.2.mcaddon](cogworks/Cogworks-1.9.2.mcaddon) |
+| **Cogworks** | Add-on | 1.9.3 | [Cogworks-1.9.3.mcaddon](cogworks/Cogworks-1.9.3.mcaddon) |
 
 ## Install
 
@@ -325,3 +325,4 @@ details and the Blockbench source.
 - [Cogworks 1.9.0](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.0)
 - [Cogworks 1.9.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.1)
 - [Cogworks 1.9.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.2)
+- [Cogworks 1.9.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.3)

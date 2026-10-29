@@ -634,86 +634,83 @@ def tool_geo(identifier: str, cubes: list[dict], bounds=(2.0, 2.0, (0, 0, 0))) -
 def drill_geo() -> dict:
     return tool_geo("geometry.cw.drill", [
         cube([-2.5, 0, -4], [5, 5, 8], STEEL),
-        cube([-2, 5, -2], [4, 2, 5], COPPER),
-        cube([-1.5, -5, -1], [3, 5, 3], DARK),
-        cube([-1, 1, 4], [2, 2, 5], COPPER),
-        cube([-0.5, 1.5, 9], [1, 1, 2], LIGHT),
-        cube([-2.5, 1, -5], [5, 2, 1], ENERGY),
-        cube([-1.5, -6, -1], [3, 1, 3], BRASS),
+        cube([-2, 5.02, -2], [4, 2, 5], COPPER),
+        cube([-1.5, -5, -1], [3, 4.98, 3], DARK),
+        cube([-1, 1, 4.02], [2, 2, 4.98], COPPER),
+        cube([-0.5, 1.5, 9.02], [1, 1, 2], LIGHT),
+        cube([-2.5, 1, -5.02], [5, 2, 1], ENERGY),
+        cube([-1.5, -6.02, -1], [3, 1, 3], BRASS),
     ], (2.0, 2.0, (0, 0, 0)))
 
 
 def chainsaw_geo() -> dict:
-    teeth = [
-        cube([-1.25, 0.5, z], [0.5, 1, 1], LIGHT)
-        for z in (3.0, 5.0, 7.0, 9.0)
-    ] + [
-        cube([0.75, 0.5, z], [0.5, 1, 1], LIGHT)
-        for z in (3.0, 5.0, 7.0, 9.0)
-    ]
+    teeth = []
+    for z in (3.2, 5.2, 7.2, 9.2):
+        teeth.append(cube([-1.9, 0.6, z], [0.5, 0.9, 0.8], LIGHT))
+        teeth.append(cube([1.4, 0.6, z], [0.5, 0.9, 0.8], LIGHT))
     return tool_geo("geometry.cw.chainsaw", [
         cube([-2.5, 0, -3], [5, 5, 6], STEEL),
-        cube([-1, 0.5, 3], [2, 2, 10], DARK),
+        cube([-1, 0.5, 3.02], [2, 2, 9.98], DARK),
         *teeth,
-        cube([-1, -4, -2], [2, 4, 3], WOOD),
-        cube([-2, 5, -2], [4, 1, 4], COPPER),
-        cube([-2.5, 1, -4], [5, 2, 1], ENERGY),
-        cube([-2.5, 1, 2], [5, 1, 1], BRASS),
+        cube([-1, -4, -2], [2, 3.98, 3], WOOD),
+        cube([-2, 5.02, -2], [4, 1, 4], COPPER),
+        cube([-2.5, 1, -4.02], [5, 2, 1], ENERGY),
     ], (2.2, 2.0, (0, 0, 0)))
 
 
 def wrench_geo() -> dict:
     return tool_geo("geometry.cw.wrench", [
-        cube([-1, -9, -1], [2, 12, 2], STEEL),
-        cube([-1, -1, -1], [2, 3, 2], COPPER),
-        cube([-3, 2, -1], [6, 2, 2], BRASS),
-        cube([-3, 4, -1], [2, 2, 2], BRASS),
-        cube([1, 4, -1], [2, 2, 2], BRASS),
-        cube([-3, 3, -1], [1, 1, 2], ENERGY),
-        cube([-1.5, -10, -1.5], [3, 1, 3], DARK),
+        cube([-1, -9, -1], [2, 11, 2], STEEL),
+        cube([-1, 2.01, -1], [2, 1, 2], COPPER),
+        cube([-3, 3.02, -1], [6, 1, 2], BRASS),
+        cube([-3, 4.03, -1], [2, 2, 2], BRASS),
+        cube([1, 4.03, -1], [2, 2, 2], BRASS),
+        cube([-2, 3.15, 1.01], [1, 0.6, 0.4], ENERGY),
+        cube([-1.5, -10.02, -1.5], [3, 1, 3], DARK),
     ], (1.8, 2.0, (0, 0, 0)))
 
 
 def surveyor_geo() -> dict:
     return tool_geo("geometry.cw.surveyor", [
         cube([-1, -10, -1], [2, 18, 2], WOOD),
-        cube([-1, 8, -1], [2, 4, 2], COPPER),
-        cube([-3, 10, -1], [6, 3, 2], STEEL),
-        cube([-2, 11, -1], [2, 2, 1], ENERGY),
-        cube([-1, 13, -1], [2, 1, 2], BRASS),
-        cube([-1.5, -11, -1.5], [3, 1, 3], DARK),
+        cube([-1, 8.02, -1], [2, 2, 2], COPPER),
+        cube([-3, 10.03, -1], [6, 1, 2], STEEL),
+        cube([-1, 11.04, -1], [2, 2, 2], COPPER),
+        cube([-2, 13.05, -1], [4, 1, 2], BRASS),
+        cube([-2, 10.3, 1.01], [1, 0.6, 0.4], ENERGY),
+        cube([-1.5, -11.02, -1.5], [3, 1, 3], DARK),
     ], (1.8, 2.0, (0, 0, 0)))
 
 
 def gear_geo() -> dict:
-    teeth = []
-    for x, z in ((-3, -1), (2, -1), (-1, -3), (-1, 2)):
-        teeth.append(cube([x, -1, z], [2, 2, 2], BRASS))
     return tool_geo("geometry.cw.gear", [
         cube([-3, -3, -1], [6, 6, 2], STEEL),
-        cube([-2, -2, 1], [4, 4, 1], BRASS),
-        cube([-1, -1, 1.8], [2, 2, 1], ENERGY),
-        *teeth,
+        cube([-2, -2, 1.01], [4, 4, 1], BRASS),
+        cube([-1, -1, 2.02], [2, 2, 0.8], ENERGY),
+        cube([-4.02, -1, -1], [1, 2, 2], BRASS),
+        cube([3.02, -1, -1], [1, 2, 2], BRASS),
+        cube([-1, 3.02, -1], [2, 1, 2], BRASS),
+        cube([-1, -4.02, -1], [2, 1, 2], BRASS),
     ], (1.6, 1.6, (0, 0, 0)))
 
 
 def circuit_geo() -> dict:
     return tool_geo("geometry.cw.circuit", [
         cube([-4, -3, -1], [8, 6, 1], DARK),
-        cube([-3, -2, 0], [3, 2, 1], ENERGY),
-        cube([1, -2, 0], [2, 2, 1], BRASS),
-        cube([-2, 1, 0], [3, 1, 1], COPPER),
-        cube([2, 1, 0], [1, 1, 1], WARNING),
+        cube([-3, -2, 0.02], [3, 2, 1], ENERGY),
+        cube([1, -2, 0.02], [2, 2, 1], BRASS),
+        cube([-2, 1, 0.02], [3, 1, 1], COPPER),
+        cube([2, 1, 0.02], [1, 1, 1], WARNING),
     ], (1.6, 1.4, (0, 0, 0)))
 
 
 def motor_geo() -> dict:
     return tool_geo("geometry.cw.motor", [
         cube([-3, -3, -3], [6, 6, 6], STEEL),
-        cube([-2, -2, -4], [4, 4, 1], COPPER),
-        cube([-2, -2, 3], [4, 4, 2], BRASS),
-        cube([-1, -1, 5], [2, 2, 1], DARK),
-        cube([-4, -1, -1], [1, 2, 2], BRASS),
+        cube([-2, -2, -4.02], [4, 4, 1], COPPER),
+        cube([-2, -2, 3.02], [4, 4, 2], BRASS),
+        cube([-1, -1, 5.04], [2, 2, 1], DARK),
+        cube([-4.02, -1, -1], [1, 2, 2], BRASS),
     ], (1.6, 1.6, (0, 0, 0)))
 
 
