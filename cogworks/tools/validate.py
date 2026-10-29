@@ -43,8 +43,8 @@ def main() -> int:
         header = data.get("header", {})
         if header.get("version") != PARTS:
             fail(f"{name} manifest version is not {PARTS}")
-        if header.get("min_engine_version") != [1, 26, 60]:
-            fail(f"{name} manifest min_engine_version must be [1,26,60]")
+        if header.get("min_engine_version") != [1, 26, 20]:
+            fail(f"{name} manifest min_engine_version must be [1,26,20]")
         if not header.get("uuid"):
             fail(f"{name} manifest has no UUID")
         modules = data.get("modules", [])

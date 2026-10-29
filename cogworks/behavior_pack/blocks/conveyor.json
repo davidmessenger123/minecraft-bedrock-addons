@@ -1,10 +1,10 @@
 {
-  "format_version": "1.26.60",
+  "format_version": "1.26.20",
   "minecraft:block": {
     "description": {
       "identifier": "cw:conveyor",
       "menu_category": {
-        "category": "construction"
+        "category": "items"
       },
       "states": {
         "cw:facing": [
@@ -35,24 +35,6 @@
           "render_method": "opaque",
           "face_dimming": true,
           "ambient_occlusion": true
-        }
-      },
-      "minecraft:item_visual": {
-        "geometry": {
-          "identifier": "geometry.cw.conveyor",
-          "bone_visibility": {
-            "straight": true,
-            "left": false,
-            "right": false
-          }
-        },
-        "material_instances": {
-          "*": {
-            "texture": "cw_blocks",
-            "render_method": "opaque",
-            "face_dimming": true,
-            "ambient_occlusion": true
-          }
         }
       },
       "minecraft:destructible_by_mining": {

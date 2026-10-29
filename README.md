@@ -16,7 +16,7 @@ Eight add-ons and one texture pack for **Minecraft Bedrock Edition**:
 | **Candyland** | Texture pack | 1.0.2 | [Candyland-v1.0.2.mcpack](candyland/dist/Candyland-v1.0.2.mcpack) |
 | **R2-D2 Droid** | Add-on | 1.2.0 | [R2D2-1.2.0.mcaddon](r2-d2/R2D2-1.2.0.mcaddon) |
 | **Bloomlands** | Add-on | 2.2.5 | [Bloomlands-2.2.5.mcaddon](bloomlands/Bloomlands-2.2.5.mcaddon) |
-| **Cogworks** | Add-on | 1.9.3 | [Cogworks-1.9.3.mcaddon](cogworks/Cogworks-1.9.3.mcaddon) |
+| **Cogworks** | Add-on | 1.9.4 | [Cogworks-1.9.4.mcaddon](cogworks/Cogworks-1.9.4.mcaddon) |
 
 ## Install
 
@@ -182,6 +182,7 @@ to bedrock into expandable storage.
 - Power tiers use Copper/MV/HV cables with 128/512/2,048 E capacity; machines
   have configurable LV/MV/HV requirements and transformers can step the network
   tier.
+- Block items are grouped under **Cogworks** in the Creative **Items** tab, with the crafting components.
 - Item stacks are visible on belts. Filters, three-way splitters and mergers
   route them between machines; belt corners are selected automatically from
   adjacent connections, with no separate corner item.
@@ -225,7 +226,7 @@ to bedrock into expandable storage.
 - **1.9.2 control layer:** machine redstone modes, a Control Panel for pausing
   linked machine groups, nearby quarry dashboard, storage-fill alarms and belt
   buffer diagnostics.
-- Requires Bedrock **1.26.60+** and stable Script API **2.0.0** with
+- Requires Bedrock **1.26.20+** and stable Script API **2.0.0** with
   `@minecraft/server-ui` **2.0.0**.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
@@ -260,7 +261,7 @@ details and the Blockbench source.
 
 - Minecraft Bedrock **1.21.90 or newer** for Angel Wings, Mobile Phone, Drone
   Companion and R2-D2 Droid; **1.21.130 or newer** for NZ Animals and Rainbow
-  Garden; **1.26.60 or newer** for Candyland, Bloomlands and Cogworks.
+  Garden; **1.26.60 or newer** for Candyland and Bloomlands, and **1.26.20 or newer** for Cogworks.
 - The scripted add-ons use stable Script API **2.0.0** modules (no experiments
   required; enable **Beta APIs** only if your build exposes those modules behind it).
   NZ Animals and Rainbow Garden are data-only and have no Script API dependency.
@@ -326,3 +327,4 @@ details and the Blockbench source.
 - [Cogworks 1.9.1](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.1)
 - [Cogworks 1.9.2](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.2)
 - [Cogworks 1.9.3](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.3)
+- [Cogworks 1.9.4](https://github.com/davidmessenger123/minecraft-bedrock-addons/releases/tag/cogworks-v1.9.4)

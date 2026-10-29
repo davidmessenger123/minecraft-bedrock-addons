@@ -33,7 +33,7 @@ BP_SCRIPT_UUID = "d9a5de35-bbfa-4c58-9d93-2c8c0c4f7a13"
 RP_HEADER_UUID = "1a9d1f88-e2a8-49b8-a6f2-a7d2ef5c1e44"
 RP_RESOURCE_UUID = "c2fd6ba3-1c27-4bf6-9f35-3a8fbd0a1c55"
 
-MIN_ENGINE = [1, 26, 60]
+MIN_ENGINE = [1, 26, 20]
 
 
 def write_json(path: Path, data) -> None:
@@ -230,17 +230,11 @@ def block_json(spec: content.BlockSpec) -> dict:
                 "right": "q.block_state('cw:curve') == 'right'",
             },
         }
-        item_geometry = {
-            "identifier": spec.geometry,
-            "bone_visibility": {"straight": True, "left": False, "right": False},
-        }
     else:
         geometry = spec.geometry
-        item_geometry = spec.geometry
     components = {
         "minecraft:geometry": geometry,
         "minecraft:material_instances": materials,
-        "minecraft:item_visual": {"geometry": item_geometry, "material_instances": materials},
         "minecraft:destructible_by_mining": {"seconds_to_destroy": spec.hardness},
         "minecraft:destructible_by_explosion": {"explosion_resistance": 4},
         "minecraft:light_emission": spec.light,
@@ -263,7 +257,7 @@ def block_json(spec: content.BlockSpec) -> dict:
         components["minecraft:transformation"] = {"rotation": [0, 0, 0]}
 
     data = {
-        "format_version": "1.26.60",
+        "format_version": "1.26.20",
         "minecraft:block": {
             "description": description,
             "components": components,
@@ -437,6 +431,7 @@ LANG = {
     "cw.msg.machine_input": "Inserted {count} {item}.",
     "cw.msg.no_accept": "This machine does not accept that item.",
     "cw.msg.recipe": "Assembler recipes: planks, sticks, iron, gold, copper, gear, circuit, motor.",
+    "cw.creative_group": "Cogworks",
 }
 
 BLOCK_LANG = {spec.key: spec.label for spec in content.BLOCKS}
@@ -452,6 +447,7 @@ def build_language():
     for key in LANG:
         if key.startswith("cw.ui.") or key.startswith("cw.msg."):
             lines.append(f"{key}={LANG[key]}")
+    lines.append(f"cw:creative_group={LANG['cw.creative_group']}")
     for key, label in BLOCK_LANG.items():
         lines.append(f"tile.cw:{key}.name={label}")
         lines.append(f"tile.cw.{key}.name={label}")
@@ -513,6 +509,24 @@ def build_blocks():
                 }],
             }],
         })
+
+
+def build_catalog():
+    write_json(BP / "item_catalog" / "crafting_item_catalog.json", {
+        "format_version": "1.26.20",
+        "minecraft:crafting_items_catalog": {
+            "categories": [{
+                "category_name": "items",
+                "groups": [{
+                    "group_identifier": {
+                        "icon": "cw:gear",
+                        "name": "cw:creative_group",
+                    },
+                    "items": [f"cw:{spec.key}" for spec in content.BLOCKS],
+                }],
+            }],
+        },
+    })
 
 
 def build_items():
@@ -596,6 +610,7 @@ def main():
     BLOCKBENCH.mkdir(exist_ok=True)
     build_packs()
     build_blocks()
+    build_catalog()
     build_items()
     build_recipes()
     build_language()

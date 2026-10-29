@@ -1,0 +1,48 @@
+{
+  "format_version": "1.26.20",
+  "minecraft:crafting_items_catalog": {
+    "categories": [
+      {
+        "category_name": "items",
+        "groups": [
+          {
+            "group_identifier": {
+              "icon": "cw:gear",
+              "name": "cw:creative_group"
+            },
+            "items": [
+              "cw:generator",
+              "cw:cable",
+              "cw:mv_cable",
+              "cw:hv_cable",
+              "cw:battery",
+              "cw:tool_charger",
+              "cw:conveyor",
+              "cw:lift",
+              "cw:control_panel",
+              "cw:filter",
+              "cw:splitter",
+              "cw:merger",
+              "cw:extractor",
+              "cw:assembler",
+              "cw:storage_core",
+              "cw:storage_extension",
+              "cw:storage_terminal",
+              "cw:storage_port",
+              "cw:electric_furnace",
+              "cw:crusher",
+              "cw:sawmill",
+              "cw:alloy_smelter",
+              "cw:wind_turbine",
+              "cw:solar_panel",
+              "cw:water_wheel",
+              "cw:transformer",
+              "cw:energy_meter",
+              "cw:quarry"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

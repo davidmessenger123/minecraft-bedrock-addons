@@ -36,6 +36,7 @@ cw.msg.chainsaw=The chainsaw needs logs.
 cw.msg.machine_input=Inserted {count} {item}.
 cw.msg.no_accept=This machine does not accept that item.
 cw.msg.recipe=Assembler recipes: planks, sticks, iron, gold, copper, gear, circuit, motor.
+cw:creative_group=Cogworks
 tile.cw:generator.name=Coal Generator
 tile.cw.generator.name=Coal Generator
 tile.cw:cable.name=Copper Cable

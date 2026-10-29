@@ -885,7 +885,7 @@ class BlockSpec:
     light: int = 0
     collision: bool | dict = True
     selection: tuple[tuple[float, float, float], tuple[float, float, float]] | None = None
-    menu: str | None = "construction"
+    menu: str | None = "items"
     sound: str = "stone"
     machine: bool = False
     state: bool = False

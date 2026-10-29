@@ -4,7 +4,7 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.9.3.mcaddon](Cogworks-1.9.3.mcaddon)  
+**Download:** [Cogworks-1.9.4.mcaddon](Cogworks-1.9.4.mcaddon)
 **Live-test checklist:** [TESTING.md](TESTING.md)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
@@ -99,6 +99,19 @@ as editable `.bbmodel` sources in `blockbench/blocks/`.
   500 charge; right-click a Tool Charger or connected Battery Bank to recharge
   them.
 
+### What changed in 1.9.4
+
+- Added a **Cogworks** Creative group under the **Items** category and moved
+  the block items there. This avoids the missing/unclear Construction tab and
+  makes the blocks findable in the same tab as the crafting components.
+- Lowered the block JSON format to **1.26.20** while retaining block entities,
+  custom components and the current Script API behavior.
+- Removed per-block `minecraft:item_visual` overrides so automatic block items
+  use the block geometry directly; block item models remain 3D.
+- Added `item_catalog/crafting_item_catalog.json` for explicit Creative menu
+  placement.
+- The behavior and resource manifests now target **1.26.20+**.
+
 ### What changed in 1.9.3
 
 - Rebuilt held-tool geometry to remove overlapping and coincident cube faces
@@ -124,11 +137,11 @@ hand. The attachable definitions include separate first/third-person hold
 poses and swing/use poses driven by `variable.attack_time` and
 `query.is_using_item`. Their Blockbench sources are in `blockbench/tools/`.
 
-Target: **Minecraft Bedrock 1.26.60+** with stable Script API **2.0.0**.
+Target: **Minecraft Bedrock 1.26.20+** with stable Script API **2.0.0**.
 
 ## Install
 
-1. Open `Cogworks-1.9.3.mcaddon` with Minecraft Bedrock.
+1. Open `Cogworks-1.9.4.mcaddon` with Minecraft Bedrock.
 2. Enable **Cogworks Behaviour Pack** and **Cogworks Resource Pack** for the world.
 3. Reload the world. No experiments are required unless your build exposes the
    stable Script API modules behind **Beta APIs**.
