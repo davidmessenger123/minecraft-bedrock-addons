@@ -4,7 +4,8 @@ A Minecraft Bedrock automation add-on: generate power, run conveyors, automate
 crafting, expand storage and carve out a quarry. All block models are included
 as editable `.bbmodel` sources in `blockbench/blocks/`.
 
-**Download:** [Cogworks-1.9.2.mcaddon](Cogworks-1.9.2.mcaddon)
+**Download:** [Cogworks-1.9.2.mcaddon](Cogworks-1.9.2.mcaddon)  
+**Live-test checklist:** [TESTING.md](TESTING.md)
 
 - **Blocks:** Coal Generator, Wind Turbine, Solar Panel, Water Wheel, Power
   Transformer, Copper Cable, MV Cable, HV Cable, Battery Bank, Tool Charger,

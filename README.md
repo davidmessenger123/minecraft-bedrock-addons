@@ -229,7 +229,8 @@ to bedrock into expandable storage.
   `@minecraft/server-ui` **2.0.0**.
 
 See [cogworks/README.md](cogworks/README.md) for recipes, machine setup, storage
-search, conveyor routing, quarry controls and build instructions. The
+search, conveyor routing, quarry controls and build instructions. Use the
+[live-test checklist](cogworks/TESTING.md) before testing new worlds. The
 [block model sheet](cogworks/previews/models.png) shows all twenty-eight blocks,
 the [item model sheet](cogworks/previews/tools.png) shows all nine held items,
 and the [belt shape sheet](cogworks/previews/belt_shapes.png) shows automatic
