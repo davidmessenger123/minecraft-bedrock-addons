@@ -1,12 +1,14 @@
 # Bloomlands
 
 A flower-filled custom dimension for **Minecraft Bedrock Edition**, entered through a
-4×4 flower bed and a rainbow portal on the ground. The island is a gentle garden of
-five themed regions plus the Bloomlands Edge, giant tree-sized blooms, a dense
-glowing canopy, terraced petal hills, a mirror lake and three hand-modelled peaceful
-Bloomling mobs.
+4×4 flower bed and a rainbow portal on the ground. The world is a gently rolling
+procedural garden of five themed regions plus the Bloomlands Edge, giant tree-sized
+blooms, a dense glowing canopy, terraced petal hills, a mirror lake and three
+hand-modelled peaceful Bloomling mobs.
 
-- **Dimension:** `bl:bloomlands` — a void dimension with a script-built floating island.
+- **Dimension:** `bl:bloomlands` — a void dimension with a lazy, deterministic
+  script generator. Only the spawn sanctuary is built up front; the wider garden is
+  generated in 16×16 chunks as players explore.
 - **Portal:** a 4×4 flower bed surrounding a 2×2 End-portal-style rainbow surface.
 - **Regions:** Sunpetal Meadow, Whispering Canopy, Giant's Garden, Petal Hills,
   Mirror Pool and the Bloomlands Edge.
@@ -18,6 +20,22 @@ Bloomling mobs.
   any vanilla hostile that somehow appears.
 - **No experiments required.** Built for Bedrock **1.26.60+** with stable
   `@minecraft/server` **2.0.0**.
+
+## What changed in 3.0.0
+
+- **Procedural generation:** new worlds now build a small arrival/return sanctuary
+  and then generate the Bloomlands lazily in deterministic 16×16 chunks around
+  players. The old 480-block prebuilt island is no longer built for new worlds.
+- **Fast first entry:** the Bloomgate only waits for the spawn sanctuary and its
+  immediate chunks instead of the entire island.
+- **Chunk queue:** two nearby chunks are generated per world tick; explored chunks
+  are recorded so they do not rebuild after reload.
+- **Giant's Garden redesign:** cleaner five-petal giant blooms with domed centres,
+  layered glowing tree crowns, flared roots and denser flower paths around the
+  garden trees.
+- **Backward compatibility:** worlds that already contain the legacy handcrafted
+  island keep it. New worlds use the procedural layout. Existing legacy worlds can
+  keep the updated blocks/models without being regenerated.
 
 ## What changed in 2.2.5
 
@@ -80,11 +98,12 @@ Bloomling mobs.
 
 ## Install
 
-1. Open `Bloomlands-2.2.5.mcaddon` with Minecraft Bedrock.
+1. Open `Bloomlands-3.0.0.mcaddon` with Minecraft Bedrock.
 2. Enable **Bloomlands Behaviour Pack** and **Bloomlands Resource Pack** for the world.
-3. Reload the world. The first load creates the island; this can take several minutes
-   because the dimension is void-generated, every block is placed by the script, and
-   the 480-block garden is built in sixteen chunk-loading passes.
+3. Reload the world. New worlds build only the arrival/return sanctuary first;
+   the surrounding garden streams in as you explore. Expect a few seconds for the
+   sanctuary and brief generation pop-in at new chunk borders. Existing 2.2.x
+   worlds keep their prebuilt island.
 4. No experimental toggles are needed. If your build exposes stable Script API 2.0.0
    behind **Beta APIs**, enable that experiment.
 
@@ -124,8 +143,8 @@ A starter kit is also available:
 ### Travel and return
 
 Step onto the **rainbow surface** in the centre of the flower bed to open the way.
-The first visit generates the island and teleports you to the arrival platform
-south of the return portal.
+The first visit builds the small arrival sanctuary and teleports you to the platform
+south of the return portal. The surrounding garden then streams in as you explore.
 
 To go home, step onto the return portal at the island spawn. Your exact return
 position and dimension are saved. The portal is disarmed after a journey until you
@@ -134,35 +153,36 @@ step off it, so returning onto the same spot does not immediately send you back.
 The return rainbow portal at the island spawn is rooted: its portal blocks cannot
 be broken, so a curious explorer cannot strand themselves.
 
-## The island
+## World generation
 
-The island is roughly 480 blocks across (a 240-block radius), with its base surface
-at **Y = 64**. Broad grass swells and smaller knolls raise much of the meadow,
-forest and garden by one to four blocks, while paths cut level benches through
-them. The arrival platform sits south of the return portal: the southern rim
-is about 114 blocks away, the centre about 126 blocks, and the northern rim about
-366 blocks. Terrain, flowers, trees, paths, water and the return gate are all
-placed once and then saved with the world.
+New Bloomlands worlds are **procedural**. The script builds a compact arrival and
+return sanctuary at the portal, then generates the surrounding garden lazily in
+deterministic 16×16 chunks. A small queue adds two nearby chunks per world tick as
+players explore; generated chunk coordinates are saved so they are not rebuilt
+after a reload.
 
-The script builds the island in sixteen 8x8-chunk tiles with a one-chunk feature
-margin. Each tile gets its own temporary ticking area, so generation stays inside
-Bedrock's ticking-area budget; the central tile is built last so the arrival and
-return areas can be probed before the island is marked complete.
+- The base terrain sits around **Y = 64**, with rolling meadow swells, higher
+  hill bluffs, canopy rises and lower pool basins.
+- The spawn sanctuary contains the arrival platform, path and rooted return gate.
+- The wider garden is regenerated from coordinate hashes, so the landscape is
+  continuous and repeatable without storing a 480-block island.
+- Brief void or pop-in can appear at a chunk border while the queue catches up.
+- Worlds created before 3.0.0 keep their legacy handcrafted island. Create a new
+  world to get the procedural layout.
 
 | Region | Direction | Character |
 | --- | --- | --- |
 | **Sunpetal Meadow** | South / spawn | Open flower fields, the arrival path and the return portal |
 | **Whispering Canopy** | North | Dense Bloomwood forest with a closed leaf ceiling, glowbud patches, fireflies and dim green fog |
-| **Giant's Garden** | East | Giant flower trees, broad petals, warm pink fog and drifting pollen |
-| **Petal Hills** | North-west | Six walkable terraces with a spiral path, overlooks and giant crown blooms |
-| **Mirror Pool** | West | A still lake, lily blooms, a small central island and a giant skybell |
-| **Bloomlands Edge** | Outer rim | A stone rim, floating islets and the open sky beyond the garden |
+| **Giant's Garden** | East | Redesigned giant flower trees with layered crowns, broad five-petal blooms, petal paths and drifting pollen |
+| **Petal Hills** | North-west | Rolling high bluffs and flower slopes |
+| **Mirror Pool** | West | Low damp basins, lily blooms and a giant skybell |
+| **Bloomlands Edge** | Outer ring | Stone outcrops and the open sky beyond the garden |
 
-The canopy is deliberately solid overhead: old-growth Bloomwoods have 3×3
-trunks, 5×5 ancient trunks, flared roots, branch arms and overlapping rounded
-crowns. When you are under the trees, the leaf ceiling blocks the sky. Region
-fog, action-bar names, particles and ambient colour change as you cross between
-areas.
+Region fog, action-bar names, particles and ambient colour change as you cross
+between areas. The giant garden's blooms use five broad outer petals, five inner
+petals and a domed centre; its trees have 3×3 trunks, flared roots and layered
+glowing crowns.
 
 ## Blocks and recipes
 
@@ -223,7 +243,7 @@ Rebuild and validate from the repository root:
 node --check bloomlands/behavior_pack/scripts/main.js
 ```
 
-The generated `.mcaddon` is `bloomlands/Bloomlands-2.2.5.mcaddon`. The validator
+The generated `.mcaddon` is `bloomlands/Bloomlands-3.0.0.mcaddon`. The validator
 checks manifests, both script/data modules, dimension and biome wiring, every block
 and item texture, model UVs and bounds, recipes, loot, entity client/behavior
 pairs, animation bones, controllers, particles, language keys, Blockbench sources
@@ -234,14 +254,14 @@ The `.bbmodel` files are sources for editing; the shipped add-on uses the export
 
 ## Notes
 
-- The dimension is data-driven but **void-generated**; Bedrock does not provide
-  engine terrain, portals or multiple biomes for a custom dimension. The island,
-  vegetation and themed regions are therefore built and dressed by the script.
-- The first world load does the heavy generation. Later loads reuse the saved
-  blocks and keep only the spawn/return area ticking. Existing 1.0.0 and 2.0.0
-  worlds use a fresh generation marker and are rebuilt around the old garden, so
-  they receive the rolling ground and the new old-growth canopy. Rebuilding can
-  overwrite player changes made inside the generated island footprint.
+- The dimension is data-driven but **void-generated**; Bedrock custom dimensions
+  support only the void generator. The terrain, vegetation and regions are
+  therefore generated by the script.
+- New worlds use the lazy 16×16 procedural generator; only the sanctuary and its
+  nearby chunks are built up front. Existing 1.0.0–2.2.x worlds keep their legacy
+  handcrafted island. Create a new world to receive the procedural layout.
+- Generated chunks are saved by coordinate key. Player edits remain in the world;
+  a chunk is not rebuilt after reload unless its marker is missing.
 - If you remove the behavior pack from a world, the saved island blocks remain in
   the dimension data but the portal and scripted mobs stop working.
 - Models, textures and code in this project are original and released under the

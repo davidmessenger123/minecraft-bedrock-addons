@@ -28,7 +28,7 @@ from typing import Callable, Iterable, Sequence
 from PIL import Image, ImageDraw, ImageFilter
 
 NS = "bl"
-VERSION = "2.2.3"
+VERSION = "3.0.0"
 PACK_NAME = "Bloomlands"
 BP_NAME = "Bloomlands Behaviour Pack"
 RP_NAME = "Bloomlands Resource Pack"
@@ -1230,50 +1230,39 @@ def giant_bloom_geometry() -> dict:
         "leaf": (48, 10, 16, 16),
         "edge": (48, 28, 8, 8),
     }
-    # Six broad outer petals, five shorter inner ones and five sepals create
-    # a cleaner, more readable flower than the previous eight-plus-eight
-    # stack while keeping the tree-sized scale.
+    # Five broad outer petals, five shorter inner petals and a domed center.
+    # The petals begin outside the center volume so they cannot z-fight.
     outer = []
-    for i in range(6):
+    for i in range(5):
         outer.append(
             cube(
-                [6, 10, -4],
-                [9, 4, 8],
+                [7.1, 11.2, -4],
+                [9, 2.6, 8],
                 uv_faces(t["petal"], up=t["petal"], down=t["light"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
-                rotation=[0, i * 60, 0],
-                pivot=[0, 12, 0],
+                rotation=[0, i * 72, 0],
+                pivot=[0, 13, 0],
             )
         )
     inner = []
     for i in range(5):
         inner.append(
             cube(
-                [5, 13, -3],
-                [8, 3, 6],
+                [5.2, 14.3, -3],
+                [6.5, 2, 6],
                 uv_faces(t["light"], up=t["light"], down=t["petal"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
-                rotation=[0, 24 + i * 72, 0],
-                pivot=[0, 14.5, 0],
+                rotation=[0, 36 + i * 72, 0],
+                pivot=[0, 15.3, 0],
             )
         )
     sepals = []
     for i in range(5):
         sepals.append(
             cube(
-                [6, 3, -1.5],
-                [7, 2, 3],
+                [4, 3, -1.5],
+                [6.5, 1.8, 3],
                 uv_faces(t["calyx"], up=t["calyx"], down=t["calyx"], north=t["edge"], south=t["edge"], east=t["edge"], west=t["edge"]),
                 rotation=[0, 36 + i * 72, 0],
                 pivot=[0, 4, 0],
-            )
-        )
-    stamens = []
-    for i in range(6):
-        angle = i * 60
-        stamens.append(
-            cube(
-                [math.cos(math.radians(angle)) * 4 - 0.5, 15, math.sin(math.radians(angle)) * 4 - 0.5],
-                [1, 4 + (i % 2) * 2, 1],
-                uv(t["center"]),
             )
         )
     pollen = []
@@ -1281,22 +1270,22 @@ def giant_bloom_geometry() -> dict:
         angle = i * 72 + 15
         pollen.append(
             cube(
-                [math.cos(math.radians(angle)) * (4 + i % 3) - 0.5, 20 + (i % 3) * 1.5, math.sin(math.radians(angle)) * (4 + i % 3) - 0.5],
+                [math.cos(math.radians(angle)) * 3 - 0.5, 17.6, math.sin(math.radians(angle)) * 3 - 0.5],
                 [1, 1, 1],
                 uv(t["pollen"]),
             )
         )
     cubes = [
-        cube([-3, 0, -3], [6, 11, 6], uv_faces(t["calyx"], up=t["calyx"], down=t["calyx"], north=t["leaf"], south=t["leaf"], east=t["leaf"], west=t["leaf"])),
-        cube([-8, 10, -8], [16, 5, 16], uv(t["center"])),
-        cube([-4, 15, -4], [8, 2, 8], uv(t["center"])),
+        cube([-3, 0, -3], [6, 10.9, 6], uv_faces(t["calyx"], up=t["calyx"], down=t["calyx"], north=t["leaf"], south=t["leaf"], east=t["leaf"], west=t["leaf"])),
+        cube([-7, 11, -7], [14, 3, 14], uv(t["center"])),
+        cube([-5, 14.05, -5], [10, 2, 10], uv(t["center"])),
+        cube([-2, 16.1, -2], [4, 1.4, 4], uv(t["light"])),
         *sepals,
         *outer,
         *inner,
-        *stamens,
         *pollen,
     ]
-    return geometry("geometry.bl.giant_bloom", 64, 64, [bone("bloom", [0, 0, 0], cubes)], 3.2, 3.2, [0, 1.5, 0])
+    return geometry("geometry.bl.giant_bloom", 64, 64, [bone("bloom", [0, 0, 0], cubes)], 3.4, 3.4, [0, 1.6, 0])
 
 
 def dewgrass_geometry() -> dict:

@@ -5,9 +5,9 @@
     "description": "Textures, models, animations and fog for the Bloomlands.",
     "uuid": "1c0cc0a0-872d-559e-8732-b0845267f916",
     "version": [
-      2,
-      2,
-      5
+      3,
+      0,
+      0
     ],
     "min_engine_version": [
       1,
@@ -21,9 +21,9 @@
       "type": "resources",
       "uuid": "1bf7a589-655c-550c-88e6-23cd53582e98",
       "version": [
-        2,
-        2,
-        5
+        3,
+        0,
+        0
       ]
     }
   ],
